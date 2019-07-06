@@ -1,0 +1,24 @@
+{
+	"elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "down":  { "texture": "#down"},
+                "up":    { "texture": "#up" },
+                "north": { "texture": "#north" },
+				"east":  { "texture": "#east" },
+                "south": { "texture": "#south" },
+                "west":  { "texture": "#west" }
+            }
+        }
+    ],
+	"textures": {
+        "particle": "#sides",
+        "down": "#sides",
+        "up": "#sides",
+        "north": "#front",
+        "east": "#sides",
+        "south": "#sides",
+        "west": "#sides"
+    }
+}

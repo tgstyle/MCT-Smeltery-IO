@@ -1,0 +1,47 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "mctsmelteryio:machine/machine",
+		"textures": {
+			"sides": "mctsmelteryio:blocks/machine/shared_side",
+			"particle": "#sides",
+			"front": "mctsmelteryio:blocks/machine/fuel_controller_front",
+			"south": "#sides",
+			"west": "#sides",
+			"east": "#sides",
+			"up": "#sides",
+			"down": "#sides"
+		}
+	},
+	"variants": {
+		"inventory": [{}],
+		"normal": [{}],
+		"active": {
+			"true": {
+				"textures": {
+					"front": "mctsmelteryio:blocks/machine/fuel_controller_front_active"
+				}
+			},
+			"false": {}
+		},
+		"facing": {
+			"north": {},
+			"south": {
+				"y": 180
+			},
+			"west": {
+				"y": 270
+			},
+			"east": {
+				"y": 90
+			},
+			"up": {
+				"x": -90
+			},
+			"down": {
+				"x": 90
+			}
+		}
+	}
+
+}

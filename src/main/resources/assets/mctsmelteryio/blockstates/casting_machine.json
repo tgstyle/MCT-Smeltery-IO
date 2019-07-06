@@ -1,0 +1,50 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "mctsmelteryio:machine/machine",
+		"textures": {
+			"sides": "mctsmelteryio:blocks/machine/casting_machine_side",
+			"particle": "#sides",
+			"front": "#sides",
+			"south": "#sides",
+			"west": "#sides",
+			"east": "#sides",
+			"up": "mctsmelteryio:blocks/machine/casting_machine_top",
+			"down": "mctsmelteryio:blocks/machine/casting_machine_bottom"
+		}
+	},
+	"variants": {
+		"inventory": [{}],
+		"normal": [{}],
+		"active": {
+			"true": {
+				"textures": {
+					"front": "mctsmelteryio:blocks/machine/casting_machine_active",
+					"south": "mctsmelteryio:blocks/machine/casting_machine_active",
+					"west": "mctsmelteryio:blocks/machine/casting_machine_active",
+					"east": "mctsmelteryio:blocks/machine/casting_machine_active"
+				}
+			},
+			"false": {}
+		},
+		"facing": {
+			"north": {},
+			"south": {
+				"y": 180
+			},
+			"west": {
+				"y": 270
+			},
+			"east": {
+				"y": 90
+			},
+			"up": {
+				"x": -90
+			},
+			"down": {
+				"x": 90
+			}
+		}
+	}
+
+}
