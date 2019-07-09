@@ -314,7 +314,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
         return this.targetTemp;
     }
 
-    public int getCurrentSolidFuelTemp() {
+    public int getCurrentTemp() {
         return this.currentTemp;
     }
 

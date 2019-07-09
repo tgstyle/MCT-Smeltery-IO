@@ -41,7 +41,7 @@ public class GuiFC extends GuiContainer {
 
         if (this.tileEntity.isReady()) {
         	int progress = this.tileEntity.getGUIProgress(PROGRESSHEIGHT);
-        	if (this.tileEntity.getCurrentSolidFuelTemp() == 0) {
+        	if (this.tileEntity.getCurrentTemp() == 0) {
             	progress = PROGRESSHEIGHT;
         	}
         	drawTexturedModalRect(guiLeft + 103, guiTop + 36 + progress, 176, 33 + progress, 13, 13 - progress);
@@ -64,7 +64,7 @@ public class GuiFC extends GuiContainer {
         String msgRatio = TextFormatting.AQUA + I18n.format("container.fuel_controller.ratio", new Object[0]) + " " + ratio;
         this.fontRenderer.drawString(msgRatio, (-55 - (this.fontRenderer.getStringWidth(msgRatio))/2), 37, 4210752);
 
-        if (this.tileEntity.getCurrentSolidFuelTemp() == 0 && this.tileEntity.atCapacity()) {
+        if (this.tileEntity.getCurrentTemp() == 0 && this.tileEntity.atCapacity()) {
             String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.error", new Object[0]);
             this.fontRenderer.drawString(warn, (-55 - (this.fontRenderer.getStringWidth(warn))/2), 49, 4210752);
         } else {
