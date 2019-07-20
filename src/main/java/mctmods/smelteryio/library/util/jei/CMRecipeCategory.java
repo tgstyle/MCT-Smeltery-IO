@@ -1,4 +1,4 @@
-package mctmods.smelteryio.library.util.plugins.jei;
+package mctmods.smelteryio.library.util.jei;
 
 import com.google.common.collect.Lists;
 
@@ -15,6 +15,7 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
@@ -61,7 +62,7 @@ public class CMRecipeCategory implements IRecipeCategory {
 
     @Override
     public void drawExtras(Minecraft minecraft) {
-        this.arrow.draw(minecraft, 71, 21);
+        this.arrow.draw(minecraft, 103, 24);
     }
 
     @Override
@@ -73,18 +74,14 @@ public class CMRecipeCategory implements IRecipeCategory {
 
         int cap = input.get(0).amount;
 
-        items.init(0, true, 58, 25);
-        items.init(1, false, 113, 24);
-        items.set(ingredients);
-
-        fluids.init(0, true, 3, 2, 12, 52, Material.VALUE_Block, false, null);
+        fluids.init(0, true, 5, 5, 12, 52, Material.VALUE_Block, false, null);
         fluids.set(ingredients);
 
-        fluids.init(1, true, 3, 2, 12, 52, cap, false, null);
+        fluids.init(1, true, 5, 5, 12, 52, cap, false, null);
         fluids.set(1, input);
 
-        items.init(0, true, 44, 19);
-        items.init(1, false, 104, 20);
+        items.init(0, true, 41, 22);
+        items.init(1, false, 127, 22);
         items.set(ingredients);
 
         List<ItemStack> upgrade = Lists.newLinkedList();
@@ -93,17 +90,24 @@ public class CMRecipeCategory implements IRecipeCategory {
         upgrade.add(new ItemStack(RegistryItem.UPGRADE, 1, 3));
         upgrade.add(new ItemStack(RegistryItem.UPGRADE, 1, 4));
 
-        items.init(2, false, 129, 11);
-        items.set(2, upgrade);
-
-        items.init(3, false, 129, 29);
+        items.init(2, true, 41, 4);
         if (recipeWrapper instanceof CMRecipeWrapper && ((CMRecipeWrapper)recipeWrapper).hasCast()){
-            items.set(3, upgrade);
+        	items.set(2, new ItemStack(Items.SNOWBALL, 1));
         } else {
-            items.set(3, new ItemStack(RegistryItem.UPGRADE, 1, 5));
+        	items.set(2, new ItemStack(Items.SNOWBALL, 8));
         }
 
-        fluids.init(0, true, 3, 2, 12, 52, Material.VALUE_Block, false, null);
+        items.init(3, false, 82, 1);
+        items.set(3, upgrade);
+
+        items.init(4, false, 82, 22);
+        if (recipeWrapper instanceof CMRecipeWrapper && ((CMRecipeWrapper)recipeWrapper).hasCast()){
+            items.set(4, upgrade);
+        } else {
+            items.set(4, new ItemStack(RegistryItem.UPGRADE, 1, 5));
+        }
+
+        fluids.init(0, true, 5, 5, 12, 52, Material.VALUE_Block, false, null);
     }
 
 }

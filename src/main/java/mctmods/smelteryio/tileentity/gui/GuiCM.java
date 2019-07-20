@@ -63,27 +63,27 @@ public class GuiCM extends GuiContainer {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         if (!this.tileEntity.isControlledByRedstone()) {
-        	this.drawTexturedModalRect(guiLeft + 130, guiTop + 52, 179, 63, 10, 10);
+        	this.drawTexturedModalRect(guiLeft + 123, guiTop + 52, 179, 63, 10, 10);
         }
         if (!this.tileEntity.canWork()) {
-        	this.drawTexturedModalRect(guiLeft + 133, guiTop + 51, 192, 60, 4, 4);
-        	this.drawTexturedModalRect(guiLeft + 126, guiTop + 34, 176, 60, 16, 16);
+        	this.drawTexturedModalRect(guiLeft + 126, guiTop + 51, 192, 60, 4, 4);
+        	this.drawTexturedModalRect(guiLeft + 119, guiTop + 34, 176, 60, 16, 16);
         }
         if (!this.tileEntity.isReady()) {
-        	this.drawTexturedModalRect(guiLeft + 149, guiTop + 33, 176, 60, 16, 16);
+        	this.drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
         }
         if (this.tileEntity.getCurrentMode() == TileEntityCM.BASIN) {
-        	this.drawTexturedModalRect(guiLeft + 54, guiTop + 52, 176, 60, 16, 16);
+        	this.drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
         } else {
-        	this.drawTexturedModalRect(guiLeft + 72, guiTop + 52, 176, 60, 16, 16);
+        	this.drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
         }
         if (this.tileEntity.isFueled() && this.tileEntity.isProgressing() != 0) {
         	int progress = this.tileEntity.getGUIProgress(PROGRESSWIDTH);
-        	this.drawTexturedModalRect(guiLeft + 124, guiTop + 34, 176, 0, progress, 16);
+        	this.drawTexturedModalRect(guiLeft + 117, guiTop + 34, 176, 0, progress, 16);
         }
     	if (this.tileEntity.getCurrentFluid() != null) {
     		int fluidAmount = this.tileEntity.getGUIFluidBarHeight(FLUIDHEIGHT);
-    		GuiUtil.renderTiledFluid(guiLeft + 26, guiTop + 15 + FLUIDHEIGHT - fluidAmount, 12, fluidAmount, this.zLevel, this.tileEntity.getCurrentFluid());
+    		GuiUtil.renderTiledFluid(guiLeft + 19, guiTop + 15 + FLUIDHEIGHT - fluidAmount, 12, fluidAmount, this.zLevel, this.tileEntity.getCurrentFluid());
     	}
         this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
     }
@@ -95,10 +95,10 @@ public class GuiCM extends GuiContainer {
 
         int outputSize = this.tileEntity.getOutputStackSize();
         String outputname = String.valueOf(outputSize);
-        this.fontRenderer.drawString(outputname, 158 - fontRenderer.getStringWidth(outputname) / 2, 18, 0x0000aa);
+        this.fontRenderer.drawString(outputname, 151 - fontRenderer.getStringWidth(outputname) / 2, 18, 0x0000aa);
 
         if (this.tileEntity.getCurrentFluid() != null) {
-            List<String> tooltip = getTankTooltip(this.tileEntity.getTank(), this.tileEntity.getCurrentFluid(), mouseX, mouseY, guiLeft + 26, guiTop + 15, guiLeft + 38, guiTop + 67);
+            List<String> tooltip = getTankTooltip(this.tileEntity.getTank(), this.tileEntity.getCurrentFluid(), mouseX, mouseY, guiLeft + 19, guiTop + 15, guiLeft + 38, guiTop + 67);
             if (tooltip != null) {
                 this.drawHoveringText(tooltip, mouseX-guiLeft, mouseY-guiTop);
             }
@@ -127,7 +127,7 @@ public class GuiCM extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        buttonEmptyTank = new GuiButton(BUTTON_EMPTY_TANK, guiLeft - 20,  guiTop + ySize - 150, 20, 20, "") {
+        buttonEmptyTank = new GuiButton(BUTTON_EMPTY_TANK, guiLeft - 20,  guiTop + ySize - 166, 20, 20, "") {
             @Override
             public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
                 super.drawButton(mc, mouseX, mouseY, partialTicks);
@@ -135,7 +135,7 @@ public class GuiCM extends GuiContainer {
                 this.drawTexturedModalRect(x, y, 177, 17, 20, 20);
             }
         };
-        buttonLockSlots = new GuiButton(BUTTON_LOCK_SLOTS, guiLeft - 20,  guiTop + ySize - 130, 20, 20, "") {
+        buttonLockSlots = new GuiButton(BUTTON_LOCK_SLOTS, guiLeft - 20,  guiTop + ySize - 146, 20, 20, "") {
             @Override
             public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
                 super.drawButton(mc, mouseX, mouseY, partialTicks);

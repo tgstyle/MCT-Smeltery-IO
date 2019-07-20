@@ -216,7 +216,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
             this.progress = (this.progress + 1) % PROGRESS;
             this.activeCount = this.progress + 5;
         }
-        if (setTemp != 0 &&   this.progress == 0) {
+        if (setTemp != 0 && this.progress == 0) {
         	this.targetTemp = getFluidFuelTemp();
         	this.currentTemp = 0;
             resetTemp();

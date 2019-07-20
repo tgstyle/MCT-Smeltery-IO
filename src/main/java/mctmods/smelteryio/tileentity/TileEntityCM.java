@@ -50,7 +50,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 
     private static final int PROGRESS = 24;
     private static final int SLOTS_SIZE = 7;
-    private static final int FUEL_AMOUNT_BASIN = 9;
+    private static final int FUEL_AMOUNT_BASIN = 8;
     private static final int FUEL_AMOUNT_CAST = 1;
 
     private FluidTank tank;
@@ -154,7 +154,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 				updateRecipe();
 			}
 			if (canWork()) {
-				checkUpgrade();
+				checkUpgradeSlots();
 				if (canCast() && burnSolidFuel()) {
 					doCasting();
 				}
@@ -289,44 +289,39 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
         }
     }
 
-    private void checkUpgrade() {
+    private void checkUpgradeSlots() {
         ItemStack upgrade1 = this.itemInventory.getStackInSlot(ContainerCM.UPGRADE1);
         ItemStack upgrade2 = this.itemInventory.getStackInSlot(ContainerCM.UPGRADE2);
         ItemStack upgrade3 = this.itemInventory.getStackInSlot(ContainerCM.UPGRADESPEED);
         ItemStack upgrade4 = this.itemInventory.getStackInSlot(ContainerCM.REDSTONE);
-        this.speedStackSize = 0;
-        this.outputStackSize = 0;
-        this.controlledByRedstone = false;
-        checkUpgrades(upgrade1);
-        checkUpgrades(upgrade2);
-        checkSpeedUpgrades(upgrade3);
-        checkRedstone(upgrade4);
-        if (this.speedStackSize == 0) {
-            this.speedStackSize = 1;
-        }
+        checkUpgrades(upgrade1, upgrade2, upgrade3, upgrade4);
         // Should not happen, but just in case!
         if (this.outputStackSize > 64) {
             this.outputStackSize = 64;
         }
     }
 
-    private void checkUpgrades(ItemStack itemStack) {
-        if (itemStack != ItemStack.EMPTY && itemStack.getItem().equals(RegistryItem.UPGRADE)) {
-            this.outputStackSize += getSlotStackSize(itemStack);
-            if (itemStack.isItemEqual(new ItemStack(RegistryItem.UPGRADE, 1, 5))) {
-                this.currentMode = BASIN;
-            }
+    private void checkUpgrades(ItemStack itemStack1, ItemStack itemStack2, ItemStack itemStack3, ItemStack itemStack4) {
+        this.speedStackSize = 0;
+        this.outputStackSize = 0;
+        this.controlledByRedstone = false;
+        if (itemStack1 != ItemStack.EMPTY || itemStack2 != ItemStack.EMPTY) {
+            this.outputStackSize += getSlotStackSize(itemStack1);
+            this.outputStackSize += getSlotStackSize(itemStack2);
         }
-    }
-
-    private void checkSpeedUpgrades(ItemStack itemStack) {
-        if (itemStack != ItemStack.EMPTY && itemStack.isItemEqual(new ItemStack(RegistryItem.UPGRADE, 1, 6))) {
-                this.speedStackSize += getSlotStackSize(itemStack);
+       	this.currentMode = CAST;
+       	this.fuelAmount = FUEL_AMOUNT_CAST;
+        if (itemStack1.isItemEqual(new ItemStack(RegistryItem.UPGRADE, 1, 5)) || itemStack2.isItemEqual(new ItemStack(RegistryItem.UPGRADE, 1, 5))) {
+            this.currentMode = BASIN;
+            this.fuelAmount = FUEL_AMOUNT_BASIN;        	
         }
-    }
-    
-    private void checkRedstone(ItemStack itemStack) {
-        if (itemStack.isItemEqual(new ItemStack(RegistryItem.UPGRADE, 1, 7))) {
+        if (itemStack3.isItemEqual(new ItemStack(RegistryItem.UPGRADE, 1, 6))) {
+            this.speedStackSize += getSlotStackSize(itemStack3);
+        }
+        if (this.speedStackSize == 0) {
+            this.speedStackSize = 1;
+        }
+        if (itemStack4.isItemEqual(new ItemStack(RegistryItem.UPGRADE, 1, 7))) {
             this.controlledByRedstone = true;
         }
     }
@@ -365,7 +360,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
     private boolean canCast() {
     	this.canCast = false;	
         if (this.outputStackSize != 0) {
-           	if (this.progress != 0 || this.itemInventory.getStackInSlot(ContainerCM.FUEL) != ItemStack.EMPTY) {
+           	if (this.progress != 0 || this.itemInventory.getStackInSlot(ContainerCM.FUEL).getCount() >= fuelAmount) {
            		this.canCast = true;
         	}
         }
@@ -373,11 +368,6 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	}
 
 	private boolean burnSolidFuel() {
-		if (this.currentMode != BASIN) {
-			this.fuelAmount = FUEL_AMOUNT_CAST;			
-		} else {
-			this.fuelAmount = FUEL_AMOUNT_BASIN;	
-		}
     	if (this.progress >= PROGRESS - 1) {
     		this.fueled = false;
     	}
@@ -385,10 +375,12 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
     		if (this.fueled == false) {
     			consumeItemStack(ContainerCM.FUEL, this.fuelAmount);
    				this.fueled = true;
+   				return this.fueled;
     		}
     	}
     	if (itemInventory.getStackInSlot(ContainerCM.FUEL) == ItemStack.EMPTY && this.progress != 0 && this.progress >= PROGRESS - 1) {
     		this.fueled = true;
+    		return this.fueled;
     	}
     	return this.fueled;
     }

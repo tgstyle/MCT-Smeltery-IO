@@ -1,4 +1,4 @@
-package mctmods.smelteryio.library.util.plugins.jei;
+package mctmods.smelteryio.library.util.jei;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

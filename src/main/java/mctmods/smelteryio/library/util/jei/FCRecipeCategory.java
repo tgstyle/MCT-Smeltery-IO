@@ -1,4 +1,4 @@
-package mctmods.smelteryio.library.util.plugins.jei;
+package mctmods.smelteryio.library.util.jei;
 
 import com.google.common.collect.Lists;
 
@@ -58,21 +58,21 @@ public class FCRecipeCategory implements IRecipeCategory {
 
     @Override
     public void drawExtras(Minecraft minecraft) {
-        this.arrow.draw(minecraft, 81, 24);
+        this.arrow.draw(minecraft, 64, 24);
     }
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
         IGuiItemStackGroup items = recipeLayout.getItemStacks();
 
-        items.init(0, true, 57, 22);
+        items.init(0, true, 116, 21);
         items.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
 
         List<ItemStack> speedUpg = Lists.newLinkedList();
         speedUpg.add(new ItemStack(RegistryItem.UPGRADE, 1, 6));
 
-        items.init(2, false, 3, 22);
-        items.set(2, speedUpg);
+        items.init(1, false, 7, 21);
+        items.set(1, speedUpg);
     }
 
 }

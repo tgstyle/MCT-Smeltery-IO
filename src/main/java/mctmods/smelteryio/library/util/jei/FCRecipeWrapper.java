@@ -1,4 +1,4 @@
-package mctmods.smelteryio.library.util.plugins.jei;
+package mctmods.smelteryio.library.util.jei;
 
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
