@@ -1,9 +1,13 @@
 package mctmods.smelteryio.tileentity;
 
+import java.text.DecimalFormat;
+
 import javax.annotation.Nonnull;
 
+import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.tileentity.container.ContainerFC;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import slimeknights.tconstruct.smeltery.tileentity.TileHeatingStructure;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
@@ -38,6 +43,8 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
     public static final int PROGRESS = 250;
 
     private static final int SLOTS_SIZE = 2;
+
+    private static final double FUEL_RATIO = ConfigSIO.fuelControllerRatio; 
 
     private TileSmeltery tileSmeltery;
 
@@ -179,9 +186,12 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
     private void calculateRatio() {
         ItemStack stack = itemInventory.getStackInSlot(ContainerFC.UPGRADESPEED);
 
-        if (stack == ItemStack.EMPTY) this.ratio = 1;
+        this.ratio = (double) stack.getCount() / FUEL_RATIO;
 
-        this.ratio = (double) stack.getCount() / 10.0 + 1.0;
+        DecimalFormat df = new DecimalFormat("#.##");
+        this.ratio = Double.parseDouble(df.format(this.ratio));
+        
+        if (stack == ItemStack.EMPTY) this.ratio = 0.01;
     }
 
     private void calculateTemperature() {

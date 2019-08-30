@@ -3,11 +3,13 @@ package mctmods.smelteryio.tileentity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.library.util.recipes.CMRecipeHandler;
 import mctmods.smelteryio.registry.RegistryItem;
 import mctmods.smelteryio.tileentity.container.ContainerCM;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -50,8 +53,9 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 
     private static final int PROGRESS = 24;
     private static final int SLOTS_SIZE = 7;
-    private static final int FUEL_AMOUNT_BASIN = 8;
-    private static final int FUEL_AMOUNT_CAST = 1;
+    private static final int FUEL_AMOUNT_BASIN = ConfigSIO.snowballBasinAmount;
+    private static final int FUEL_AMOUNT_CAST = ConfigSIO.snowballCastingAmount;
+    private static final int CASTING_MACHINE_SPEED = ConfigSIO.castingMachineSpeed; 
 
     private FluidTank tank;
 
@@ -404,7 +408,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
                             this.itemInventory.extractItem(ContainerCM.CAST, 1, false);
                         }
                         this.tank.drain(currentRecipe.getFluidAmount(), true);
-                        this.progress = this.speedStackSize * 2;
+                        this.progress = this.speedStackSize * CASTING_MACHINE_SPEED;
                     } else {
                         this.targetItemStack = ItemStack.EMPTY;
                     }

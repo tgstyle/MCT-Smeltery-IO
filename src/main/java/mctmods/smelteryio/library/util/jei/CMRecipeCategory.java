@@ -3,6 +3,7 @@ package mctmods.smelteryio.library.util.jei;
 import com.google.common.collect.Lists;
 
 import mctmods.smelteryio.SmelteryIO;
+import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.registry.RegistryBlock;
 import mctmods.smelteryio.registry.RegistryItem;
 
@@ -92,9 +93,9 @@ public class CMRecipeCategory implements IRecipeCategory {
 
         items.init(2, true, 41, 4);
         if (recipeWrapper instanceof CMRecipeWrapper && ((CMRecipeWrapper)recipeWrapper).hasCast()){
-        	items.set(2, new ItemStack(Items.SNOWBALL, 1));
+        	items.set(2, new ItemStack(Items.SNOWBALL, ConfigSIO.snowballCastingAmount));
         } else {
-        	items.set(2, new ItemStack(Items.SNOWBALL, 8));
+        	items.set(2, new ItemStack(Items.SNOWBALL, ConfigSIO.snowballBasinAmount));
         }
 
         items.init(3, false, 82, 1);
