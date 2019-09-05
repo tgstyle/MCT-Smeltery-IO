@@ -7,12 +7,13 @@ import net.minecraftforge.common.config.Property;
 
 public class ConfigSIO {
 
-	public static int powderedFuelBurnTime = 20000;
+	public static int powderedFuelBurnTime;
 	public static int snowballBasinAmount;
 	public static int snowballCastingAmount;
 	public static int castingMachineSpeed;
 	public static double fuelControllerRatio;
 
+	private static int powderedFuelBurnTimeCheck = 20000;
 	private static int snowballBasinAmountCheck = 8;
 	private static int snowballCastingAmountCheck = 1;
 	private static int castingMachineSpeedCheck = 2;
@@ -26,9 +27,9 @@ public class ConfigSIO {
 	 	 	Property powderedFuelBurnTimeProperty = config.get(Configuration.CATEGORY_GENERAL,
 	 	 	 	 	"powderedFuelBurnTime",
 	 	 	 	 	"20000",
-	 	 	 	 	"The burn time of Powdered Fuel (Default = 20000)");
+	 	 	 	 	"The burn time of Powdered Fuel (Valid value 1600-200000) (Default = 20000)");
 
-	 	 	powderedFuelBurnTime = powderedFuelBurnTimeProperty.getInt();
+	 	 	powderedFuelBurnTimeCheck = powderedFuelBurnTimeProperty.getInt();
 	 	 	
 	 	 	Property snowballBasinAmountProperty = config.get(Configuration.CATEGORY_GENERAL,
 	 	 	 	 	"snowballBasinAmount",
@@ -67,6 +68,11 @@ public class ConfigSIO {
 	 	 	}
 	 	}
 
+ 	 	if (powderedFuelBurnTimeCheck < 1600) {
+ 	 		powderedFuelBurnTimeCheck = 1600;
+ 	 	} else if (powderedFuelBurnTimeCheck > 200000) {
+ 	 		powderedFuelBurnTimeCheck = 200000;
+ 	 	}
  	 	if (snowballBasinAmountCheck < 1) {
  	 		snowballBasinAmountCheck = 1;
  	 	} else if (snowballBasinAmountCheck > 16) {
@@ -87,7 +93,8 @@ public class ConfigSIO {
  	 	} else if (fuelControllerRatioCheck > 4.44) {
  	 		fuelControllerRatioCheck = 4.44;
  	 	}
-
+ 	 	
+ 	 	powderedFuelBurnTime = powderedFuelBurnTimeCheck;
  	 	snowballBasinAmount = snowballBasinAmountCheck;
  	 	snowballCastingAmount = snowballCastingAmountCheck;
  	 	castingMachineSpeed = castingMachineSpeedCheck;
