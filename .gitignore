@@ -22,3 +22,4 @@ gradlesetup.bat
 T1 Sync from Test.cmd
 /build/
 /bin/
+/run/
