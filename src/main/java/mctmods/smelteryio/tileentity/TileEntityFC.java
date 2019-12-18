@@ -85,7 +85,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 		if (cooldown % 2 == 0) {
 			if (this instanceof TileSmelteryComponent) {
 				tileSmeltery = getMasterTile();
-           		if (tileSmeltery != null) {
+           		if (tileSmeltery != null && tileSmeltery.getTank() != null) {
            			updateSmelteryHeatingState();
            			calculateRatio();
            			calculateTemperature();
