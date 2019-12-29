@@ -1,6 +1,7 @@
 package mctmods.smelteryio.blocks;
 
 import mctmods.smelteryio.SmelteryIO;
+import mctmods.smelteryio.blocks.base.BlockBaseTE;
 import mctmods.smelteryio.blocks.meta.EnumMachine;
 import mctmods.smelteryio.tileentity.TileEntityCM;
 import mctmods.smelteryio.tileentity.TileEntityFC;

@@ -1,6 +1,4 @@
-package mctmods.smelteryio.blocks;
-
-import mctmods.smelteryio.blocks.base.BlockBase;
+package mctmods.smelteryio.blocks.base;
 
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.MapColor;
