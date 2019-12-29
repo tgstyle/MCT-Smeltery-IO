@@ -35,30 +35,29 @@ public enum EnumUpgrade implements IStringSerializable {
  		return this.name;
  	}
 
-    @Override
-    public String toString() {
-        return getName();
-    }
+	@Override
+	public String toString() {
+		return getName();
+	}
 
  	public String getRecipeOreDict1() {
-       	return this.recipeOreDict1;
-    }
+	   	return this.recipeOreDict1;
+	}
 
  	public String getRecipeOreDict2() {
-       	return this.recipeOreDict2;
-    }
+	   	return this.recipeOreDict2;
+	}
 
  	public EnumRarity getRarity() {
-       	return this.rarity;
-    }
+	   	return this.rarity;
+	}
 
  	public int getMaxSize() {
  		return this.maxSize;
  	}
 
-    public int getMeta() {
-        return this.itemMeta;
-    }
+	public int getMeta() {
+		return this.itemMeta;
+	}
 
 }
-

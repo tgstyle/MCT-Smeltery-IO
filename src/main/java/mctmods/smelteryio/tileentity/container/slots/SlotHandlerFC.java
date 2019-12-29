@@ -3,6 +3,7 @@ package mctmods.smelteryio.tileentity.container.slots;
 import javax.annotation.Nonnull;
 
 import mctmods.smelteryio.tileentity.container.ContainerFC;
+
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.items.IItemHandler;
@@ -22,7 +23,7 @@ public class SlotHandlerFC extends SlotItemHandler {
 	}
 
 	@Override
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+	public boolean isItemValid(@Nonnull ItemStack stack) {
 		switch(this.tileSlot) {
 		case ContainerFC.FUEL:
 			return (SlotHandlerItems.validForSlot(stack, ContainerFC.FUEL, tileID));
@@ -33,8 +34,8 @@ public class SlotHandlerFC extends SlotItemHandler {
 	}
 
 	@Override
-    public int getSlotStackLimit() {
+	public int getSlotStackLimit() {
 		return slotStackLimit;
-    }
+	}
 
 }

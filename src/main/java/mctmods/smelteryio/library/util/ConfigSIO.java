@@ -61,7 +61,7 @@ public class ConfigSIO {
 	 	 	fuelControllerRatioCheck = fuelControllerRatioProperty.getDouble();
 
 	 	} catch (Exception e) {
-	 		LoggerSIO.error("Config Error %d" + e);
+	 		SmelteryIO.logger.error("Config Error %d" + e);
 	 	} finally {
 	 	 	if (config.hasChanged()) {
 	 	 		config.save();

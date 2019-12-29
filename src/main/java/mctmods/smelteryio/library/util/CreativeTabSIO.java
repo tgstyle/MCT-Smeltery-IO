@@ -1,10 +1,9 @@
 package mctmods.smelteryio.library.util;
 
 import mctmods.smelteryio.SmelteryIO;
-import mctmods.smelteryio.registry.RegistryBlock;
+import mctmods.smelteryio.registry.Registry;
 
 import net.minecraft.creativetab.CreativeTabs;
-
 import net.minecraft.item.ItemStack;
 
 public class CreativeTabSIO extends CreativeTabs {
@@ -17,7 +16,7 @@ public class CreativeTabSIO extends CreativeTabs {
 
 	@Override
 	public ItemStack getTabIconItem() {
- 	 	return new ItemStack(RegistryBlock.MACHINE, 1, 0);
+ 	 	return new ItemStack(Registry.MACHINE, 1, 0);
 	}
 
 }

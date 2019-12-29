@@ -8,15 +8,15 @@ import net.minecraft.item.ItemStack;
 
 public class FCRecipeWrapper implements IRecipeWrapper {
 
-    protected final ItemStack input;
+	protected final ItemStack input;
 
-    public FCRecipeWrapper(ItemStack itemStack) {
-        this.input = itemStack;
-    }
+	public FCRecipeWrapper(ItemStack itemStack) {
+		this.input = itemStack;
+	}
 
-    @Override
-    public void getIngredients(IIngredients ingredients) {
-        ingredients.setInput(VanillaTypes.ITEM, this.input);
-    }
+	@Override
+	public void getIngredients(IIngredients ingredients) {
+		ingredients.setInput(VanillaTypes.ITEM, this.input);
+	}
 
 }

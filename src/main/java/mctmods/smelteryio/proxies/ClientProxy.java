@@ -1,52 +1,39 @@
 package mctmods.smelteryio.proxies;
 
-import mctmods.smelteryio.registry.RegistryBlock;
-import mctmods.smelteryio.registry.RegistryItem;
+import mctmods.smelteryio.registry.Registry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-@EventBusSubscriber(Side.CLIENT)
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
 	@Override
- 	public void preInit(FMLPreInitializationEvent event) {
- 	 	super.preInit(event);
-		MinecraftForge.EVENT_BUS.register(this);
+	public void registerRenders() {
+		Registry.initModels();
 	}
 
 	@Override
- 	public void init(FMLInitializationEvent event) {
- 	 	super.init(event);
+ 	public void preInit() {
+ 	 	super.preInit();
 	}
 
 	@Override
- 	public void postInit(FMLPostInitializationEvent event) {
- 	 	super.postInit(event);
+ 	public void init() {
+ 	 	super.init();
 	}
 
-	@SubscribeEvent
-	public void registerModels(ModelRegistryEvent event) {
-
-		// blocks
-		RegistryBlock.initModels();
-
-		// items
-		RegistryItem.initModels();
-
+	@Override
+ 	public void postInit() {
+ 	 	super.postInit();
 	}
 
-    public EntityPlayer getPlayerEntity(){
-        return Minecraft.getMinecraft().player;
-    }
+	@Override
+	public EntityPlayer getPlayerEntity(){
+		return Minecraft.getMinecraft().player;
+	}
 
 }

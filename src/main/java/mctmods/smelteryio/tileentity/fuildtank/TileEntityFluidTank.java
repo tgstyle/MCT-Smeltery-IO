@@ -9,37 +9,37 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
 public class TileEntityFluidTank extends FluidTank {
-    public TileEntityFluidTank(final TileEntity tileEntity, final int capacity) {
-        super(capacity);
-        tile = tileEntity;
-    }
+	public TileEntityFluidTank(final TileEntity tileEntity, final int capacity) {
+		super(capacity);
+		tile = tileEntity;
+	}
 
-    @Override
-    public int fill(FluidStack resource, boolean doFill) {
-        notifyBlockUpdate();
-        tile.markDirty();
-        return super.fill(resource, doFill);
-    }
+	@Override
+	public int fill(FluidStack resource, boolean doFill) {
+		notifyBlockUpdate();
+		tile.markDirty();
+		return super.fill(resource, doFill);
+	}
 
-    @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
-        notifyBlockUpdate();
-        tile.markDirty();
-        return super.drain(resource, doDrain);
-    }
+	@Override
+	public FluidStack drain(FluidStack resource, boolean doDrain) {
+		notifyBlockUpdate();
+		tile.markDirty();
+		return super.drain(resource, doDrain);
+	}
 
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        notifyBlockUpdate();
-        tile.markDirty();
-        return super.drain(maxDrain, doDrain);
-    }
+	@Override
+	public FluidStack drain(int maxDrain, boolean doDrain) {
+		notifyBlockUpdate();
+		tile.markDirty();
+		return super.drain(maxDrain, doDrain);
+	}
 
-    private void notifyBlockUpdate(){
-        World world = tile.getWorld();
-        BlockPos pos = tile.getPos();
-        IBlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, state, state, 3);
-    }
+	private void notifyBlockUpdate(){
+		World world = tile.getWorld();
+		BlockPos pos = tile.getPos();
+		IBlockState state = world.getBlockState(pos);
+		world.notifyBlockUpdate(pos, state, state, 3);
+	}
 
 }

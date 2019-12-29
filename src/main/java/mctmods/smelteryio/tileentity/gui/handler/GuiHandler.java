@@ -7,6 +7,7 @@ import mctmods.smelteryio.tileentity.container.ContainerFC;
 import mctmods.smelteryio.tileentity.container.base.ContainerBase;
 import mctmods.smelteryio.tileentity.gui.GuiCM;
 import mctmods.smelteryio.tileentity.gui.GuiFC;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -25,8 +26,8 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerFC(player.inventory, (TileEntityFC) world.getTileEntity(new BlockPos(x, y, z)));
 		case CASTING_MACHINE:
 			return new ContainerCM(player.inventory, (TileEntityCM) world.getTileEntity(new BlockPos(x, y, z)));
-        default:
-            return null;
+		default:
+			return null;
 		}
 	}
 

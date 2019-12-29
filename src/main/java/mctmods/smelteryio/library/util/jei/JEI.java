@@ -2,7 +2,7 @@ package mctmods.smelteryio.library.util.jei;
 
 import javax.annotation.Nonnull;
 
-import mctmods.smelteryio.registry.RegistryBlock;
+import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.tileentity.gui.GuiCM;
 import mctmods.smelteryio.tileentity.gui.GuiFC;
 
@@ -17,53 +17,52 @@ import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 
 import net.minecraft.item.ItemStack;
 
-
 @mezz.jei.api.JEIPlugin
 public class JEI implements IModPlugin{
 
-    public static IJeiHelpers jeiHelpers;
-    public static ICraftingGridHelper craftingGridHelper;
-    public static IRecipeRegistry recipeRegistry;
+	public static IJeiHelpers jeiHelpers;
+	public static ICraftingGridHelper craftingGridHelper;
+	public static IRecipeRegistry recipeRegistry;
 
-    public static CMRecipeCategory castingMachineRecipeCategory;
-    public static FCRecipeCategory fuelControllerRecipeCategory;
+	public static CMRecipeCategory castingMachineRecipeCategory;
+	public static FCRecipeCategory fuelControllerRecipeCategory;
 
-    @Override
-    public void registerCategories(IRecipeCategoryRegistration registry) {
-        final IJeiHelpers jeiHelpers = registry.getJeiHelpers();
-        final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
+	@Override
+	public void registerCategories(IRecipeCategoryRegistration registry) {
+		final IJeiHelpers jeiHelpers = registry.getJeiHelpers();
+		final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
 
-        fuelControllerRecipeCategory = new FCRecipeCategory(guiHelper);
-        castingMachineRecipeCategory = new CMRecipeCategory(guiHelper);
+		fuelControllerRecipeCategory = new FCRecipeCategory(guiHelper);
+		castingMachineRecipeCategory = new CMRecipeCategory(guiHelper);
 
-        registry.addRecipeCategories(
-        		castingMachineRecipeCategory,
-                fuelControllerRecipeCategory);
-    }
+		registry.addRecipeCategories(
+				castingMachineRecipeCategory,
+				fuelControllerRecipeCategory);
+	}
 
-    @Override
-    public void register(@Nonnull IModRegistry registry) {
-        jeiHelpers = registry.getJeiHelpers();
+	@Override
+	public void register(@Nonnull IModRegistry registry) {
+		jeiHelpers = registry.getJeiHelpers();
 
-        @SuppressWarnings("unused")
+		@SuppressWarnings("unused")
 		IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
 
-        registry.handleRecipes(FCRecipeWrapper.class, new FCRecipeHandler(), FCRecipeCategory.CATEGORY);
-        registry.addRecipes(FCRecipeChecker.getFuel(), FCRecipeCategory.CATEGORY);
+		registry.handleRecipes(FCRecipeWrapper.class, new FCRecipeHandler(), FCRecipeCategory.CATEGORY);
+		registry.addRecipes(FCRecipeChecker.getFuel(), FCRecipeCategory.CATEGORY);
 
-        registry.handleRecipes(CMRecipeWrapper.class, new CMRecipeHandler(), CMRecipeCategory.CATEGORY);
-        registry.addRecipes(CMRecipeChecker.getCastingRecipes(), CMRecipeCategory.CATEGORY);
+		registry.handleRecipes(CMRecipeWrapper.class, new CMRecipeHandler(), CMRecipeCategory.CATEGORY);
+		registry.addRecipes(CMRecipeChecker.getCastingRecipes(), CMRecipeCategory.CATEGORY);
 
-        registry.addRecipeClickArea(GuiFC.class, 102, 35, 18, 18, FCRecipeCategory.CATEGORY);
-        registry.addRecipeClickArea(GuiCM.class, 124, 34, 22, 16, CMRecipeCategory.CATEGORY);
+		registry.addRecipeClickArea(GuiFC.class, 102, 35, 18, 18, FCRecipeCategory.CATEGORY);
+		registry.addRecipeClickArea(GuiCM.class, 124, 34, 22, 16, CMRecipeCategory.CATEGORY);
 
-        registry.addRecipeCatalyst(new ItemStack(RegistryBlock.MACHINE, 1, 0), FCRecipeCategory.CATEGORY);
-        registry.addRecipeCatalyst(new ItemStack(RegistryBlock.MACHINE, 1, 1), CMRecipeCategory.CATEGORY);
-    }
+		registry.addRecipeCatalyst(new ItemStack(Registry.MACHINE, 1, 0), FCRecipeCategory.CATEGORY);
+		registry.addRecipeCatalyst(new ItemStack(Registry.MACHINE, 1, 1), CMRecipeCategory.CATEGORY);
+	}
 
-    @Override
-    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
-        recipeRegistry = jeiRuntime.getRecipeRegistry();
-    }
+	@Override
+	public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
+		recipeRegistry = jeiRuntime.getRecipeRegistry();
+	}
 
 }

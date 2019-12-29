@@ -3,6 +3,7 @@ package mctmods.smelteryio.tileentity.container.slots;
 import javax.annotation.Nonnull;
 
 import mctmods.smelteryio.tileentity.container.ContainerCM;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -23,7 +24,7 @@ public class SlotHandlerCM extends SlotItemHandler {
 	}
 
 	@Override
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+	public boolean isItemValid(@Nonnull ItemStack stack) {
 		switch(this.tileSlot) {
 		case ContainerCM.FUEL:
 			return SlotHandlerItems.validForSlot(stack, ContainerCM.FUEL, tileID);
@@ -43,17 +44,17 @@ public class SlotHandlerCM extends SlotItemHandler {
 		return false;
 	}
 
-    @Override
-    public int getSlotStackLimit() {
+	@Override
+	public int getSlotStackLimit() {
 		return slotStackLimit;
-    }
+	}
 
-    @Override
-    public boolean canTakeStack(EntityPlayer playerIn) {
-    	if (this.tileSlot == ContainerCM.FUEL) {
-    		return false;
-    	}
-        return true;
-    }
+	@Override
+	public boolean canTakeStack(EntityPlayer playerIn) {
+		if (this.tileSlot == ContainerCM.FUEL) {
+			return false;
+		}
+		return true;
+	}
 
 }

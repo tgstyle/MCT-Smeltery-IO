@@ -1,10 +1,7 @@
 package mctmods.smelteryio.items;
 
 import java.util.List;
-
 import javax.annotation.Nullable;
-
-import org.lwjgl.input.Keyboard;
 
 import mctmods.smelteryio.items.base.ItemBase;
 import mctmods.smelteryio.items.meta.EnumUpgrade;
@@ -22,6 +19,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import org.lwjgl.input.Keyboard;
 
 public class ItemUpgrade extends ItemBase {
 
@@ -44,10 +43,10 @@ public class ItemUpgrade extends ItemBase {
  	 	return super.getUnlocalizedName() + "." + EnumUpgrade.values()[stack.getMetadata()].getName();
  	}
 
-    @Override
-    public EnumRarity getRarity(ItemStack stack) {
-        return EnumUpgrade.values()[stack.getMetadata()].getRarity();
-    }
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		return EnumUpgrade.values()[stack.getMetadata()].getRarity();
+	}
 
 	@Override
 	public int getItemStackLimit(ItemStack stack) {

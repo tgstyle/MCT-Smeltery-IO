@@ -3,6 +3,7 @@ package mctmods.smelteryio.tileentity.container;
 import mctmods.smelteryio.tileentity.TileEntityCM;
 import mctmods.smelteryio.tileentity.container.base.ContainerBase;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerCM;
+
 import net.minecraft.inventory.IInventory;
 
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -10,9 +11,9 @@ import net.minecraftforge.items.IItemHandler;
 
 public class ContainerCM extends ContainerBase {
 
-    public static final int FUEL = 0, CAST = 1, UPGRADE1 = 2, UPGRADE2 = 3, UPGRADESPEED = 4, OUTPUT = 5, REDSTONE = 6;
+	public static final int FUEL = 0, CAST = 1, UPGRADE1 = 2, UPGRADE2 = 3, UPGRADESPEED = 4, OUTPUT = 5, REDSTONE = 6;
 
-    private int tileID = TileEntityCM.TILEID;
+	private int tileID = TileEntityCM.TILEID;
 
 	private TileEntityCM tileEntity;
 	private IItemHandler handler;

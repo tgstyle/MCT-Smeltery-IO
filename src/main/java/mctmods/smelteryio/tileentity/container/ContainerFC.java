@@ -3,6 +3,7 @@ package mctmods.smelteryio.tileentity.container;
 import mctmods.smelteryio.tileentity.TileEntityFC;
 import mctmods.smelteryio.tileentity.container.base.ContainerBase;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerFC;
+
 import net.minecraft.inventory.IInventory;
 
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -10,9 +11,9 @@ import net.minecraftforge.items.IItemHandler;
 
 public class ContainerFC extends ContainerBase {
 
-    public static final int UPGRADESPEED = 0, FUEL = 1;
+	public static final int UPGRADESPEED = 0, FUEL = 1;
 
-    private int tileID = TileEntityFC.TILEID;
+	private int tileID = TileEntityFC.TILEID;
 
 	private TileEntityFC tileEntity;
 	private IItemHandler handler;

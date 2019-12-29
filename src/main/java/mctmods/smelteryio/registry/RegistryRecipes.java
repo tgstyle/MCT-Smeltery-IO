@@ -34,17 +34,17 @@ public class RegistryRecipes {
 	static ItemStack seared_brick = new ItemStack(TinkerSmeltery.searedBlock, 1, 0);
 	static ItemStack smeltery_machine = new ItemStack(TinkerSmeltery.smelteryIO, 1, 0);
 
-	static ItemStack fuel_controller = new ItemStack(RegistryBlock.MACHINE, 1, 0);
-	static ItemStack casting_machine = new ItemStack(RegistryBlock.MACHINE, 1, 1);
-	static ItemStack upgrade_base = new ItemStack(RegistryItem.UPGRADE, 1, 0);
-	static ItemStack upgrade_slot1 = new ItemStack(RegistryItem.UPGRADE, 1, 1);
-	static ItemStack upgrade_slot2 = new ItemStack(RegistryItem.UPGRADE, 1, 2);
-	static ItemStack upgrade_slot3 = new ItemStack(RegistryItem.UPGRADE, 1, 3);
-	static ItemStack upgrade_slot4 = new ItemStack(RegistryItem.UPGRADE, 1, 4);
-	static ItemStack upgrade_basin = new ItemStack(RegistryItem.UPGRADE ,1 ,5);
-	static ItemStack upgrade_speed = new ItemStack(RegistryItem.UPGRADE, 1, 6);
-	static ItemStack upgrade_redstone = new ItemStack(RegistryItem.UPGRADE, 1, 7);
-	static ItemStack powdered_fuel = new ItemStack(RegistryItem.POWDERED_FUEL, 3);
+	static ItemStack fuel_controller = new ItemStack(Registry.MACHINE, 1, 0);
+	static ItemStack casting_machine = new ItemStack(Registry.MACHINE, 1, 1);
+	static ItemStack upgrade_base = new ItemStack(Registry.UPGRADE, 1, 0);
+	static ItemStack upgrade_slot1 = new ItemStack(Registry.UPGRADE, 1, 1);
+	static ItemStack upgrade_slot2 = new ItemStack(Registry.UPGRADE, 1, 2);
+	static ItemStack upgrade_slot3 = new ItemStack(Registry.UPGRADE, 1, 3);
+	static ItemStack upgrade_slot4 = new ItemStack(Registry.UPGRADE, 1, 4);
+	static ItemStack upgrade_basin = new ItemStack(Registry.UPGRADE ,1 ,5);
+	static ItemStack upgrade_speed = new ItemStack(Registry.UPGRADE, 1, 6);
+	static ItemStack upgrade_redstone = new ItemStack(Registry.UPGRADE, 1, 7);
+	static ItemStack powdered_fuel = new ItemStack(Registry.POWDERED_FUEL, 3);
 
 	private static void registerRecipe() {
 
@@ -76,7 +76,7 @@ public class RegistryRecipes {
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_basin, true, new Object[]{"ABA", "BCB","ABA", 'A', obsidian, 'B', casting_basin, 'C', upgrade_slot4}).setRegistryName("upgrade_basin"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_speed, true, new Object[]{"ABA", "BCB","ABA", 'A', emerald, 'B', sugar, 'C', upgrade_base}).setRegistryName("upgrade_speed"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_redstone, true, new Object[]{"ABA", "CDC","ABA", 'A', "blockRedstone", 'B', repeater, 'C', "gemQuartz", 'D', upgrade_base}).setRegistryName("upgrade_redstone"));
-		
+
 		ForgeRegistries.RECIPES.register(new ShapelessOreRecipe(new ResourceLocation(SmelteryIO.MODID), powdered_fuel, coalOrDustCoal, "gunpowder", coalOrDustCoal, coalOrDustCoal, ingotGoldOrDustGold, coalOrDustCoal, coalOrDustCoal, coalOrDustCoal, coalOrDustCoal).setRegistryName("powdered_fuel"));
 	}
 
