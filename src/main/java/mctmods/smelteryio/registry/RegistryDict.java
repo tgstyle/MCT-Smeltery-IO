@@ -9,7 +9,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class RegistryDict {
 
-	public static void registerDictionaryBlocks() {
+	public static void registerDictionary() {
 
 		// Blocks
 		for (EnumMachine variant : EnumMachine.values()) {
@@ -20,9 +20,6 @@ public class RegistryDict {
 				OreDictionary.registerOre(variant.getRecipeOreDict2(), new ItemStack(Registry.MACHINE, 1, variant.ordinal()));
 			}
 		}
-	}
-
-	public static void registerDictionaryItems() {
 
 		// Items
 		for (EnumUpgrade variant : EnumUpgrade.values()) {

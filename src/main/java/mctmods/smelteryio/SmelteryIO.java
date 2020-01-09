@@ -64,8 +64,8 @@ public class SmelteryIO {
 	public static void registerItems(RegistryEvent.Register<Item> event) {
 		Registry.registerItems(event.getRegistry());
 		Registry.registerItemBlocks(event.getRegistry());
-		RegistryDict.registerDictionaryBlocks();
-		RegistryDict.registerDictionaryItems();
+		RegistryDict.registerDictionary();
+		RegistryRecipes.registerRecipes();
 	}
 
 	@SubscribeEvent
@@ -80,7 +80,6 @@ public class SmelteryIO {
  		ConfigSIO.syncConfig();
  		RegistryTE.registerTileEntities();
  		NetworkHandler.registerNetwork();
- 		RegistryRecipes.registerRecipes();
 
  		proxy.preInit();
  	}
