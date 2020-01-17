@@ -13,3 +13,4 @@ You may use this mod in any modpack, and put a link to the curseforge page as a 
 
 # Links
 - [MCT Smeltery IO on CurseForge](https://www.curseforge.com/minecraft/mc-mods/mct-smeltery-io)<br/>
+- [TiCh Immersion Modpack on CurseForge](https://www.curseforge.com/minecraft/modpacks/mct-tich-immersion)<br/>
