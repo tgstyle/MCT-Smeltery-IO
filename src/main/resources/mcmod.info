@@ -10,6 +10,6 @@
   "credits": "Tinker I/O Team & TeamSLTW for inspiration and some code.",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": []
+  "dependencies": [tconstruct]
 }
 ]

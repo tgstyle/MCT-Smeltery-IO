@@ -34,8 +34,8 @@ import org.apache.logging.log4j.Logger;
 	version = SmelteryIO.VERSION,
 	acceptedMinecraftVersions = "[1.12.2,1.13)",
 	dependencies=
-			"required-after:forge@[14.23.0.2486,);" +
-			"required-after:tconstruct@[1.12.2-2.7.3.30,);" +
+			"required-after:forge@[14.23.+,);" +
+			"required-after:tconstruct;" +
 			"after:waila;" +
 			"after:jei;")
 

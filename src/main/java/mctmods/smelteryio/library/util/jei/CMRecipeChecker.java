@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import mctmods.smelteryio.library.util.recipes.CMRecipeHandler;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -30,22 +28,21 @@ public class CMRecipeChecker {
 
 		List<ICastingRecipe> allRecipes = Lists.newLinkedList();
 		allRecipes.addAll(TinkerRegistry.getAllTableCastingRecipes());
-		allRecipes.addAll(CMRecipeHandler.fluidStackTableCastingRecipe);
 
-		for (ICastingRecipe irecipe : allRecipes) {
-			if (irecipe instanceof CastingRecipe) {
+		for(ICastingRecipe irecipe : allRecipes) {
+			if(irecipe instanceof CastingRecipe) {
 				CastingRecipe recipe = (CastingRecipe) irecipe;
 
-				if (recipe.cast != null && recipe.getResult() != null && recipe.getResult().getItem() instanceof Cast) {
+				if(recipe.cast != null && recipe.getResult() != null && recipe.getResult().getItem() instanceof Cast) {
 					Triple<Item, Item, Fluid> output = Triple.of(recipe.getResult().getItem(), Cast.getPartFromTag(recipe.getResult()), recipe.getFluid().getFluid());
 
-					if (!castDict.containsKey(output)) {
+					if(!castDict.containsKey(output)) {
 						List<ItemStack> list = Lists.newLinkedList();
 						castDict.put(output, list);
 
 						recipeWrapper = new CMRecipeWrapper(list, recipe, JEIPlugin.castingCategory.castingTable);
 
-						if (recipeWrapper.isValid(false)) {
+						if(recipeWrapper.isValid(false)) {
 							recipes.add(recipeWrapper);
 						}
 					}
@@ -55,20 +52,20 @@ public class CMRecipeChecker {
 				else {
 					recipeWrapper = new CMRecipeWrapper(recipe, JEIPlugin.castingCategory.castingTable);
 
-					if (recipeWrapper.isValid(true)) {
+					if(recipeWrapper.isValid(true)) {
 						recipes.add(recipeWrapper);
 					}
 				}
 			}
 		}
 
-		for (ICastingRecipe irecipe : TinkerRegistry.getAllBasinCastingRecipes()) {
-			if (irecipe instanceof CastingRecipe) {
+		for(ICastingRecipe irecipe : TinkerRegistry.getAllBasinCastingRecipes()) {
+			if(irecipe instanceof CastingRecipe) {
 				CastingRecipe recipe = (CastingRecipe) irecipe;
 
 				recipeWrapper = new CMRecipeWrapper(recipe, JEIPlugin.castingCategory.castingBasin);
 
-				if (recipeWrapper.isValid(true)) {
+				if(recipeWrapper.isValid(true)) {
 					recipes.add(recipeWrapper);
 				}
 			}
