@@ -1,6 +1,7 @@
 {
 	"forge_marker": 1,
 	"defaults": {
+		"transform": "forge:default-block",
 		"model": "mctsmelteryio:machine/machine",
 		"textures": {
 			"sides": "mctsmelteryio:blocks/machine/shared_side",
@@ -43,5 +44,4 @@
 			}
 		}
 	}
-
 }

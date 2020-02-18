@@ -8,6 +8,7 @@ import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.tileentity.container.ContainerFC;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -28,7 +29,6 @@ import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 
 public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITickable {
 	private EnumFacing facing = EnumFacing.NORTH;
-
 	public static final String TAG_FACING = "facing";
 	public static final String TAG_PROGRESS = "progress";
 	public static final String TAG_ACTIVE_COUNT = "activeCount";
@@ -37,26 +37,19 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	public static final String TAG_CURRENT_TEMP = "currentTemp";
 	public static final String TAG_SMELTERY_TEMP = "smelteryTemp";
 	public static final String TAG_AT_CAPACITY = "atCapacity";
-
 	public static final int TILEID = 0;
 	public static final int PROGRESS = 250;
-
 	private static final int SLOTS_SIZE = 2;
-
-	private static final double FUEL_RATIO = ConfigSIO.fuelControllerRatio; 
-
+	private static final double FUEL_RATIO = ConfigSIO.fuelControllerRatio;
 	private TileSmeltery tileSmeltery;
-
 	private double ratio = 0.01;
-
-	private int upgradeSize1 = 0;
 	private int cooldown = 0;
+	private int upgradeSize1 = 0;
 	private int progress = 0;
+	private int activeCount = 0;
 	private int targetTemp = 0;
 	private int currentTemp = 0;
 	private int smelteryTemp;
-	private int activeCount;
-
 	private boolean heatingItem = false;
 	private boolean atCapacity = false;
 	private boolean update = false;
@@ -104,7 +97,6 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 
 	@Override
 	public void update() {
-		if(!this.hasWorld()) return;
 		if(world.isRemote) return;
 		this.update = false;
 		if(cooldown % 2 == 0) {
@@ -124,7 +116,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	}
 
 	public EnumFacing getFacing() {
-		return facing;
+		return this.facing;
 	}
 
 	public void setFacing(EnumFacing facing) {
@@ -133,7 +125,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 
 	@Override
 	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 1, getUpdateTag());
+		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
 	}
 
 	@Override
@@ -147,10 +139,18 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 		readFromNBT(packet.getNbtCompound());
 	}
 
+	private IBlockState getState() {
+		return world.getBlockState(pos);
+	}
+
+	public void markBlockForUpdate(BlockPos pos) {
+		world.notifyBlockUpdate(pos, getState(), getState(), 3);
+		world.notifyNeighborsOfStateChange(pos, getState().getBlock(), true);
+	}
+
 	private void saveUpdates() {
-		System.out.println("uh oh");
 		efficientMarkDirty();
-		this.markContainingBlockForUpdate(null);
+		markBlockForUpdate(getPos());
 	}
 
 	private void updateSmelteryHeatingState() {
@@ -194,10 +194,10 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 
 	private void calculateTemperature() {
 		if(!this.heatingItem) return;
-		int fuelTempRatio = (int) (getBurnTime() * this.ratio) / 2;
-		int fuelTempSolid = (((fuelTempRatio + 99) / 100) * 100);
-		if(fuelTempSolid >= 200000) fuelTempSolid = 200000;
 		this.smelteryTemp = getFluidFuelTemp();
+		int fuelTempRatio = (int) (getBurnTime() * this.ratio) / 2;
+		int fuelTempSolid = (((fuelTempRatio + 99) / 100) * 100) + this.smelteryTemp;
+		if(fuelTempSolid >= 200000) fuelTempSolid = 200000;
 		this.targetTemp = fuelTempSolid;
 	}
 
@@ -209,7 +209,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 		} if(this.currentTemp != 0) {
 			if(this.targetTemp != tileSmeltery.getTemperature()) setSmelteryTemp(this.targetTemp);
 			this.progress = (this.progress + 1) % PROGRESS;
-			this.activeCount = this.progress + 5;
+			this.activeCount = this.progress + 10;
 			if(this.progress == 0) {
 				this.targetTemp = this.smelteryTemp;
 				this.currentTemp = 0;
@@ -277,7 +277,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	}
 
 	public void resetTemp() {
-		setSmelteryTemp(this.targetTemp);
+		setSmelteryTemp(this.smelteryTemp);
 	}
 
 	public int getFuelTemp() {

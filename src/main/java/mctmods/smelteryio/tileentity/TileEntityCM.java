@@ -10,12 +10,14 @@ import mctmods.smelteryio.tileentity.container.ContainerCM;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,7 +30,6 @@ import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
 
 public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	private EnumFacing facing = EnumFacing.NORTH;
-
 	public static final String TAG_FACING = "facing";
 	public static final String TAG_PROGRESS = "progress";
 	public static final String TAG_ACTIVE_COUNT = "activeCount";
@@ -41,40 +42,34 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	public static final String TAG_OUTPUT_ITEM_STACK = "targetItemStack";
 	public static final String TAG_REDSTONE = "controlledByRedstone";
 	public static final String TAG_POWERED = "blockPowered";
-
 	public static final int TILEID = 1;
 	public static final int CAPACITY = 10368;
 	public static final int CAST = 0;
 	public static final int BASIN = 1;
-
 	private static final int PROGRESS = 24;
 	private static final int SLOTS_SIZE = 7;
 	private static final int FUEL_AMOUNT_BASIN = ConfigSIO.snowballBasinAmount;
 	private static final int FUEL_AMOUNT_CAST = ConfigSIO.snowballCastingAmount;
-	private static final int CASTING_MACHINE_SPEED = ConfigSIO.castingMachineSpeed; 
-
+	private static final int CASTING_MACHINE_SPEED = ConfigSIO.castingMachineSpeed;
 	private FluidTank tank;
-
+	private int cooldown = 0;
 	private int upgradeSize1 = 0;
 	private int upgradeSize2 = 0;
 	private int upgradeSize3 = 0;
 	private int upgradeSize4 = 0;
+	private int progress = 0;
+	private int activeCount = 0;
 	private int outputStackSize = 0;
 	private int speedStackSize = 1;
 	private int currentMode = CAST;
-	private int cooldown = 0;
-	private int fuelAmount;	
-	private int progress;
+	private int fuelAmount;
 	private int lastMode;
-	private int activeCount;
-
 	private boolean canCast = false;
 	private boolean fueled = false;
 	private boolean slotsLocked = true;
 	private boolean controlledByRedstone = false;
 	private boolean blockPowered = false;
 	private boolean update = false;
-
 	private ItemStack targetItemStack = ItemStack.EMPTY;
 	private ItemStack lastCast = ItemStack.EMPTY;
 	private ItemStack cast;
@@ -182,15 +177,13 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 
 	@Override
 	public void update() {
-		if(!this.hasWorld()) return;
 		if(world.isRemote) return;
 		this.update = false;
 		if(this.cooldown % 2 == 0) {
-			this.blockPowered = world.isBlockPowered(pos);
 			if(isChanged()) updateRecipe();
 			if(canWork()) {
 				checkUpgradeSlots();
-				if(canCast() && burnSolidFuel()) {
+				if(canCast()) {
 					doCasting();
 				}
 			}
@@ -224,9 +217,18 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 		readFromNBT(packet.getNbtCompound());
 	}
 
+	private IBlockState getState() {
+		return world.getBlockState(pos);
+	}
+
+	public void markBlockForUpdate(BlockPos pos) {
+		world.notifyBlockUpdate(pos, getState(), getState(), 3);
+		world.notifyNeighborsOfStateChange(pos, getState().getBlock(), true);
+	}
+
 	private void saveUpdates() {
 		efficientMarkDirty();
-		this.markContainingBlockForUpdate(null);
+		markBlockForUpdate(getPos());
 	}
 
 	@Override
@@ -290,7 +292,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 				if(this.outputStackSize > 64) this.outputStackSize = 64;
 				if(itemStack1.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 5)) || itemStack2.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 5))) {
 					this.currentMode = BASIN;
-					this.fuelAmount = FUEL_AMOUNT_BASIN;			
+					this.fuelAmount = FUEL_AMOUNT_BASIN;
 				}
 			}
 			this.upgradeSize1 = stackSize1;
@@ -341,6 +343,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	}
 
 	public boolean canWork() {
+		this.blockPowered = world.isBlockPowered(pos);
 		if(!this.controlledByRedstone) return true;
 		return !this.blockPowered;
 	}
@@ -355,33 +358,12 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 		return this.canCast;
 	}
 
-	private boolean burnSolidFuel() {
-		if(this.progress >= PROGRESS - 1) this.fueled = false;
-		if(this.itemInventory.getStackInSlot(ContainerCM.FUEL).getCount() >= fuelAmount) {
-			if(this.fueled == false) {
-				consumeItemStack(ContainerCM.FUEL, this.fuelAmount);
-   				this.fueled = true;
-   				return this.fueled;
-			}
-		}
-		if(itemInventory.getStackInSlot(ContainerCM.FUEL) == ItemStack.EMPTY && this.progress != 0 && this.progress >= PROGRESS - 1) {
-			this.fueled = true;
-			return this.fueled;
-		}
-		return this.fueled;
-	}
-
-	private ItemStack getResult(ItemStack cast, FluidStack fluidStack) {
-		if(fluidStack != null) return this.currentRecipe.getResult(cast, fluidStack.getFluid());
-		return ItemStack.EMPTY;
-	}
-
 	private void doCasting() {
 		if(this.progress == 0) {
 			if(this.targetItemStack.isEmpty() && currentRecipe != null) {
 				if(castFluid != null && castFluid.amount >= currentRecipe.getFluidAmount()){
 					this.targetItemStack = getResult(cast, castFluid);
-					if(!this.targetItemStack.isEmpty() && canOutput()){
+					if(!this.targetItemStack.isEmpty() && canOutput() && burnSolidFuel()){
 						if(currentRecipe.consumesCast()) {
 							this.itemInventory.extractItem(ContainerCM.CAST, 1, false);
 						}
@@ -410,6 +392,25 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	private boolean canOutput() {
 		ItemStack outputSlot = this.itemInventory.getStackInSlot(ContainerCM.OUTPUT);
 		return (outputSlot.isEmpty() || (outputSlot.isItemEqual(this.targetItemStack) && ItemStack.areItemStackTagsEqual(outputSlot, this.targetItemStack))) && outputStackSize - outputSlot.getCount() > 0;
+	}
+
+	private ItemStack getResult(ItemStack cast, FluidStack fluidStack) {
+		if(fluidStack != null) return this.currentRecipe.getResult(cast, fluidStack.getFluid());
+		return ItemStack.EMPTY;
+	}
+	
+	private boolean burnSolidFuel() {
+		this.fueled = false;
+		if(this.itemInventory.getStackInSlot(ContainerCM.FUEL).getCount() >= fuelAmount) {
+			consumeItemStack(ContainerCM.FUEL, this.fuelAmount);
+   			this.fueled = true;
+   			return this.fueled;
+		}
+		if(itemInventory.getStackInSlot(ContainerCM.FUEL) == ItemStack.EMPTY && this.progress != 0) {
+			this.fueled = true;
+			return this.fueled;
+		}
+		return this.fueled;
 	}
 
 	public int activeCount() {
@@ -464,11 +465,9 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	}
 
 	public void slotsLocked() {
-		if(slotsLocked) {
-			this.slotsLocked = false;
-		} else {
-			this.slotsLocked = true;
-		}
+		if(slotsLocked) this.slotsLocked = false;
+		else this.slotsLocked = true;
+		
 	}
 
 	public int getOutputStackSize() {
