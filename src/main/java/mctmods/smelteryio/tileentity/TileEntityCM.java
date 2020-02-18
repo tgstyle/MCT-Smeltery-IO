@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
 
 public class TileEntityCM extends TileEntityItemHandler implements ITickable {
-	
 	private EnumFacing facing = EnumFacing.NORTH;
 
 	public static final String TAG_FACING = "facing";
@@ -343,7 +342,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 
 	public boolean canWork() {
 		if(!this.controlledByRedstone) return true;
-		else return !this.blockPowered;
+		return !this.blockPowered;
 	}
 
 	private boolean canCast() {
@@ -374,7 +373,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 
 	private ItemStack getResult(ItemStack cast, FluidStack fluidStack) {
 		if(fluidStack != null) return this.currentRecipe.getResult(cast, fluidStack.getFluid());
-		else return ItemStack.EMPTY;
+		return ItemStack.EMPTY;
 	}
 
 	private void doCasting() {
@@ -424,7 +423,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 
 	public boolean isReady() {
 		if(this.canCast && this.fueled) return true;
-		else return false;
+		return false;
 	}
 
 	public int getCurrentMode() {

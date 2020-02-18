@@ -29,7 +29,6 @@ import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.library.client.GuiUtil;
 
 public class GuiCM extends GuiContainer {
-
 	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/container/casting_machine.png");
 
 	private TileEntityCM tileEntity;
@@ -63,27 +62,22 @@ public class GuiCM extends GuiContainer {
 		drawDefaultBackground();
 		mc.getTextureManager().bindTexture(BG_TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-
-		if (!this.tileEntity.isControlledByRedstone()) {
-			this.drawTexturedModalRect(guiLeft + 123, guiTop + 52, 179, 63, 10, 10);
-		}
-		if (!this.tileEntity.canWork()) {
+		if(!this.tileEntity.isControlledByRedstone()) this.drawTexturedModalRect(guiLeft + 123, guiTop + 52, 179, 63, 10, 10);
+		if(!this.tileEntity.canWork()) {
 			this.drawTexturedModalRect(guiLeft + 126, guiTop + 51, 192, 60, 4, 4);
 			this.drawTexturedModalRect(guiLeft + 119, guiTop + 34, 176, 60, 16, 16);
 		}
-		if (!this.tileEntity.isReady()) {
-			this.drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
-		}
-		if (this.tileEntity.getCurrentMode() == TileEntityCM.BASIN) {
+		if(!this.tileEntity.isReady()) this.drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
+		if(this.tileEntity.getCurrentMode() == TileEntityCM.BASIN) {
 			this.drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
 		} else {
 			this.drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
 		}
-		if (this.tileEntity.isFueled() && this.tileEntity.isProgressing() != 0) {
+		if(this.tileEntity.isFueled() && this.tileEntity.isProgressing() != 0) {
 			int progress = this.tileEntity.getGUIProgress(PROGRESSWIDTH);
 			this.drawTexturedModalRect(guiLeft + 117, guiTop + 34, 176, 0, progress, 16);
 		}
-		if (this.tileEntity.getCurrentFluid() != null) {
+		if(this.tileEntity.getCurrentFluid() != null) {
 			int fluidAmount = this.tileEntity.getGUIFluidBarHeight(FLUIDHEIGHT);
 			GuiUtil.renderTiledFluid(guiLeft + 19, guiTop + 15 + FLUIDHEIGHT - fluidAmount, 12, fluidAmount, this.zLevel, this.tileEntity.getCurrentFluid());
 		}
@@ -94,27 +88,24 @@ public class GuiCM extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		String name = I18n.format("container.casting_machine");
 		fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 5, 0xffffff);
-
 		int outputSize = this.tileEntity.getOutputStackSize();
 		String outputname = String.valueOf(outputSize);
 		this.fontRenderer.drawString(outputname, 151 - fontRenderer.getStringWidth(outputname) / 2, 18, 0x0000aa);
-
-		if (this.tileEntity.getCurrentFluid() != null) {
+		if(this.tileEntity.getCurrentFluid() != null) {
 			List<String> tooltip = getTankTooltip(this.tileEntity.getTank(), this.tileEntity.getCurrentFluid(), mouseX, mouseY, guiLeft + 19, guiTop + 15, guiLeft + 38, guiTop + 67);
-			if (tooltip != null) {
+			if(tooltip != null) {
 				this.drawHoveringText(tooltip, mouseX-guiLeft, mouseY-guiTop);
 			}
 		}
 		buttonEmptyTank.enabled = Util.isShiftKeyDown();
 		buttonLockSlots.enabled = Util.isShiftKeyDown();
-
-		if (buttonEmptyTank.isMouseOver()) {
+		if(buttonEmptyTank.isMouseOver()) {
 			String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttontank.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttontank.info")};
 			List<String> temp = Arrays.asList(desc);
 			drawHoveringText(temp, mouseX - guiLeft, mouseY - guiTop, fontRenderer);
 		}
-		if (buttonLockSlots.isMouseOver()) {
-			if (this.tileEntity.isSlotsLocked()) {
+		if(buttonLockSlots.isMouseOver()) {
+			if(this.tileEntity.isSlotsLocked()) {
 				String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttonslot.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info1"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info2"), TextFormatting.DARK_GREEN + I18n.format("container.casting_machine.buttonslot.enabled")};
 				List<String> temp = Arrays.asList(desc);
 				drawHoveringText(temp, mouseX - guiLeft, mouseY - guiTop, fontRenderer);
@@ -145,7 +136,6 @@ public class GuiCM extends GuiContainer {
 				this.drawTexturedModalRect(x, y, 177, 39, 20, 20);
 			}
 		};
-
 		buttonList.add(buttonEmptyTank);
 		buttonList.add(buttonLockSlots);
 		buttonEmptyTank.enabled = false;
@@ -168,11 +158,10 @@ public class GuiCM extends GuiContainer {
 	}
 
 	private static List<String> getTankTooltip(IFluidTank tank, FluidStack fluid, int mouseX, int mouseY, int xmin, int ymin, int xmax, int ymax) {
-		if (xmin <= mouseX && mouseX < xmax && ymin <= mouseY && mouseY < ymax) {
+		if(xmin <= mouseX && mouseX < xmax && ymin <= mouseY && mouseY < ymax) {
 			FluidStack hovered = fluid;
 			List<String> text = Lists.newArrayList();
-
-			if (hovered == null) {
+			if(hovered == null) {
 				text.add(Util.translateFormatted("gui.smeltery.capacity_used"));
 			} else {
 				text.add(TextFormatting.WHITE + hovered.getLocalizedName());

@@ -3,10 +3,11 @@ package mctmods.smelteryio.tileentity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -86,8 +87,8 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 	@Nullable
 	@Override
 	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			if (facing == null) {
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			if(facing == null) {
 				return (T) this.itemInventory;
 			} else {
 				return (T) this.itemInventoryIO;
@@ -109,6 +110,21 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 
 	protected void consumeItemStack(int slotId, int amount) {
 		this.itemInventory.extractItem(slotId, amount, false);
+	}
+
+	public void markContainingBlockForUpdate(@Nullable IBlockState newState) {
+		markBlockForUpdate(getPos(), newState);
+	}
+
+	public void markBlockForUpdate(BlockPos pos, @Nullable IBlockState newState) {
+		IBlockState state = world.getBlockState(pos);
+		if(newState==null) newState = state;
+		world.notifyBlockUpdate(pos, state, newState, 3);
+		world.notifyNeighborsOfStateChange(pos, newState.getBlock(), true);
+	}
+
+	public void efficientMarkDirty() {
+		world.getChunkFromBlockCoords(this.getPos()).markDirty();
 	}
 
 }
