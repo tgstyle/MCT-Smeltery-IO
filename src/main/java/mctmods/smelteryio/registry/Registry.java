@@ -21,7 +21,6 @@ import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
 @GameRegistry.ObjectHolder(SmelteryIO.MODID)
 public class Registry {
-
 	// blocks
  	public static final BlockMachine MACHINE = new BlockMachine();
 
@@ -68,8 +67,8 @@ public class Registry {
 
 	public static void registerTConstruct () {
 		ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
- 	 	for (Block block : TinkerSmeltery.validSmelteryBlocks) {
- 	 	 	  builder.add(block);
+ 	 	for(Block block : TinkerSmeltery.validSmelteryBlocks) {
+ 	 	 	builder.add(block);
  	 	}
  	 	builder.add(MACHINE);
  	 	TinkerSmeltery.validSmelteryBlocks = builder.build();

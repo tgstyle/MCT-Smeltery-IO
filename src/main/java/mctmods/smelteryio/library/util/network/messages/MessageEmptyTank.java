@@ -13,7 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class MessageEmptyTank extends MessageBase<MessageEmptyTank> {
-
 	private NBTTagCompound data;
 
 	public MessageEmptyTank() {
@@ -37,9 +36,9 @@ public class MessageEmptyTank extends MessageBase<MessageEmptyTank> {
 		int y = message.data.getInteger("y");
 		int z = message.data.getInteger("z");
 
-		if (!player.world.isRemote) {
+		if(!player.world.isRemote) {
 			TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
-			if (tileEntity instanceof TileEntityCM) {
+			if(tileEntity instanceof TileEntityCM) {
 				((TileEntityCM) tileEntity).emptyTank();
 			}
 		}

@@ -19,13 +19,10 @@ import net.minecraftforge.fluids.FluidStack;
 import slimeknights.tconstruct.library.smeltery.CastingRecipe;
 
 public class CMRecipeWrapper implements IRecipeWrapper {
-
 	protected final List<ItemStack> cast;
 	protected final List<FluidStack> inputFluid;
 	protected List<ItemStack> output;
-
 	public final IDrawable castingBlock;
-
 	private final CastingRecipe recipe;
 
 	public CMRecipeWrapper(List<ItemStack> casts, CastingRecipe recipe, IDrawable castingBlock) {
@@ -37,15 +34,11 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 	}
 
 	public CMRecipeWrapper(CastingRecipe recipe, IDrawable castingBlock) {
-		if (recipe.cast != null) {
-			this.cast = recipe.cast.getInputs();
-		} else {
-			this.cast = ImmutableList.of();
-		}
+		if(recipe.cast != null) this.cast = recipe.cast.getInputs();
+		else this.cast = ImmutableList.of();
 		this.inputFluid = ImmutableList.of(recipe.getFluid());
 		this.recipe = recipe;
 		this.output = ImmutableList.of(recipe.getResult());
-
 		this.castingBlock = castingBlock;
 	}
 
@@ -61,10 +54,8 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 	}
 
 	public List<ItemStack> lazyInitOutput() {
-		if (this.output == null) {
-			if (this.recipe.getResult() == null) {
-				return ImmutableList.of();
-			}
+		if(this.output == null) {
+			if(this.recipe.getResult() == null) return ImmutableList.of();
 			this.output = ImmutableList.of(this.recipe.getResult());
 		}
 		return this.output;
@@ -72,7 +63,7 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		if (this.recipe.consumesCast()) {
+		if(this.recipe.consumesCast()) {
 			String s = I18n.format("gui.jei.casting.consume");
 			int x = 55;
 			x -= minecraft.fontRenderer.getStringWidth(s)/2;

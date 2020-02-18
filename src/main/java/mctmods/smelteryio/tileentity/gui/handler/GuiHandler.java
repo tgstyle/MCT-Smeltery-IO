@@ -16,7 +16,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
-
 	public static final int FUEL_CONTROLLER = 0, CASTING_MACHINE = 1;
 
 	@Override

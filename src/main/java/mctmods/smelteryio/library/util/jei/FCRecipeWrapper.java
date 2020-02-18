@@ -7,7 +7,6 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
 
 public class FCRecipeWrapper implements IRecipeWrapper {
-
 	protected final ItemStack input;
 
 	public FCRecipeWrapper(ItemStack itemStack) {

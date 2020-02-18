@@ -28,12 +28,10 @@ public class RegistryRecipes {
 	static ItemStack repeater = new ItemStack(Items.REPEATER ,1);
 	static ItemStack sugar = new ItemStack(Items.SUGAR, 1);
 	static ItemStack emerald = new ItemStack(Items.EMERALD, 1);
-
 	static ItemStack casting_table = new ItemStack(TinkerSmeltery.castingBlock, 1, BlockCasting.CastingType.TABLE.getMeta());
 	static ItemStack casting_basin = new ItemStack(TinkerSmeltery.castingBlock, 1, BlockCasting.CastingType.BASIN.getMeta());
 	static ItemStack seared_brick = new ItemStack(TinkerSmeltery.searedBlock, 1, 0);
 	static ItemStack smeltery_machine = new ItemStack(TinkerSmeltery.smelteryIO, 1, 0);
-
 	static ItemStack fuel_controller = new ItemStack(Registry.MACHINE, 1, 0);
 	static ItemStack casting_machine = new ItemStack(Registry.MACHINE, 1, 1);
 	static ItemStack upgrade_base = new ItemStack(Registry.UPGRADE, 1, 0);
@@ -47,25 +45,14 @@ public class RegistryRecipes {
 	static ItemStack powdered_fuel = new ItemStack(Registry.POWDERED_FUEL, 3);
 
 	private static void registerRecipe() {
-
 		String ingotIronOrPlate = "plateIron";
 		String ingotGoldOrPlate = "plateGold";
 		String ingotGoldOrDustGold = "dustGold";
 		String coalOrDustCoal = "dustCoal";
-
-		if (OreDictionary.getOres("plateIton").isEmpty()) {
-			ingotIronOrPlate = "ingotIron";
-		}
-		if (OreDictionary.getOres("plateGold").isEmpty()) {
-			ingotGoldOrPlate = "ingotGold";
-		}
-		if (OreDictionary.getOres("dustGold").isEmpty()) {
-			ingotGoldOrDustGold = "ingotGold";
-		}
-		if (OreDictionary.getOres("dustCoal").isEmpty()) {
-			coalOrDustCoal = "itemCoal";
-		}
-
+		if(OreDictionary.getOres("plateIton").isEmpty()) ingotIronOrPlate = "ingotIron";
+		if(OreDictionary.getOres("plateGold").isEmpty()) ingotGoldOrPlate = "ingotGold";
+		if(OreDictionary.getOres("dustGold").isEmpty()) ingotGoldOrDustGold = "ingotGold";
+		if(OreDictionary.getOres("dustCoal").isEmpty()) coalOrDustCoal = "itemCoal";
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), fuel_controller, new Object[]{"AAA", "ABA","AAA", 'A', seared_brick, 'B', hopper}).setRegistryName("fuel_controller"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), casting_machine, new Object[]{"ADA", "BCB","ABA", 'A', seared_brick, 'B', ice, 'C', casting_table, 'D', smeltery_machine}).setRegistryName("casting_machine"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_base, true, new Object[]{"ACA", "CBC","ACA", 'A', "dyeBlue", 'B', ingotIronOrPlate, 'C', "paper"}).setRegistryName("upgrade_base"));
@@ -76,7 +63,6 @@ public class RegistryRecipes {
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_basin, true, new Object[]{"ABA", "BCB","ABA", 'A', obsidian, 'B', casting_basin, 'C', upgrade_slot4}).setRegistryName("upgrade_basin"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_speed, true, new Object[]{"ABA", "BCB","ABA", 'A', emerald, 'B', sugar, 'C', upgrade_base}).setRegistryName("upgrade_speed"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_redstone, true, new Object[]{"ABA", "CDC","ABA", 'A', "blockRedstone", 'B', repeater, 'C', "gemQuartz", 'D', upgrade_base}).setRegistryName("upgrade_redstone"));
-
 		ForgeRegistries.RECIPES.register(new ShapelessOreRecipe(new ResourceLocation(SmelteryIO.MODID), powdered_fuel, coalOrDustCoal, "gunpowder", coalOrDustCoal, coalOrDustCoal, ingotGoldOrDustGold, coalOrDustCoal, coalOrDustCoal, coalOrDustCoal, coalOrDustCoal).setRegistryName("powdered_fuel"));
 	}
 

@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class MessageLockSlots extends MessageBase<MessageLockSlots> {
-
 	private NBTTagCompound data;
 
 	public MessageLockSlots() {
@@ -36,9 +35,9 @@ public class MessageLockSlots extends MessageBase<MessageLockSlots> {
 		int y = message.data.getInteger("y");
 		int z = message.data.getInteger("z");
 
-		if (!player.world.isRemote) {
+		if(!player.world.isRemote) {
 			TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
-			if (tileEntity instanceof TileEntityCM) {
+			if(tileEntity instanceof TileEntityCM) {
 				((TileEntityCM) tileEntity).slotsLocked();
 			}
 		}

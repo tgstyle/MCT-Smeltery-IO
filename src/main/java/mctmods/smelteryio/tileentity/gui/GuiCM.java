@@ -30,18 +30,13 @@ import slimeknights.tconstruct.library.client.GuiUtil;
 
 public class GuiCM extends GuiContainer {
 	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/container/casting_machine.png");
-
 	private TileEntityCM tileEntity;
-
 	public static final int WIDTH = 176;
 	public static final int HEIGHT = 166;
-
 	private static int PROGRESSWIDTH = 22;
 	private static int FLUIDHEIGHT = 52;
-
 	private GuiButton buttonEmptyTank;
 	private GuiButton buttonLockSlots;
-
 	public static final int BUTTON_EMPTY_TANK = 0, BUTTON_LOCK_SLOTS = 1;
 
 	public GuiCM(ContainerBase serverGuiElement, TileEntityCM tileEntity) {
@@ -68,11 +63,8 @@ public class GuiCM extends GuiContainer {
 			this.drawTexturedModalRect(guiLeft + 119, guiTop + 34, 176, 60, 16, 16);
 		}
 		if(!this.tileEntity.isReady()) this.drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
-		if(this.tileEntity.getCurrentMode() == TileEntityCM.BASIN) {
-			this.drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
-		} else {
-			this.drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
-		}
+		if(this.tileEntity.getCurrentMode() == TileEntityCM.BASIN) this.drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
+		else this.drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
 		if(this.tileEntity.isFueled() && this.tileEntity.isProgressing() != 0) {
 			int progress = this.tileEntity.getGUIProgress(PROGRESSWIDTH);
 			this.drawTexturedModalRect(guiLeft + 117, guiTop + 34, 176, 0, progress, 16);
@@ -93,9 +85,7 @@ public class GuiCM extends GuiContainer {
 		this.fontRenderer.drawString(outputname, 151 - fontRenderer.getStringWidth(outputname) / 2, 18, 0x0000aa);
 		if(this.tileEntity.getCurrentFluid() != null) {
 			List<String> tooltip = getTankTooltip(this.tileEntity.getTank(), this.tileEntity.getCurrentFluid(), mouseX, mouseY, guiLeft + 19, guiTop + 15, guiLeft + 38, guiTop + 67);
-			if(tooltip != null) {
-				this.drawHoveringText(tooltip, mouseX-guiLeft, mouseY-guiTop);
-			}
+			if(tooltip != null) this.drawHoveringText(tooltip, mouseX-guiLeft, mouseY-guiTop);
 		}
 		buttonEmptyTank.enabled = Util.isShiftKeyDown();
 		buttonLockSlots.enabled = Util.isShiftKeyDown();
@@ -161,9 +151,8 @@ public class GuiCM extends GuiContainer {
 		if(xmin <= mouseX && mouseX < xmax && ymin <= mouseY && mouseY < ymax) {
 			FluidStack hovered = fluid;
 			List<String> text = Lists.newArrayList();
-			if(hovered == null) {
-				text.add(Util.translateFormatted("gui.smeltery.capacity_used"));
-			} else {
+			if(hovered == null) text.add(Util.translateFormatted("gui.smeltery.capacity_used"));
+			else {
 				text.add(TextFormatting.WHITE + hovered.getLocalizedName());
 				GuiUtil.liquidToString(hovered, text);
 			}

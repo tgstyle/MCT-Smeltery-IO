@@ -3,7 +3,6 @@ package mctmods.smelteryio.proxies;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class CommonProxy {
-
 	public void registerRenders() {
 	}
 

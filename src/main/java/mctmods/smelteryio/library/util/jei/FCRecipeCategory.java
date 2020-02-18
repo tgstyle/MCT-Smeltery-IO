@@ -21,10 +21,8 @@ import net.minecraft.util.ResourceLocation;
 
 @SuppressWarnings("rawtypes")
 public class FCRecipeCategory implements IRecipeCategory {
-
 	public static String CATEGORY = SmelteryIO.MODID + ":" + "fuel_controller";
 	private static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/jei/fuel_controller.png");
-
 	protected final IDrawable background;
 	protected final IDrawableAnimated arrow;
 
@@ -63,13 +61,10 @@ public class FCRecipeCategory implements IRecipeCategory {
 	@Override
 	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		IGuiItemStackGroup items = recipeLayout.getItemStacks();
-
 		items.init(0, true, 116, 21);
 		items.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
-
 		List<ItemStack> speedUpg = Lists.newLinkedList();
 		speedUpg.add(new ItemStack(Registry.UPGRADE, 1, 6));
-
 		items.init(1, false, 7, 21);
 		items.set(1, speedUpg);
 	}

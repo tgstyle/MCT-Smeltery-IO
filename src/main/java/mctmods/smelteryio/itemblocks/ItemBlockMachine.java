@@ -8,7 +8,6 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 
 public class ItemBlockMachine extends ItemBlockBase {
-
 	public ItemBlockMachine(Block block) {
 		super(block);
 		setHasSubtypes(true);

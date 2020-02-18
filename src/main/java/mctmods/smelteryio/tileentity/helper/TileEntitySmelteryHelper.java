@@ -11,7 +11,6 @@ import slimeknights.tconstruct.smeltery.tileentity.TileHeatingStructure;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 
 public class TileEntitySmelteryHelper {
-
 	private World world;
 	private BlockPos scPos;
 
@@ -21,9 +20,9 @@ public class TileEntitySmelteryHelper {
 	}
 
 	public void setTemp(int temp) {
-		if (this.world != null && scPos != null) {
+		if(this.world != null && scPos != null) {
 			TileEntity tileEntity = this.world.getTileEntity(scPos);
-			if (tileEntity instanceof TileSmeltery) {
+			if(tileEntity instanceof TileSmeltery) {
 				TileSmeltery tileSC = (TileSmeltery) tileEntity;
 				try {
 					@SuppressWarnings("rawtypes")

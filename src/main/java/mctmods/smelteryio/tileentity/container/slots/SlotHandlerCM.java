@@ -11,7 +11,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class SlotHandlerCM extends SlotItemHandler {
-
 	private int tileID;
 	private int tileSlot;
 	private int slotStackLimit;
@@ -51,9 +50,7 @@ public class SlotHandlerCM extends SlotItemHandler {
 
 	@Override
 	public boolean canTakeStack(EntityPlayer playerIn) {
-		if (this.tileSlot == ContainerCM.FUEL) {
-			return false;
-		}
+		if(this.tileSlot == ContainerCM.FUEL) return false;
 		return true;
 	}
 

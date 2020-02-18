@@ -10,7 +10,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 public abstract class MessageBase<REQ extends IMessage> implements IMessage, IMessageHandler<REQ, REQ> {
-
 	public MessageBase() {
 	}
 
@@ -19,7 +18,7 @@ public abstract class MessageBase<REQ extends IMessage> implements IMessage, IMe
 
 	@Override
 	public REQ onMessage(REQ message, MessageContext context) {
-		if (context.side == Side.SERVER) {
+		if(context.side == Side.SERVER) {
 			handleServerSide(message, context.getServerHandler().player);
 		} else {
 			handleClientSide(message, SmelteryIO.proxy.getPlayerEntity());

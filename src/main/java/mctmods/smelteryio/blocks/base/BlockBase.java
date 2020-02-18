@@ -8,7 +8,6 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 
 public class BlockBase extends Block {
-
 	public BlockBase(Material material, MapColor mapColor, String registry) {
 		super(material, mapColor);
 		setRegistryName(SmelteryIO.MODID, registry);

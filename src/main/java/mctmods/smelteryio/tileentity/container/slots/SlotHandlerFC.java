@@ -10,7 +10,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class SlotHandlerFC extends SlotItemHandler {
-
 	private int tileID;
 	private int tileSlot;
 	private int slotStackLimit;

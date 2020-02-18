@@ -23,7 +23,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 public class ItemUpgrade extends ItemBase {
-
 	public ItemUpgrade() {
  	 	super("upgrade");
 		setHasSubtypes(true);
@@ -31,8 +30,8 @@ public class ItemUpgrade extends ItemBase {
 
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
-		if (this.isInCreativeTab(tab)) {
-			for (EnumUpgrade type : EnumUpgrade.values()) {
+		if(this.isInCreativeTab(tab)) {
+			for(EnumUpgrade type : EnumUpgrade.values()) {
 				list.add(new ItemStack(this, 1, type.ordinal()));
 			}
 		}
@@ -66,7 +65,7 @@ public class ItemUpgrade extends ItemBase {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		if (this.isShiftKeyDown()) {
+		if(this.isShiftKeyDown()) {
 			switch (stack.getItemDamage()) {
 				case 0:
 					tooltip.add(TextFormatting.GOLD + I18n.format("sio.tooltips.upgrade_base"));
@@ -108,7 +107,7 @@ public class ItemUpgrade extends ItemBase {
 
 	@SideOnly(Side.CLIENT)
  	public void initItemModels() {
- 		for (EnumUpgrade variant : EnumUpgrade.values()) {
+ 		for(EnumUpgrade variant : EnumUpgrade.values()) {
  			ModelLoader.setCustomModelResourceLocation(this, variant.ordinal(), new ModelResourceLocation(this.getRegistryName() + "/" + variant.getName(), "inventory"));
  		}
  	}

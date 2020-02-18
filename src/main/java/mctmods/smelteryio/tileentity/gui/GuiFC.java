@@ -11,12 +11,9 @@ import net.minecraft.util.text.TextFormatting;
 
 public class GuiFC extends GuiContainer {
 	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/container/fuel_controller.png");
-
 	private TileEntityFC tileEntity;
-
 	public static final int WIDTH = 176;
 	public static final int HEIGHT = 166;
-
 	private static int PROGRESSHEIGHT = 13;
 
 	public GuiFC(ContainerBase serverGuiElement, TileEntityFC tileEntity) {
@@ -62,7 +59,7 @@ public class GuiFC extends GuiContainer {
 		} else if(this.tileEntity.getCurrentTemp() == 0) {
 			String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.error", new Object[0]);
 			this.fontRenderer.drawString(warn, (-55 - (this.fontRenderer.getStringWidth(warn))/2), 44, 4210752);
-		} 
+		}
 	}
 
 }

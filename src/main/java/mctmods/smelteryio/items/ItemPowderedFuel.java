@@ -11,7 +11,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemPowderedFuel extends ItemBase {
-
 	private int maxSize = 64;
 
 	public ItemPowderedFuel() {
