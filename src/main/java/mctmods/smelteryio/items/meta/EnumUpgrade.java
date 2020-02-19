@@ -29,7 +29,7 @@ public enum EnumUpgrade implements IStringSerializable {
 
  	@Override
  	public String getName() {
- 		return this.name;
+ 		return name;
  	}
 
 	@Override
@@ -38,19 +38,19 @@ public enum EnumUpgrade implements IStringSerializable {
 	}
 
  	public String getRecipeOreDict1() {
-	   	return this.recipeOreDict1;
+	   	return recipeOreDict1;
 	}
 
  	public String getRecipeOreDict2() {
-	   	return this.recipeOreDict2;
+	   	return recipeOreDict2;
 	}
 
  	public EnumRarity getRarity() {
-	   	return this.rarity;
+	   	return rarity;
 	}
 
  	public int getMaxSize() {
- 		return this.maxSize;
+ 		return maxSize;
  	}
 
 }

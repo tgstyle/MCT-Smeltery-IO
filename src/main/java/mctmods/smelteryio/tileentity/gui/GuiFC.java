@@ -26,7 +26,7 @@ public class GuiFC extends GuiContainer {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
+		renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	@Override
@@ -35,9 +35,9 @@ public class GuiFC extends GuiContainer {
 		mc.getTextureManager().bindTexture(BG_TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 		drawTexturedModalRect(guiLeft - 110, guiTop, 146, 170, 110, 60);
-		if(this.tileEntity.isReady()) {
-			int progress = this.tileEntity.getGUIProgress(PROGRESSHEIGHT);
-			if(this.tileEntity.getCurrentTemp() == 0) progress = PROGRESSHEIGHT;
+		if(tileEntity.isReady()) {
+			int progress = tileEntity.getGUIProgress(PROGRESSHEIGHT);
+			if(tileEntity.getCurrentTemp() == 0) progress = PROGRESSHEIGHT;
 			drawTexturedModalRect(guiLeft + 81, guiTop + 37 + progress, 176, 33 + progress, 13, 13 - progress);
 		}
 	}
@@ -47,18 +47,18 @@ public class GuiFC extends GuiContainer {
 		String name = I18n.format("container.fuel_controller");
 		fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 5, 0xffffff);
 		String temperatureInfo = TextFormatting.RED + I18n.format("container.fuel_controller.temperature", new Object[0]);
-		this.fontRenderer.drawString(temperatureInfo, (-55 - (this.fontRenderer.getStringWidth(temperatureInfo))/2), 9, 4210752);
-		String currentTemperature = TextFormatting.RED + String.valueOf(this.tileEntity.getFuelTemp() + "°C");
-		this.fontRenderer.drawString(currentTemperature, (-55 - (this.fontRenderer.getStringWidth(currentTemperature))/2), 21, 4210752);
-		double ratio = this.tileEntity.getRatio();
+		fontRenderer.drawString(temperatureInfo, (-55 - (fontRenderer.getStringWidth(temperatureInfo))/2), 9, 4210752);
+		String currentTemperature = TextFormatting.RED + String.valueOf(tileEntity.getFuelTemp() + "°C");
+		fontRenderer.drawString(currentTemperature, (-55 - (fontRenderer.getStringWidth(currentTemperature))/2), 21, 4210752);
+		double ratio = tileEntity.getRatio();
 		String msgRatio = TextFormatting.AQUA + I18n.format("container.fuel_controller.ratio", new Object[0]) + " " + ratio;
-		this.fontRenderer.drawString(msgRatio, (-55 - (this.fontRenderer.getStringWidth(msgRatio))/2), 32, 4210752);
-		if(this.tileEntity.atCapacity()) {
+		fontRenderer.drawString(msgRatio, (-55 - (fontRenderer.getStringWidth(msgRatio))/2), 32, 4210752);
+		if(tileEntity.atCapacity()) {
 			String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorcapacity", new Object[0]);
-			this.fontRenderer.drawString(warn, (-55 - (this.fontRenderer.getStringWidth(warn))/2), 44, 4210752);
-		} else if(this.tileEntity.getCurrentTemp() == 0) {
+			fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
+		} else if(tileEntity.getCurrentTemp() == 0) {
 			String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.error", new Object[0]);
-			this.fontRenderer.drawString(warn, (-55 - (this.fontRenderer.getStringWidth(warn))/2), 44, 4210752);
+			fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
 		}
 	}
 

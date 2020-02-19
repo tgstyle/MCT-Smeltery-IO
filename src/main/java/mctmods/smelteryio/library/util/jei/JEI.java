@@ -29,10 +29,8 @@ public class JEI implements IModPlugin{
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		final IJeiHelpers jeiHelpers = registry.getJeiHelpers();
 		final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
-
 		fuelControllerRecipeCategory = new FCRecipeCategory(guiHelper);
 		castingMachineRecipeCategory = new CMRecipeCategory(guiHelper);
-
 		registry.addRecipeCategories(
 				castingMachineRecipeCategory,
 				fuelControllerRecipeCategory);
@@ -46,7 +44,7 @@ public class JEI implements IModPlugin{
 		registry.handleRecipes(CMRecipeWrapper.class, new CMRecipeHandler(), CMRecipeCategory.CATEGORY);
 		registry.addRecipes(CMRecipeChecker.getCastingRecipes(), CMRecipeCategory.CATEGORY);
 		registry.addRecipeClickArea(GuiFC.class, 102, 35, 18, 18, FCRecipeCategory.CATEGORY);
-		registry.addRecipeClickArea(GuiCM.class, 124, 34, 22, 16, CMRecipeCategory.CATEGORY);
+		registry.addRecipeClickArea(GuiCM.class, 117, 34, 22, 16, CMRecipeCategory.CATEGORY);
 		registry.addRecipeCatalyst(new ItemStack(Registry.MACHINE, 1, 0), FCRecipeCategory.CATEGORY);
 		registry.addRecipeCatalyst(new ItemStack(Registry.MACHINE, 1, 1), CMRecipeCategory.CATEGORY);
 	}

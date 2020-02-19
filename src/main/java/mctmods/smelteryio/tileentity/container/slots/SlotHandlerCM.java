@@ -24,7 +24,7 @@ public class SlotHandlerCM extends SlotItemHandler {
 
 	@Override
 	public boolean isItemValid(@Nonnull ItemStack stack) {
-		switch(this.tileSlot) {
+		switch(tileSlot) {
 		case ContainerCM.FUEL:
 			return SlotHandlerItems.validForSlot(stack, ContainerCM.FUEL, tileID);
 		case ContainerCM.CAST:
@@ -50,7 +50,7 @@ public class SlotHandlerCM extends SlotItemHandler {
 
 	@Override
 	public boolean canTakeStack(EntityPlayer playerIn) {
-		if(this.tileSlot == ContainerCM.FUEL) return false;
+		if(tileSlot == ContainerCM.FUEL) return false;
 		return true;
 	}
 

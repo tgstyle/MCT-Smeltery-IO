@@ -61,44 +61,44 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	@Override
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		if(slot == ContainerFC.FUEL) {
-			if(SlotHandlerItems.validForSlot(stack, ContainerFC.FUEL, TILEID)) return this.itemInventory.insertItem(slot, stack, simulate);
+			if(SlotHandlerItems.validForSlot(stack, ContainerFC.FUEL, TILEID)) return itemInventory.insertItem(slot, stack, simulate);
 		}
 		if(slot == ContainerFC.UPGRADESPEED) {
-			if(SlotHandlerItems.validForSlot(stack, ContainerFC.UPGRADESPEED, TILEID)) return this.itemInventory.insertItem(slot, stack, simulate);
+			if(SlotHandlerItems.validForSlot(stack, ContainerFC.UPGRADESPEED, TILEID)) return itemInventory.insertItem(slot, stack, simulate);
 		}
 		return super.insertItem(slot, stack, simulate);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		this.facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
-		this.progress = compound.getInteger(TAG_PROGRESS);
-		this.activeCount = (compound.getInteger(TAG_ACTIVE_COUNT));
-		this.ratio = compound.getDouble(TAG_RATIO);
-		this.targetTemp = compound.getInteger(TAG_TARGET_TEMP);
-		this.currentTemp = compound.getInteger(TAG_CURRENT_TEMP);
-		this.smelteryTemp = compound.getInteger(TAG_SMELTERY_TEMP);
-		this.atCapacity = compound.getBoolean(TAG_AT_CAPACITY);
+		facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
+		progress = compound.getInteger(TAG_PROGRESS);
+		activeCount = (compound.getInteger(TAG_ACTIVE_COUNT));
+		ratio = compound.getDouble(TAG_RATIO);
+		targetTemp = compound.getInteger(TAG_TARGET_TEMP);
+		currentTemp = compound.getInteger(TAG_CURRENT_TEMP);
+		smelteryTemp = compound.getInteger(TAG_SMELTERY_TEMP);
+		atCapacity = compound.getBoolean(TAG_AT_CAPACITY);
 		super.readFromNBT(compound);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setInteger(TAG_FACING, facing.getIndex());
-		compound.setInteger(TAG_PROGRESS, this.progress);
-		compound.setInteger(TAG_ACTIVE_COUNT, this.activeCount);
-		compound.setDouble(TAG_RATIO, this.ratio);
-		compound.setInteger(TAG_TARGET_TEMP, this.targetTemp);
-		compound.setInteger(TAG_CURRENT_TEMP, this.currentTemp);
-		compound.setInteger(TAG_SMELTERY_TEMP, this.smelteryTemp);
-		compound.setBoolean(TAG_AT_CAPACITY, this.atCapacity);
+		compound.setInteger(TAG_PROGRESS, progress);
+		compound.setInteger(TAG_ACTIVE_COUNT, activeCount);
+		compound.setDouble(TAG_RATIO, ratio);
+		compound.setInteger(TAG_TARGET_TEMP, targetTemp);
+		compound.setInteger(TAG_CURRENT_TEMP, currentTemp);
+		compound.setInteger(TAG_SMELTERY_TEMP, smelteryTemp);
+		compound.setBoolean(TAG_AT_CAPACITY, atCapacity);
 		return super.writeToNBT(compound);
 	}
 
 	@Override
 	public void update() {
 		if(world.isRemote) return;
-		this.update = false;
+		update = false;
 		if(cooldown % 2 == 0) {
 			if(this instanceof TileSmelteryComponent) {
 				tileSmeltery = getMasterTile();
@@ -111,12 +111,12 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 			}
 		}
 		activeCount();
-		this.cooldown = (this.cooldown + 1) % 20;
-		if(this.update) saveUpdates();
+		cooldown = (cooldown + 1) % 20;
+		if(update) saveUpdates();
 	}
 
 	public EnumFacing getFacing() {
-		return this.facing;
+		return facing;
 	}
 
 	public void setFacing(EnumFacing facing) {
@@ -154,8 +154,8 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	}
 
 	private void updateSmelteryHeatingState() {
-		this.heatingItem = false;
-		this.atCapacity = false;
+		heatingItem = false;
+		atCapacity = false;
 		for(int item = 0; item < tileSmeltery.getSizeInventory(); item++) {
 			ItemStack stack = tileSmeltery.getStackInSlot(item);
 		    if(!stack.isEmpty()) {
@@ -164,16 +164,16 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 		    			int temp = tileSmeltery.getTemperature(item);
 		    			int neededTemp = tileSmeltery.getTempRequired(item);
 		    			float progress = tileSmeltery.getProgress(item);
-		    			if(temp != 0 && temp <= neededTemp) this.heatingItem = true;
-		    			if(!this.heatingItem && progress >= 2) this.atCapacity = true;
+		    			if(temp != 0 && temp <= neededTemp) heatingItem = true;
+		    			if(!heatingItem && progress >= 2) atCapacity = true;
 		    		}
 		    	}
 		    }
 		}
-		if(this.heatingItem || this.atCapacity && this.activeCount != 0) this.update = true;
-		if(this.activeCount == 0 && this.atCapacity) {
-			this.atCapacity = false;
-			this.update = true;
+		if(heatingItem || atCapacity && activeCount != 0) update = true;
+		if(activeCount == 0 && atCapacity) {
+			atCapacity = false;
+			update = true;
 		}
 	}
 
@@ -181,41 +181,41 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 		ItemStack speedStack = itemInventory.getStackInSlot(ContainerFC.UPGRADESPEED);
 		int stackSize1 = speedStack.getCount();
 		if(stackSize1 != upgradeSize1) {
-			this.ratio = 0.01;
+			ratio = 0.01;
 			if(speedStack != ItemStack.EMPTY) {
-				this.ratio = (double) speedStack.getCount() / FUEL_RATIO;
+				ratio = (double) speedStack.getCount() / FUEL_RATIO;
 				DecimalFormat df = new DecimalFormat("#.##");
-				this.ratio = Double.parseDouble(df.format(this.ratio));
+				ratio = Double.parseDouble(df.format(ratio));
 			}
-			this.upgradeSize1 = stackSize1;
-			this.update = true;
+			upgradeSize1 = stackSize1;
+			update = true;
 		}
 	}
 
 	private void calculateTemperature() {
-		if(!this.heatingItem) return;
-		this.smelteryTemp = getFluidFuelTemp();
-		int fuelTempRatio = (int) (getBurnTime() * this.ratio) / 2;
-		int fuelTempSolid = (((fuelTempRatio + 99) / 100) * 100) + this.smelteryTemp;
+		if(!heatingItem) return;
+		smelteryTemp = getFluidFuelTemp();
+		int fuelTempRatio = (int) (getBurnTime() * ratio) / 2;
+		int fuelTempSolid = (((fuelTempRatio + 99) / 100) * 100) + smelteryTemp;
 		if(fuelTempSolid >= 200000) fuelTempSolid = 200000;
-		this.targetTemp = fuelTempSolid;
+		targetTemp = fuelTempSolid;
 	}
 
 	private void burnSolidFuel() {
-		if(this.currentTemp == 0 && this.heatingItem && itemInventory.getStackInSlot(ContainerFC.FUEL) != ItemStack.EMPTY && !this.atCapacity) {
-			this.currentTemp = this.targetTemp;
+		if(currentTemp == 0 && heatingItem && itemInventory.getStackInSlot(ContainerFC.FUEL) != ItemStack.EMPTY && !atCapacity) {
+			currentTemp = targetTemp;
 			consumeItemStack(ContainerFC.FUEL, 1);
-			this.update = true;
-		} if(this.currentTemp != 0) {
-			if(this.targetTemp != tileSmeltery.getTemperature()) setSmelteryTemp(this.targetTemp);
-			this.progress = (this.progress + 1) % PROGRESS;
-			this.activeCount = this.progress + 10;
-			if(this.progress == 0) {
-				this.targetTemp = this.smelteryTemp;
-				this.currentTemp = 0;
+			update = true;
+		} if(currentTemp != 0) {
+			if(targetTemp != tileSmeltery.getTemperature()) setSmelteryTemp(targetTemp);
+			progress = (progress + 1) % PROGRESS;
+			activeCount = progress + 10;
+			if(progress == 0) {
+				targetTemp = smelteryTemp;
+				currentTemp = 0;
 				resetTemp();
 			}
-			this.update = true;
+			update = true;
 		}
 	}
 
@@ -263,40 +263,43 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	}
 
 	public int activeCount() {
-		if(this.activeCount != 0) this.activeCount--;
-		return this.activeCount;
+		if(activeCount != 0) {
+			activeCount--;
+			world.markBlockRangeForRenderUpdate(pos, pos);
+		}
+		return activeCount;
 	}
 
 	public boolean isReady() {
-		if(this.progress != 0) return true;
+		if(progress != 0) return true;
 		return false;
 	}
 
 	public boolean atCapacity() {
-		return this.atCapacity;
+		return atCapacity;
 	}
 
 	public void resetTemp() {
-		setSmelteryTemp(this.smelteryTemp);
+		setSmelteryTemp(smelteryTemp);
 	}
 
 	public int getFuelTemp() {
-		if(currentTemp == 0) return this.smelteryTemp;
-		else return this.targetTemp;
+		if(currentTemp == 0) return smelteryTemp;
+		else return targetTemp;
 	}
 
 	public int getCurrentTemp() {
-		return this.currentTemp;
+		return currentTemp;
 	}
 
 	@SideOnly(Side.CLIENT)
 	public double getRatio() {
-		return this.ratio;
+		return ratio;
 	}
 
 	@SideOnly(Side.CLIENT)
 	public int getGUIProgress(int pixel) {
-		return (int) (((float)this.progress / (float)PROGRESS) * pixel);
+		return (int) (((float)progress / (float)PROGRESS) * pixel);
 	}
 
 }

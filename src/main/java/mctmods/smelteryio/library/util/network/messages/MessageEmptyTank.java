@@ -20,10 +20,10 @@ public class MessageEmptyTank extends MessageBase<MessageEmptyTank> {
 	}
 
 	public MessageEmptyTank(BlockPos pos) {
-		this.data = new NBTTagCompound();
-		this.data.setInteger("x", pos.getX());
-		this.data.setInteger("y", pos.getY());
-		this.data.setInteger("z", pos.getZ());
+		data = new NBTTagCompound();
+		data.setInteger("x", pos.getX());
+		data.setInteger("y", pos.getY());
+		data.setInteger("z", pos.getZ());
 	}
 
 	@Override
@@ -46,12 +46,12 @@ public class MessageEmptyTank extends MessageBase<MessageEmptyTank> {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.data = ByteBufUtils.readTag(buf);
+		data = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeTag(buf, this.data);
+		ByteBufUtils.writeTag(buf, data);
 	}
 
 }

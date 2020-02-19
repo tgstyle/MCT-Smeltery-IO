@@ -23,7 +23,7 @@ public class SlotHandlerFC extends SlotItemHandler {
 
 	@Override
 	public boolean isItemValid(@Nonnull ItemStack stack) {
-		switch(this.tileSlot) {
+		switch(tileSlot) {
 		case ContainerFC.FUEL:
 			return (SlotHandlerItems.validForSlot(stack, ContainerFC.FUEL, tileID));
 		case ContainerFC.UPGRADESPEED:

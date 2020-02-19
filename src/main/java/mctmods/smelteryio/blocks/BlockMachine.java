@@ -116,27 +116,25 @@ public class BlockMachine extends BlockBaseTE {
 
 	public EnumFacing getFacing(IBlockAccess world, BlockPos pos, IBlockState state) {
 		int meta = getMetaFromState(state);
+		TileEntity tileEntity = world.getTileEntity(pos);
 		switch(meta) {
 		case 0:
-			final TileEntityFC tileEntity0 = (TileEntityFC)world.getTileEntity(pos);
-			return tileEntity0 != null ? tileEntity0.getFacing() : EnumFacing.NORTH;
+			return ((TileEntityFC)tileEntity) != null ? ((TileEntityFC)tileEntity).getFacing() : EnumFacing.NORTH;
 		case 1:
-			final TileEntityCM tileEntity1 = (TileEntityCM)world.getTileEntity(pos);
-			return tileEntity1 != null ? tileEntity1.getFacing() : EnumFacing.NORTH;
+			return ((TileEntityCM)tileEntity) != null ? ((TileEntityCM)tileEntity).getFacing() : EnumFacing.NORTH;
 		}
 		return null;
 	}
 
 	public void setFacing(IBlockAccess world, BlockPos pos, EnumFacing facing, IBlockState state) {
 		int meta = getMetaFromState(state);
+		TileEntity tileEntity = world.getTileEntity(pos);
 		switch(meta) {
 		case 0:
-			final TileEntityFC tileEntity0 = (TileEntityFC)world.getTileEntity(pos);
-			tileEntity0.setFacing(facing);
+			((TileEntityFC)tileEntity).setFacing(facing);
 			break;
 		case 1:
-			final TileEntityCM tileEntity1 = (TileEntityCM)world.getTileEntity(pos);
-			tileEntity1.setFacing(facing);
+			((TileEntityCM)tileEntity).setFacing(facing);
 			break;
 		}
 	}
@@ -148,15 +146,15 @@ public class BlockMachine extends BlockBaseTE {
 
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-		int meta = getMetaFromState(state);
 		boolean active = false;
+		int meta = getMetaFromState(state);
 		TileEntity tileEntity = world.getTileEntity(pos);
 		switch(meta) {
 		case 0:
-			if(((TileEntityFC) tileEntity).activeCount() !=0) active = true;
+			if(((TileEntityFC)tileEntity).activeCount() != 0) active = true;
 			return state.withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, active);
 		case 1:
-			if(((TileEntityCM) tileEntity).activeCount() !=0) active = true;
+			if(((TileEntityCM)tileEntity).activeCount() != 0) active = true;
 			return state.withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, active);
 		}
 		return state.withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, active);
@@ -205,7 +203,7 @@ public class BlockMachine extends BlockBaseTE {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		switch(meta) {
 		case 0:
-			IItemHandler handler0 = ((TileEntityFC) tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+			IItemHandler handler0 = ((TileEntityFC)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 			for(int slot = 0; slot < handler0.getSlots(); slot++) {
 				ItemStack stack = handler0.getStackInSlot(slot);
 				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
@@ -216,7 +214,7 @@ public class BlockMachine extends BlockBaseTE {
 			}
 			break;
 		case 1:
-			IItemHandler handler1 = ((TileEntityCM) tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+			IItemHandler handler1 = ((TileEntityCM)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 			for(int slot = 0; slot < handler1.getSlots(); slot++) {
 				ItemStack stack = handler1.getStackInSlot(slot);
 				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
@@ -233,7 +231,7 @@ public class BlockMachine extends BlockBaseTE {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		switch(meta) {
 		case 0:
-			if(((TileEntityFC) tileEntity).activeCount() !=0) {
+			if(((TileEntityFC)tileEntity).activeCount() !=0) {
 				EnumFacing enumfacing = getFacing(world, pos, state);
 				double d0 = (double)pos.getX() + 0.5D;
 				double d1 = (double)pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
@@ -262,7 +260,7 @@ public class BlockMachine extends BlockBaseTE {
 			}
 			break;
 		case 1:
-			if(((TileEntityCM) tileEntity).activeCount() !=0) {
+			if(((TileEntityCM)tileEntity).activeCount() !=0) {
 				world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.25F, 0.1F, false);
 				world.spawnParticle(EnumParticleTypes.getParticleFromId(12), pos.getX() + .5D , pos.getY() + .99D, pos.getZ() + .5D , 0.0, 0.0, 0.0);
 				world.spawnParticle(EnumParticleTypes.getParticleFromId(11), pos.getX() + .99D, pos.getY() + .5D , pos.getZ() + .5D , 0.0, 0.0, 0.0);

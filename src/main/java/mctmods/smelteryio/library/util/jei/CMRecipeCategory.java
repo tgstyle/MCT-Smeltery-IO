@@ -32,9 +32,9 @@ public class CMRecipeCategory implements IRecipeCategory {
 	protected final IDrawableAnimated arrow;
 
 	public CMRecipeCategory(IGuiHelper guiHelper) {
-		this.background = guiHelper.createDrawable(BACKGROUND_TEXTURE, 0, 0, 149, 63);
+		background = guiHelper.createDrawable(BACKGROUND_TEXTURE, 0, 0, 149, 63);
 		IDrawableStatic arrowDrawable = guiHelper.createDrawable(BACKGROUND_TEXTURE, 151, 0, 24, 17);
-		this.arrow = guiHelper.createAnimatedDrawable(arrowDrawable, 30, IDrawableAnimated.StartDirection.LEFT, false);
+		arrow = guiHelper.createAnimatedDrawable(arrowDrawable, 30, IDrawableAnimated.StartDirection.LEFT, false);
 	}
 
 	@Override
@@ -54,12 +54,12 @@ public class CMRecipeCategory implements IRecipeCategory {
 
 	@Override
 	public IDrawable getBackground() {
-		return this.background;
+		return background;
 	}
 
 	@Override
 	public void drawExtras(Minecraft minecraft) {
-		this.arrow.draw(minecraft, 103, 24);
+		arrow.draw(minecraft, 103, 24);
 	}
 
 	@Override

@@ -16,12 +16,12 @@ public class ItemPowderedFuel extends ItemBase {
 	public ItemPowderedFuel() {
  	 	super("powdered_fuel");
  	 	setMaxDamage(0);
- 	 	setMaxStackSize(this.maxSize);
+ 	 	setMaxStackSize(maxSize);
 	}
 
 	@Override
 	public int getItemStackLimit(ItemStack stack) {
-		return this.maxSize;
+		return maxSize;
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class ItemPowderedFuel extends ItemBase {
 
 	@SideOnly(Side.CLIENT)
  	public void initItemModels() {
-   		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(this.getRegistryName(), "inventory"));
+   		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
  	}
 
 }

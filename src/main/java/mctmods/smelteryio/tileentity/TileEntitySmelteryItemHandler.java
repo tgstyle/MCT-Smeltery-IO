@@ -19,8 +19,8 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 	protected ItemStackHandler itemInventory;
 
 	protected TileEntitySmelteryItemHandler(int itemSlots) {
-		this.itemSlotsSize = itemSlots;
-		this.itemInventory = new ItemStackHandler(itemSlotsSize) {
+		itemSlotsSize = itemSlots;
+		itemInventory = new ItemStackHandler(itemSlotsSize) {
 			@Override
 			protected void onContentsChanged(int itemSlots) {
 				TileEntitySmelteryItemHandler.this.efficientMarkDirty();
@@ -28,7 +28,7 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 			}
 		};
 
-		this.itemInventoryIO = new ItemStackHandler(itemSlotsSize) {
+		itemInventoryIO = new ItemStackHandler(itemSlotsSize) {
 			@Override
 			protected void onContentsChanged(int itemSlots) {
 				TileEntitySmelteryItemHandler.this.efficientMarkDirty();
@@ -64,13 +64,13 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setTag("itemInventory", this.itemInventory.serializeNBT());
+		compound.setTag("itemInventory", itemInventory.serializeNBT());
 		return super.writeToNBT(compound);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		this.itemInventory.deserializeNBT(compound.getCompoundTag("itemInventory"));
+		itemInventory.deserializeNBT(compound.getCompoundTag("itemInventory"));
 		super.readFromNBT(compound);
 	}
 
@@ -85,9 +85,9 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			if(facing == null) {
-				return (T) this.itemInventory;
+				return (T) itemInventory;
 			} else {
-				return (T) this.itemInventoryIO;
+				return (T) itemInventoryIO;
 			}
 		}
 		return super.getCapability(capability, facing);
@@ -105,11 +105,11 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 	}
 
 	protected void consumeItemStack(int slotId, int amount) {
-		this.itemInventory.extractItem(slotId, amount, false);
+		itemInventory.extractItem(slotId, amount, false);
 	}
 
 	public void efficientMarkDirty() {
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
+		world.getChunkFromBlockCoords(getPos()).markDirty();
 	}
 
 }

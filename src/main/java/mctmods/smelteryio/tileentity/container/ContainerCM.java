@@ -16,17 +16,17 @@ public class ContainerCM extends ContainerBase {
 	private IItemHandler handler;
 
 	public ContainerCM(IInventory playerInventory, final TileEntityCM tileentity) {
-		this.tileEntity = tileentity;
-		this.handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-		this.addSlotToContainer(new SlotHandlerCM(this.handler, FUEL, 56, 15, 64, this.tileID));
-		this.addSlotToContainer(new SlotHandlerCM(this.handler, CAST, 56, 33, 1, this.tileID));
-		this.addSlotToContainer(new SlotHandlerCM(this.handler, OUTPUT, 142, 33, 64, this.tileID));
-		this.addSlotToContainer(new SlotHandlerCM(this.handler, UPGRADE1, 97, 12, 64, this.tileID));
-		this.addSlotToContainer(new SlotHandlerCM(this.handler, UPGRADE2, 97, 33, 64, this.tileID));
-		this.addSlotToContainer(new SlotHandlerCM(this.handler, UPGRADESPEED, 97, 54, 64, this.tileID));
-		this.addSlotToContainer(new SlotHandlerCM(this.handler, OUTPUT, 142, 33, 64, this.tileID));
-		this.addSlotToContainer(new SlotHandlerCM(this.handler, REDSTONE, 142, 54, 64, this.tileID));
-		this.addPlayerInventorySlotToContainer(playerInventory);
+		tileEntity = tileentity;
+		handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		addSlotToContainer(new SlotHandlerCM(handler, FUEL, 56, 15, 64, tileID));
+		addSlotToContainer(new SlotHandlerCM(handler, CAST, 56, 33, 1, tileID));
+		addSlotToContainer(new SlotHandlerCM(handler, OUTPUT, 142, 33, 64, tileID));
+		addSlotToContainer(new SlotHandlerCM(handler, UPGRADE1, 97, 12, 64, tileID));
+		addSlotToContainer(new SlotHandlerCM(handler, UPGRADE2, 97, 33, 64, tileID));
+		addSlotToContainer(new SlotHandlerCM(handler, UPGRADESPEED, 97, 54, 64, tileID));
+		addSlotToContainer(new SlotHandlerCM(handler, OUTPUT, 142, 33, 64, tileID));
+		addSlotToContainer(new SlotHandlerCM(handler, REDSTONE, 142, 54, 64, tileID));
+		addPlayerInventorySlotToContainer(playerInventory);
 	}
 
 }

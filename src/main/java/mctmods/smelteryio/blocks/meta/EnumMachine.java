@@ -31,39 +31,39 @@ public enum EnumMachine implements IStringSerializable {
 
 	@Override
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public EnumRarity getRarity() {
-		return this.rarity;
+		return rarity;
 	}
 
 	public String getRecipeOreDict1() {
-		return this.recipeOreDict1;
+		return recipeOreDict1;
 	}
 
 	public String getRecipeOreDict2() {
-		return this.recipeOreDict2;
+		return recipeOreDict2;
 	}
 
 	public int getLight() {
-		return this.light;
+		return light;
 	}
 
 	public int getHarvestLevel() {
-		return this.harvestLevel;
+		return harvestLevel;
 	}
 
 	public float getHardness() {
-		return this.hardness;
+		return hardness;
 	}
 
 	public float getResistance() {
-		return this.resistance;
+		return resistance;
 	}
 
  	public int getMaxSize() {
- 		return this.maxSize;
+ 		return maxSize;
  	}
 
 }

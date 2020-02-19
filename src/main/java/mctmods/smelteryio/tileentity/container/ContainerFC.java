@@ -16,11 +16,11 @@ public class ContainerFC extends ContainerBase {
 	private IItemHandler handler;
 
 	public ContainerFC(IInventory playerInventory, final TileEntityFC tileentity) {
-		this.tileEntity = tileentity;
-		this.handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-		this.addSlotToContainer(new SlotHandlerFC(this.handler, UPGRADESPEED, 25, 34, 64, this.tileID));
-		this.addSlotToContainer(new SlotHandlerFC(this.handler, FUEL, 134, 34, 64, this.tileID));
-		this.addPlayerInventorySlotToContainer(playerInventory);
+		tileEntity = tileentity;
+		handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		addSlotToContainer(new SlotHandlerFC(handler, UPGRADESPEED, 25, 34, 64, tileID));
+		addSlotToContainer(new SlotHandlerFC(handler, FUEL, 134, 34, 64, tileID));
+		addPlayerInventorySlotToContainer(playerInventory);
 	}
 
 }

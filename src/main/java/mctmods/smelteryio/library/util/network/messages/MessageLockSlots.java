@@ -19,10 +19,10 @@ public class MessageLockSlots extends MessageBase<MessageLockSlots> {
 	}
 
 	public MessageLockSlots(BlockPos pos) {
-		this.data = new NBTTagCompound();
-		this.data.setInteger("x", pos.getX());
-		this.data.setInteger("y", pos.getY());
-		this.data.setInteger("z", pos.getZ());
+		data = new NBTTagCompound();
+		data.setInteger("x", pos.getX());
+		data.setInteger("y", pos.getY());
+		data.setInteger("z", pos.getZ());
 	}
 
 	@Override
@@ -45,12 +45,12 @@ public class MessageLockSlots extends MessageBase<MessageLockSlots> {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.data = ByteBufUtils.readTag(buf);
+		data = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeTag(buf, this.data);
+		ByteBufUtils.writeTag(buf, data);
 	}
 
 }
