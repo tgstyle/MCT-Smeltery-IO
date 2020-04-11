@@ -8,7 +8,6 @@ import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.tileentity.container.ContainerFC;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -27,11 +26,11 @@ import slimeknights.tconstruct.smeltery.tileentity.TileHeatingStructure;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 
-public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITickable {
+public class TileEntityFC extends TileEntitySlotHandler implements ITickable {
 	private EnumFacing facing = EnumFacing.NORTH;
 	public static final String TAG_FACING = "facing";
 	public static final String TAG_PROGRESS = "progress";
-	public static final String TAG_ACTIVE_COUNT = "activeCount";
+	public static final String TAG_ACTIVE = "active";
 	public static final String TAG_RATIO = "ratio";
 	public static final String TAG_TARGET_TEMP = "targetTemp";
 	public static final String TAG_CURRENT_TEMP = "currentTemp";
@@ -39,6 +38,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	public static final String TAG_AT_CAPACITY = "atCapacity";
 	public static final int TILEID = 0;
 	public static final int PROGRESS = 250;
+	public boolean active = false;
 	private static final int SLOTS_SIZE = 2;
 	private static final double FUEL_RATIO = ConfigSIO.fuelControllerRatio;
 	private TileSmeltery tileSmeltery;
@@ -73,7 +73,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	public void readFromNBT(NBTTagCompound compound) {
 		facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
 		progress = compound.getInteger(TAG_PROGRESS);
-		activeCount = (compound.getInteger(TAG_ACTIVE_COUNT));
+		active = (compound.getBoolean(TAG_ACTIVE));
 		ratio = compound.getDouble(TAG_RATIO);
 		targetTemp = compound.getInteger(TAG_TARGET_TEMP);
 		currentTemp = compound.getInteger(TAG_CURRENT_TEMP);
@@ -86,7 +86,7 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setInteger(TAG_FACING, facing.getIndex());
 		compound.setInteger(TAG_PROGRESS, progress);
-		compound.setInteger(TAG_ACTIVE_COUNT, activeCount);
+		compound.setBoolean(TAG_ACTIVE, active);
 		compound.setDouble(TAG_RATIO, ratio);
 		compound.setInteger(TAG_TARGET_TEMP, targetTemp);
 		compound.setInteger(TAG_CURRENT_TEMP, currentTemp);
@@ -110,9 +110,15 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 		   		}
 			}
 		}
-		activeCount();
 		cooldown = (cooldown + 1) % 20;
-		if(update) saveUpdates();
+		if(activeCount != 0) {
+			activeCount--;
+			active = true;
+		} else if(activeCount == 0 && progress == 0 && active) {
+			update = true;
+			active = false;
+		}
+		if(update) efficientMarkDirty();
 	}
 
 	public EnumFacing getFacing() {
@@ -125,7 +131,9 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 
 	@Override
 	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
+		NBTTagCompound tag = new NBTTagCompound();
+		writeToNBT(tag);
+		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
 	}
 
 	@Override
@@ -134,23 +142,9 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-		super.onDataPacket(net, packet);
-		readFromNBT(packet.getNbtCompound());
-	}
-
-	private IBlockState getState() {
-		return world.getBlockState(pos);
-	}
-
-	public void markBlockForUpdate(BlockPos pos) {
-		world.notifyBlockUpdate(pos, getState(), getState(), 3);
-		world.notifyNeighborsOfStateChange(pos, getState().getBlock(), true);
-	}
-
-	private void saveUpdates() {
-		efficientMarkDirty();
-		markBlockForUpdate(getPos());
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		super.onDataPacket(net, pkt);
+		readFromNBT(pkt.getNbtCompound());
 	}
 
 	private void updateSmelteryHeatingState() {
@@ -260,14 +254,6 @@ public class TileEntityFC extends TileEntitySmelteryItemHandler implements ITick
 
 	private void setSmelteryTemp(int temperature) {
 	   	setSmelteryTempNBT(temperature);
-	}
-
-	public int activeCount() {
-		if(activeCount != 0) {
-			activeCount--;
-			world.markBlockRangeForRenderUpdate(pos, pos);
-		}
-		return activeCount;
 	}
 
 	public boolean isReady() {

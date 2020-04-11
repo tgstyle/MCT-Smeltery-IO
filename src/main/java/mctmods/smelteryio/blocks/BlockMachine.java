@@ -42,7 +42,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-
 import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 
@@ -115,28 +114,16 @@ public class BlockMachine extends BlockBaseTE {
 	}
 
 	public EnumFacing getFacing(IBlockAccess world, BlockPos pos, IBlockState state) {
-		int meta = getMetaFromState(state);
 		TileEntity tileEntity = world.getTileEntity(pos);
-		switch(meta) {
-		case 0:
-			return ((TileEntityFC)tileEntity) != null ? ((TileEntityFC)tileEntity).getFacing() : EnumFacing.NORTH;
-		case 1:
-			return ((TileEntityCM)tileEntity) != null ? ((TileEntityCM)tileEntity).getFacing() : EnumFacing.NORTH;
-		}
+		if(tileEntity instanceof TileEntityFC) return ((TileEntityFC)tileEntity) != null ? ((TileEntityFC)tileEntity).getFacing() : EnumFacing.NORTH;
+		if(tileEntity instanceof TileEntityCM) return ((TileEntityCM)tileEntity) != null ? ((TileEntityCM)tileEntity).getFacing() : EnumFacing.NORTH;
 		return null;
 	}
 
 	public void setFacing(IBlockAccess world, BlockPos pos, EnumFacing facing, IBlockState state) {
-		int meta = getMetaFromState(state);
 		TileEntity tileEntity = world.getTileEntity(pos);
-		switch(meta) {
-		case 0:
-			((TileEntityFC)tileEntity).setFacing(facing);
-			break;
-		case 1:
-			((TileEntityCM)tileEntity).setFacing(facing);
-			break;
-		}
+		if(tileEntity instanceof TileEntityFC) ((TileEntityFC)tileEntity).setFacing(facing);
+		if(tileEntity instanceof TileEntityCM) ((TileEntityCM)tileEntity).setFacing(facing);
 	}
 
 	@Override
@@ -146,18 +133,11 @@ public class BlockMachine extends BlockBaseTE {
 
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-		boolean active = false;
-		int meta = getMetaFromState(state);
 		TileEntity tileEntity = world.getTileEntity(pos);
-		switch(meta) {
-		case 0:
-			if(((TileEntityFC)tileEntity).activeCount() != 0) active = true;
-			return state.withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, active);
-		case 1:
-			if(((TileEntityCM)tileEntity).activeCount() != 0) active = true;
-			return state.withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, active);
-		}
-		return state.withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, active);
+		int meta = getMetaFromState(state);
+		if(tileEntity instanceof TileEntityFC) return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, ((TileEntityFC)tileEntity).active);
+		if(tileEntity instanceof TileEntityCM) return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, ((TileEntityCM)tileEntity).active);
+		return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(FACING, getFacing(world, pos, state)).withProperty(ACTIVE, false);
 	}
 
 	@Override
@@ -199,10 +179,8 @@ public class BlockMachine extends BlockBaseTE {
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
-		int meta = getMetaFromState(state);
 		TileEntity tileEntity = world.getTileEntity(pos);
-		switch(meta) {
-		case 0:
+		if(tileEntity instanceof TileEntityFC) {
 			IItemHandler handler0 = ((TileEntityFC)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 			for(int slot = 0; slot < handler0.getSlots(); slot++) {
 				ItemStack stack = handler0.getStackInSlot(slot);
@@ -212,14 +190,13 @@ public class BlockMachine extends BlockBaseTE {
 				if(tileEntity instanceof TileSmelteryComponent) ((TileSmelteryComponent)tileEntity).notifyMasterOfChange();
 				if(tileEntity instanceof TileEntityFC) ((TileEntityFC)tileEntity).resetTemp();
 			}
-			break;
-		case 1:
+		}
+		if(tileEntity instanceof TileEntityCM) {
 			IItemHandler handler1 = ((TileEntityCM)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 			for(int slot = 0; slot < handler1.getSlots(); slot++) {
 				ItemStack stack = handler1.getStackInSlot(slot);
 				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
 			}
-			break;
 		}
 		world.removeTileEntity(pos);
 		super.breakBlock(world, pos, state);
@@ -227,11 +204,9 @@ public class BlockMachine extends BlockBaseTE {
 
 	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
-		int meta = getMetaFromState(state);
 		TileEntity tileEntity = world.getTileEntity(pos);
-		switch(meta) {
-		case 0:
-			if(((TileEntityFC)tileEntity).activeCount() !=0) {
+		if(tileEntity instanceof TileEntityFC) {
+			if(((TileEntityFC)tileEntity).active) {
 				EnumFacing enumfacing = getFacing(world, pos, state);
 				double d0 = (double)pos.getX() + 0.5D;
 				double d1 = (double)pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
@@ -258,9 +233,9 @@ public class BlockMachine extends BlockBaseTE {
 						break;
 				}
 			}
-			break;
-		case 1:
-			if(((TileEntityCM)tileEntity).activeCount() !=0) {
+		}
+		if(tileEntity instanceof TileEntityCM) {
+			if(((TileEntityCM)tileEntity).active) {
 				world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.25F, 0.1F, false);
 				world.spawnParticle(EnumParticleTypes.getParticleFromId(12), pos.getX() + .5D , pos.getY() + .99D, pos.getZ() + .5D , 0.0, 0.0, 0.0);
 				world.spawnParticle(EnumParticleTypes.getParticleFromId(11), pos.getX() + .99D, pos.getY() + .5D , pos.getZ() + .5D , 0.0, 0.0, 0.0);
@@ -268,7 +243,6 @@ public class BlockMachine extends BlockBaseTE {
 				world.spawnParticle(EnumParticleTypes.getParticleFromId(11), pos.getX() + .5D , pos.getY() + .5D , pos.getZ() + .99D, 0.0, 0.0, 0.0);
 				world.spawnParticle(EnumParticleTypes.getParticleFromId(11), pos.getX() + .5D , pos.getY() + .5D , pos.getZ() + .0D , 0.0, 0.0, 0.0);
 			}
-			break;
 		}
 	}
 

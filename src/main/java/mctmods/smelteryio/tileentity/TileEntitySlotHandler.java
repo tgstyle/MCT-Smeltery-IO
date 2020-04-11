@@ -3,35 +3,36 @@ package mctmods.smelteryio.tileentity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 
-public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
+public class TileEntitySlotHandler extends TileSmelteryComponent {
 	private final int itemSlotsSize;
 	private ItemStackHandler itemInventoryIO;
 	protected ItemStackHandler itemInventory;
 
-	protected TileEntitySmelteryItemHandler(int itemSlots) {
+	protected TileEntitySlotHandler(int itemSlots) {
 		itemSlotsSize = itemSlots;
 		itemInventory = new ItemStackHandler(itemSlotsSize) {
 			@Override
 			protected void onContentsChanged(int itemSlots) {
-				TileEntitySmelteryItemHandler.this.efficientMarkDirty();
-				TileEntitySmelteryItemHandler.this.onSlotChange(itemSlots);
+				TileEntitySlotHandler.this.efficientMarkDirty();
+				TileEntitySlotHandler.this.onSlotChange(itemSlots);
 			}
 		};
 
 		itemInventoryIO = new ItemStackHandler(itemSlotsSize) {
 			@Override
 			protected void onContentsChanged(int itemSlots) {
-				TileEntitySmelteryItemHandler.this.efficientMarkDirty();
+				TileEntitySlotHandler.this.efficientMarkDirty();
 			}
 
 			@Override
@@ -52,12 +53,12 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 
 			@Override
 			public ItemStack insertItem(int itemSlots, @Nonnull ItemStack stack, boolean simulate) {
-				return TileEntitySmelteryItemHandler.this.insertItem(itemSlots, stack, simulate);
+				return TileEntitySlotHandler.this.insertItem(itemSlots, stack, simulate);
 			}
 
 			@Override
 			public ItemStack extractItem(int itemSlots, int amount, boolean simulate) {
-				return TileEntitySmelteryItemHandler.this.extractItem(itemSlots, amount, simulate);
+				return TileEntitySlotHandler.this.extractItem(itemSlots, amount, simulate);
 			}
 		};
 	}
@@ -110,6 +111,18 @@ public class TileEntitySmelteryItemHandler extends TileSmelteryComponent {
 
 	public void efficientMarkDirty() {
 		world.getChunkFromBlockCoords(getPos()).markDirty();
+		this.markContainingBlockForUpdate(null);
+	}
+
+	public void markContainingBlockForUpdate(@Nullable IBlockState newState) {
+		markBlockForUpdate(getPos(), newState);
+	}
+
+	public void markBlockForUpdate(BlockPos pos, @Nullable IBlockState newState) {
+		IBlockState state = world.getBlockState(pos);
+		if(newState == null) newState = state;
+		world.notifyBlockUpdate(pos, state, newState, 3);
+		world.notifyNeighborsOfStateChange(pos, newState.getBlock(), true);
 	}
 
 }

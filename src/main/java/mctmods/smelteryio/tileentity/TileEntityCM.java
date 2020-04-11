@@ -9,15 +9,13 @@ import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.tileentity.container.ContainerCM;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank;
-
-import net.minecraft.block.state.IBlockState;
+import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank.TankListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,11 +26,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
 
-public class TileEntityCM extends TileEntityItemHandler implements ITickable {
+public class TileEntityCM extends TileEntitySlotHandler implements ITickable, TankListener {
 	private EnumFacing facing = EnumFacing.NORTH;
 	public static final String TAG_FACING = "facing";
 	public static final String TAG_PROGRESS = "progress";
-	public static final String TAG_ACTIVE_COUNT = "activeCount";
+	public static final String TAG_ACTIVE = "active";
 	public static final String TAG_FUEL = "fueled";
 	public static final String TAG_CAN_CAST = "canCast";
 	public static final String TAG_MODE = "currentMode";
@@ -46,12 +44,12 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	public static final int CAPACITY = 10368;
 	public static final int CAST = 0;
 	public static final int BASIN = 1;
+	public boolean active = false;
 	private static final int PROGRESS = 24;
 	private static final int SLOTS_SIZE = 7;
 	private static final int FUEL_AMOUNT_BASIN = ConfigSIO.snowballBasinAmount;
 	private static final int FUEL_AMOUNT_CAST = ConfigSIO.snowballCastingAmount;
 	private static final int CASTING_MACHINE_SPEED = ConfigSIO.castingMachineSpeed;
-	private FluidTank tank;
 	private int cooldown = 0;
 	private int upgradeSize1 = 0;
 	private int upgradeSize2 = 0;
@@ -77,9 +75,10 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	private FluidStack castFluid;
 	private ICastingRecipe currentRecipe;
 
+	public TileEntityFluidTank tank = new TileEntityFluidTank(CAPACITY, this);
+
 	public TileEntityCM() {
 		super(SLOTS_SIZE);
-		tank = new TileEntityFluidTank(this, CAPACITY);
 	}
 
 	@Override
@@ -87,7 +86,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 		super.readFromNBT(compound);
 		facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
 		progress = compound.getInteger(TAG_PROGRESS);
-		activeCount = (compound.getInteger(TAG_ACTIVE_COUNT));
+		active = (compound.getBoolean(TAG_ACTIVE));
 		fueled = compound.getBoolean(TAG_FUEL);
 		canCast = compound.getBoolean(TAG_CAN_CAST);
 		currentMode = compound.getInteger(TAG_MODE);
@@ -105,7 +104,7 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 		compound = super.writeToNBT(compound);
 		compound.setInteger(TAG_FACING, facing.getIndex());
 		compound.setInteger(TAG_PROGRESS, progress);
-		compound.setInteger(TAG_ACTIVE_COUNT, activeCount);
+		compound.setBoolean(TAG_ACTIVE, active);
 		compound.setBoolean(TAG_FUEL, fueled);
 		compound.setBoolean(TAG_CAN_CAST, canCast);
 		compound.setInteger(TAG_MODE, currentMode);
@@ -174,9 +173,15 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 				}
 			}
 		}
-		activeCount();
 		cooldown = (cooldown + 2) % 200;
-		if(update) saveUpdates();
+		if(activeCount != 0) {
+			activeCount--;
+			active = true;
+		} else if(activeCount == 0 && progress == 0 && active) {
+			update = true;
+			active = false;
+		}
+		if(update) efficientMarkDirty();
 	}
 
 	public EnumFacing getFacing() {
@@ -189,7 +194,9 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 
 	@Override
 	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
+		NBTTagCompound tag = new NBTTagCompound();
+		writeToNBT(tag);
+		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
 	}
 
 	@Override
@@ -198,23 +205,9 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-		super.onDataPacket(net, packet);
-		readFromNBT(packet.getNbtCompound());
-	}
-
-	private IBlockState getState() {
-		return world.getBlockState(pos);
-	}
-
-	public void markBlockForUpdate(BlockPos pos) {
-		world.notifyBlockUpdate(pos, getState(), getState(), 3);
-		world.notifyNeighborsOfStateChange(pos, getState().getBlock(), true);
-	}
-
-	private void saveUpdates() {
-		efficientMarkDirty();
-		markBlockForUpdate(getPos());
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		super.onDataPacket(net, pkt);
+		readFromNBT(pkt.getNbtCompound());
 	}
 
 	@Override
@@ -347,11 +340,11 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 				if(castFluid != null && castFluid.amount >= currentRecipe.getFluidAmount()){
 					targetItemStack = getResult(cast, castFluid);
 					if(!targetItemStack.isEmpty() && canOutput() && burnSolidFuel()){
-						if(currentRecipe.consumesCast()) {
-							itemInventory.extractItem(ContainerCM.CAST, 1, false);
-						}
+						if(currentRecipe.consumesCast()) itemInventory.extractItem(ContainerCM.CAST, 1, false);
 						tank.drain(currentRecipe.getFluidAmount(), true);
 						progress = speedStackSize * CASTING_MACHINE_SPEED;
+						if(currentMode == BASIN) progress = progress / 3;
+						if(progress == 0) progress = 1;
 						update = true;
 					} else {
 						targetItemStack = ItemStack.EMPTY;
@@ -394,14 +387,6 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 			return fueled;
 		}
 		return fueled;
-	}
-
-	public int activeCount() {
-		if(activeCount != 0) {
-			activeCount--;
-			world.markBlockRangeForRenderUpdate(pos, pos);
-		}
-		return activeCount;
 	}
 
 	public boolean isFueled() {
@@ -458,6 +443,11 @@ public class TileEntityCM extends TileEntityItemHandler implements ITickable {
 
 	public int getOutputStackSize() {
 		return outputStackSize;
+	}
+
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
 	}
 
 	@SideOnly(Side.CLIENT)
