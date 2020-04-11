@@ -30,22 +30,22 @@ public class ConfigSIO {
 	 	 	Property snowballBasinAmountProperty = config.get(Configuration.CATEGORY_GENERAL,
 	 	 	 	 	"snowballBasinAmount",
 	 	 	 	 	"8",
-	 	 	 	 	"The Amount of Snowballs used forBasin mode (Valid value 1-16) (Default = 8)");
+	 	 	 	 	"The Amount of Snowballs used for Basin mode (Valid value 1-16) (Default = 8)");
 	 	 	snowballBasinAmountCheck = snowballBasinAmountProperty.getInt();
 	 	 	Property snowballCastingAmountProperty = config.get(Configuration.CATEGORY_GENERAL,
 	 	 	 	 	"snowballCastingAmount",
 	 	 	 	 	"1",
-	 	 	 	 	"The Amount of Snowballs used forCasting mode (Valid value 1-16) (Default = 1)");
+	 	 	 	 	"The Amount of Snowballs used for Casting mode (Valid value 1-16) (Default = 1)");
 	 	 	snowballCastingAmountCheck = snowballCastingAmountProperty.getInt();
 	 	 	Property castingMachineSpeedProperty = config.get(Configuration.CATEGORY_GENERAL,
 	 	 	 	 	"castingMachineSpeed",
 	 	 	 	 	"2",
-	 	 	 	 	"Casting Machine Speed Upgrade Multiplier forBasin/Casting (Valid value 1-4) (Default = 2)");
+	 	 	 	 	"Casting Machine Speed Upgrade Multiplier for Basin/Casting (Valid value 1-4) (Default = 2)");
 	 	 	castingMachineSpeedCheck = castingMachineSpeedProperty.getInt();
 	 	 	Property fuelControllerRatioProperty = config.get(Configuration.CATEGORY_GENERAL,
 	 	 	 	 	"fuelControllerRatio",
 	 	 	 	 	"4.44",
-	 	 	 	 	"Fuel Controller Ratio forTemperature/Speed Upgrades (Valid value 1.0-4.44) (Default = 4.44)");
+	 	 	 	 	"Fuel Controller Ratio for Temperature/Speed Upgrades (Valid value 1.0-4.44) (Default = 4.44)");
 	 	 	fuelControllerRatioCheck = fuelControllerRatioProperty.getDouble();
 	 	} catch (Exception e) {
 	 		SmelteryIO.logger.error("Config Error %d" + e);
