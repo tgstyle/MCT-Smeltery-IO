@@ -10,10 +10,9 @@ import mctmods.smelteryio.tileentity.container.ContainerCM;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank.TankListener;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
@@ -26,11 +25,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
 
-public class TileEntityCM extends TileEntitySlotHandler implements ITickable, TankListener {
-	private EnumFacing facing = EnumFacing.NORTH;
+public class TileEntityCM extends TileEntityBase implements ITickable, TankListener {
 	public static final String TAG_FACING = "facing";
 	public static final String TAG_PROGRESS = "progress";
 	public static final String TAG_ACTIVE = "active";
+	public static final String TAG_SMELTER = "smeltery";
 	public static final String TAG_FUEL = "fueled";
 	public static final String TAG_CAN_CAST = "canCast";
 	public static final String TAG_MODE = "currentMode";
@@ -44,19 +43,11 @@ public class TileEntityCM extends TileEntitySlotHandler implements ITickable, Ta
 	public static final int CAPACITY = 10368;
 	public static final int CAST = 0;
 	public static final int BASIN = 1;
-	public boolean active = false;
 	private static final int PROGRESS = 24;
 	private static final int SLOTS_SIZE = 7;
 	private static final int FUEL_AMOUNT_BASIN = ConfigSIO.snowballBasinAmount;
 	private static final int FUEL_AMOUNT_CAST = ConfigSIO.snowballCastingAmount;
 	private static final int CASTING_MACHINE_SPEED = ConfigSIO.castingMachineSpeed;
-	private int cooldown = 0;
-	private int upgradeSize1 = 0;
-	private int upgradeSize2 = 0;
-	private int upgradeSize3 = 0;
-	private int upgradeSize4 = 0;
-	private int progress = 0;
-	private int activeCount = 0;
 	private int outputStackSize = 0;
 	private int speedStackSize = 1;
 	private int currentMode = CAST;
@@ -67,7 +58,6 @@ public class TileEntityCM extends TileEntitySlotHandler implements ITickable, Ta
 	private boolean slotsLocked = true;
 	private boolean controlledByRedstone = false;
 	private boolean blockPowered = false;
-	private boolean update = false;
 	private ItemStack targetItemStack = ItemStack.EMPTY;
 	private ItemStack lastCast = ItemStack.EMPTY;
 	private ItemStack cast;
@@ -87,6 +77,7 @@ public class TileEntityCM extends TileEntitySlotHandler implements ITickable, Ta
 		facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
 		progress = compound.getInteger(TAG_PROGRESS);
 		active = (compound.getBoolean(TAG_ACTIVE));
+		smeltery = (compound.getBoolean(TAG_SMELTER));
 		fueled = compound.getBoolean(TAG_FUEL);
 		canCast = compound.getBoolean(TAG_CAN_CAST);
 		currentMode = compound.getInteger(TAG_MODE);
@@ -105,18 +96,19 @@ public class TileEntityCM extends TileEntitySlotHandler implements ITickable, Ta
 		compound.setInteger(TAG_FACING, facing.getIndex());
 		compound.setInteger(TAG_PROGRESS, progress);
 		compound.setBoolean(TAG_ACTIVE, active);
+		compound.setBoolean(TAG_SMELTER, smeltery);
 		compound.setBoolean(TAG_FUEL, fueled);
 		compound.setBoolean(TAG_CAN_CAST, canCast);
 		compound.setInteger(TAG_MODE, currentMode);
 		compound.setInteger(TAG_OUTPUT_STACK_SIZE, outputStackSize);
 		compound.setInteger(TAG_SPEED_STACK_SIZE, speedStackSize);
 		compound.setBoolean(TAG_LOCK_SLOTS, slotsLocked);
-		compound.setBoolean(TAG_REDSTONE, controlledByRedstone);
-		compound.setBoolean(TAG_POWERED, blockPowered);
-		tank.writeToNBT(compound);
 		NBTTagCompound tagItemStack = new NBTTagCompound();
 		tagItemStack = targetItemStack.writeToNBT(tagItemStack);
 		compound.setTag(TAG_OUTPUT_ITEM_STACK, tagItemStack);
+		compound.setBoolean(TAG_REDSTONE, controlledByRedstone);
+		compound.setBoolean(TAG_POWERED, blockPowered);
+		tank.writeToNBT(compound);
 		return compound;
 	}
 
@@ -161,56 +153,6 @@ public class TileEntityCM extends TileEntitySlotHandler implements ITickable, Ta
 	}
 
 	@Override
-	public void update() {
-		if(world.isRemote) return;
-		update = false;
-		if(cooldown % 2 == 0) {
-			if(isChanged()) updateRecipe();
-			if(canWork()) {
-				checkUpgradeSlots();
-				if(canCast()) {
-					doCasting();
-				}
-			}
-		}
-		cooldown = (cooldown + 2) % 200;
-		if(activeCount != 0) {
-			activeCount--;
-			active = true;
-		} else if(activeCount == 0 && progress == 0 && active) {
-			update = true;
-			active = false;
-		}
-		if(update) efficientMarkDirty();
-	}
-
-	public EnumFacing getFacing() {
-		return facing;
-	}
-
-	public void setFacing(EnumFacing facing) {
-		this.facing = facing;
-	}
-
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
-	}
-
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		super.onDataPacket(net, pkt);
-		readFromNBT(pkt.getNbtCompound());
-	}
-
-	@Override
 	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
 		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 	}
@@ -220,6 +162,57 @@ public class TileEntityCM extends TileEntitySlotHandler implements ITickable, Ta
 	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) tank;
 		return super.getCapability(capability, facing);
+	}
+
+	@Override
+	public void update() {
+		if(world.isRemote) return;
+		update = false;
+		if(cooldown % 2 == 0) {
+			if(getSmeltery()) inputFluid();
+		   	if(isChanged()) updateRecipe();
+			if(canWork()) {
+				checkUpgradeSlots();
+				if(canCast()) doCasting();
+			}
+		}
+		cooldown = (cooldown + 2) % 200;
+		if(activeCount != 0) {
+			activeCount--;
+			active = true;
+		} else if(progress == 0 && active) {
+			update = true;
+			active = false;
+		}
+		if(update) efficientMarkDirty();
+	}
+
+	private boolean getSmeltery() {
+		if(tileSmeltery == null) tileSmeltery = getMasterTile();
+	   	if(tileSmeltery != null && tileSmeltery.getTank() != null) {
+			if(!smeltery) {
+				notifyMasterOfChange();
+				update = true;
+			}
+	   		smeltery = true;
+		} else {
+			if(smeltery) {
+				smeltery = false;
+				tileSmeltery = null;
+				update = true;
+			}
+		}
+		return smeltery;
+	}
+
+	private void inputFluid() {
+		if(tileSmeltery.getTank().getFluid() == null) return;
+		FluidStack out = tileSmeltery.getTank().getFluid();
+		int accepted = tank.fill(out, false);
+		if(accepted == 0) return;
+		FluidStack transfer = new FluidStack(out, Math.min(accepted, 144));
+		tileSmeltery.getTank().drain(transfer, true);
+		tank.fill(transfer, true);
 	}
 
 	private boolean isChanged() {
@@ -393,11 +386,6 @@ public class TileEntityCM extends TileEntitySlotHandler implements ITickable, Ta
 		return fueled;
 	}
 
-	public boolean isReady() {
-		if(canCast && fueled) return true;
-		return false;
-	}
-
 	public int getCurrentMode() {
 		return currentMode;
 	}
@@ -448,6 +436,15 @@ public class TileEntityCM extends TileEntitySlotHandler implements ITickable, Ta
 	@Override
 	public void TankContentsChanged() {
 		this.markContainingBlockForUpdate(null);
+	}
+
+	public boolean hasController() {
+		return smeltery;
+	}
+
+	public boolean isReady() {
+		if(canCast && fueled) return true;
+		return false;
 	}
 
 	@SideOnly(Side.CLIENT)

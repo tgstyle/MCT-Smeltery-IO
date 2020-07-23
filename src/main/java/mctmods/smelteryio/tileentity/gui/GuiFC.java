@@ -53,7 +53,10 @@ public class GuiFC extends GuiContainer {
 		double ratio = tileEntity.getRatio();
 		String msgRatio = TextFormatting.AQUA + I18n.format("container.fuel_controller.ratio", new Object[0]) + " " + ratio;
 		fontRenderer.drawString(msgRatio, (-55 - (fontRenderer.getStringWidth(msgRatio))/2), 32, 4210752);
-		if(tileEntity.atCapacity()) {
+		if(!tileEntity.hasController()) {
+			String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorsmelter", new Object[0]);
+			fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
+		} else if(tileEntity.atCapacity()) {
 			String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorcapacity", new Object[0]);
 			fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
 		} else if(tileEntity.getCurrentTemp() == 0) {

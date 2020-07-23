@@ -25,15 +25,19 @@ repositories {
 	maven {
 		name = 'ChickenBones Maven'
 		url = "http://chickenbones.net/maven/"
-	}	
+	}
 	maven {
 		name = 'JEI Maven'
 		url = 'http://dvs1.progwml6.com/files/maven'
 	}
 	maven {
 		name = 'HWYLA Maven'
-		url = 'http://tehnut.info/maven'
+		url = 'http://maven.tehnut.info'
 	}
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
 	maven {
 		name = 'Immersive Maven'
 		url = 'http://maven.blamejared.com'
@@ -41,7 +45,7 @@ repositories {
 	maven {
 		name = 'tterrag Maven'
 		url = 'http://maven.tterrag.com/'
-	}	
+	}
 }
 
 
@@ -66,10 +70,11 @@ dependencies {
 
 
 
-	
 
-	deobfCompile "codechicken:CodeChickenLib:${common.mcversion}-${common.cclo_version}:deobf"	
-		
+
+
+
+
 	compileOnly "mcjty.theoneprobe:TheOneProbe-${common.mcbaseversion}:${common.mcbaseversion}-${common.top_version}"
 	compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
 	deobfCompile "slimeknights:TConstruct:${common.mcversion}-${common.tcon_version}"
@@ -83,10 +88,10 @@ processResources {
 
 	from(sourceSets.main.resources.srcDirs) {
 		include "mcmod.info"
-				
+
 		expand "version":project.modversion + "." + project.modsubversion, "mcversion":project.minecraft.version
 	}
-		
+
 	from(sourceSets.main.resources.srcDirs) {
 		exclude "mcmod.info"
 	}

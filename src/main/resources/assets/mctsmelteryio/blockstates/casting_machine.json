@@ -1,32 +1,62 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"transform": "forge:default-block",
-		"model": "mctsmelteryio:machine/machine",
+		"model": "orientable",
 		"textures": {
-			"sides": "mctsmelteryio:blocks/machine/casting_machine_side",
-			"particle": "#sides",
-			"front": "#sides",
-			"south": "#sides",
-			"west": "#sides",
-			"east": "#sides",
-			"up": "mctsmelteryio:blocks/machine/casting_machine_top",
-			"down": "mctsmelteryio:blocks/machine/casting_machine_bottom"
-		}
+			"active": "mctsmelteryio:blocks/casting_machine/casting_machine_active",
+			"front": "mctsmelteryio:blocks/casting_machine/casting_machine_side",
+			"side": "mctsmelteryio:blocks/shared_side",
+			"back": "mctsmelteryio:blocks/casting_machine/casting_machine_drain",
+			"top": "mctsmelteryio:blocks/casting_machine/casting_machine_top",
+			"bottom": "mctsmelteryio:blocks/casting_machine/casting_machine_bottom",
+			"particle": "#side"
+		},
+        "uvlock": true
 	},
 	"variants": {
 		"inventory": [{}],
 		"normal": [{}],
 		"active": {
-			"true": {
+			"1": {
 				"textures": {
-					"front": "mctsmelteryio:blocks/machine/casting_machine_active",
-					"south": "mctsmelteryio:blocks/machine/casting_machine_active",
-					"west": "mctsmelteryio:blocks/machine/casting_machine_active",
-					"east": "mctsmelteryio:blocks/machine/casting_machine_active"
+					"down": "#bottom",
+					"up": "#top",
+					"north": "#front",
+					"south": "#front",
+					"west": "#front",
+					"east": "#front"
 				}
 			},
-			"false": {}
+			"2": {
+				"textures": {
+					"down": "#bottom",
+					"up": "#top",
+					"north": "#active",
+					"south": "#active",
+					"west": "#active",
+					"east": "#active"	
+				}
+			},
+			"3": {
+				"textures": {
+					"down": "#side",
+					"up": "#side",
+					"north": "#front",
+					"south": "#back",
+					"west": "#side",
+					"east": "#side"
+				}
+			},
+			"4": {
+				"textures": {
+					"down": "#side",
+					"up": "#side",
+					"north": "#active",
+					"south": "#back",
+					"west": "#side",
+					"east": "#side"
+				}
+			}
 		},
 		"facing": {
 			"north": {},

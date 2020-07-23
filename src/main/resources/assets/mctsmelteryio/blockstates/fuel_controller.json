@@ -1,29 +1,62 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"transform": "forge:default-block",
-		"model": "mctsmelteryio:machine/machine",
+		"model": "orientable",
 		"textures": {
-			"sides": "mctsmelteryio:blocks/machine/shared_side",
-			"particle": "#sides",
-			"front": "mctsmelteryio:blocks/machine/fuel_controller_front",
-			"south": "#sides",
-			"west": "#sides",
-			"east": "#sides",
-			"up": "#sides",
-			"down": "#sides"
-		}
+			"active": "mctsmelteryio:blocks/fuel_controller/fuel_controller_front_active",
+			"front": "mctsmelteryio:blocks/fuel_controller/fuel_controller_front",
+			"side": "mctsmelteryio:blocks/shared_side",
+			"back": "#side",
+			"top": "#side",
+			"bottom": "#side",
+			"particle": "#side"
+		},
+        "uvlock": true
 	},
 	"variants": {
 		"inventory": [{}],
 		"normal": [{}],
 		"active": {
-			"true": {
+			"1": {
 				"textures": {
-					"front": "mctsmelteryio:blocks/machine/fuel_controller_front_active"
+					"down": "#bottom",
+					"up": "#top",
+					"north": "#front",
+					"south": "#back",
+					"west": "#side",
+					"east": "#side"
 				}
 			},
-			"false": {}
+			"2": {
+				"textures": {
+					"down": "#bottom",
+					"up": "#top",
+					"north": "#active",
+					"south": "#back",
+					"west": "#side",
+					"east": "#side"
+				}
+			},
+			"3": {
+				"textures": {
+					"down": "#top",
+					"up": "#bottom",
+					"north": "#front",
+					"south": "#back",
+					"west": "#side",
+					"east": "#side"
+				}
+			},
+			"4": {
+				"textures": {
+					"down": "#bottom",
+					"up": "#top",
+					"north": "#active",
+					"south": "#back",
+					"west": "#side",
+					"east": "#side"
+				}
+			}
 		},
 		"facing": {
 			"north": {},

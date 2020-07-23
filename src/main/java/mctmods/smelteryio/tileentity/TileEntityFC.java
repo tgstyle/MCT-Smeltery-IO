@@ -10,27 +10,21 @@ import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import slimeknights.tconstruct.smeltery.tileentity.TileHeatingStructure;
-import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
-import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 
-public class TileEntityFC extends TileEntitySlotHandler implements ITickable {
-	private EnumFacing facing = EnumFacing.NORTH;
+public class TileEntityFC extends TileEntityBase implements ITickable {
 	public static final String TAG_FACING = "facing";
 	public static final String TAG_PROGRESS = "progress";
 	public static final String TAG_ACTIVE = "active";
+	public static final String TAG_SMELTER = "smeltery";
 	public static final String TAG_RATIO = "ratio";
 	public static final String TAG_TARGET_TEMP = "targetTemp";
 	public static final String TAG_CURRENT_TEMP = "currentTemp";
@@ -38,24 +32,45 @@ public class TileEntityFC extends TileEntitySlotHandler implements ITickable {
 	public static final String TAG_AT_CAPACITY = "atCapacity";
 	public static final int TILEID = 0;
 	public static final int PROGRESS = 250;
-	public boolean active = false;
 	private static final int SLOTS_SIZE = 2;
 	private static final double FUEL_RATIO = ConfigSIO.fuelControllerRatio;
-	private TileSmeltery tileSmeltery;
 	private double ratio = 0.01;
-	private int cooldown = 0;
-	private int upgradeSize1 = 0;
-	private int progress = 0;
-	private int activeCount = 0;
 	private int targetTemp = 0;
 	private int currentTemp = 0;
 	private int smelteryTemp;
 	private boolean heatingItem = false;
 	private boolean atCapacity = false;
-	private boolean update = false;
 
 	public TileEntityFC() {
 		super(SLOTS_SIZE);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound compound) {
+		facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
+		progress = compound.getInteger(TAG_PROGRESS);
+		active = (compound.getBoolean(TAG_ACTIVE));
+		smeltery = (compound.getBoolean(TAG_SMELTER));
+		ratio = compound.getDouble(TAG_RATIO);
+		targetTemp = compound.getInteger(TAG_TARGET_TEMP);
+		currentTemp = compound.getInteger(TAG_CURRENT_TEMP);
+		smelteryTemp = compound.getInteger(TAG_SMELTERY_TEMP);
+		atCapacity = compound.getBoolean(TAG_AT_CAPACITY);
+		super.readFromNBT(compound);
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		compound.setInteger(TAG_FACING, facing.getIndex());
+		compound.setInteger(TAG_PROGRESS, progress);
+		compound.setBoolean(TAG_ACTIVE, active);
+		compound.setBoolean(TAG_SMELTER, smeltery);
+		compound.setDouble(TAG_RATIO, ratio);
+		compound.setInteger(TAG_TARGET_TEMP, targetTemp);
+		compound.setInteger(TAG_CURRENT_TEMP, currentTemp);
+		compound.setInteger(TAG_SMELTERY_TEMP, smelteryTemp);
+		compound.setBoolean(TAG_AT_CAPACITY, atCapacity);
+		return super.writeToNBT(compound);
 	}
 
 	@Override
@@ -70,99 +85,71 @@ public class TileEntityFC extends TileEntitySlotHandler implements ITickable {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
-		progress = compound.getInteger(TAG_PROGRESS);
-		active = (compound.getBoolean(TAG_ACTIVE));
-		ratio = compound.getDouble(TAG_RATIO);
-		targetTemp = compound.getInteger(TAG_TARGET_TEMP);
-		currentTemp = compound.getInteger(TAG_CURRENT_TEMP);
-		smelteryTemp = compound.getInteger(TAG_SMELTERY_TEMP);
-		atCapacity = compound.getBoolean(TAG_AT_CAPACITY);
-		super.readFromNBT(compound);
-	}
-
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setInteger(TAG_FACING, facing.getIndex());
-		compound.setInteger(TAG_PROGRESS, progress);
-		compound.setBoolean(TAG_ACTIVE, active);
-		compound.setDouble(TAG_RATIO, ratio);
-		compound.setInteger(TAG_TARGET_TEMP, targetTemp);
-		compound.setInteger(TAG_CURRENT_TEMP, currentTemp);
-		compound.setInteger(TAG_SMELTERY_TEMP, smelteryTemp);
-		compound.setBoolean(TAG_AT_CAPACITY, atCapacity);
-		return super.writeToNBT(compound);
-	}
-
-	@Override
 	public void update() {
 		if(world.isRemote) return;
 		update = false;
-		if(cooldown % 2 == 0) {
-			if(this instanceof TileSmelteryComponent) {
-				tileSmeltery = getMasterTile();
-		   		if(tileSmeltery != null && tileSmeltery.getTank() != null) {
-		   			updateSmelteryHeatingState();
-		   			calculateRatio();
-		   			calculateTemperature();
-		   			burnSolidFuel();
-		   		}
-			}
+		if(cooldown % 2 == 0 && getSmeltery()) {
+		 	updateSmelteryHeatingState();
+		 	calculateRatio();
+		  	calculateTemperature();
+		  	burnSolidFuel();
 		}
 		cooldown = (cooldown + 1) % 20;
 		if(activeCount != 0) {
 			activeCount--;
 			active = true;
-		} else if(activeCount == 0 && progress == 0 && active) {
+		} else if(progress == 0 && active) {
 			update = true;
 			active = false;
 		}
 		if(update) efficientMarkDirty();
 	}
 
-	public EnumFacing getFacing() {
-		return facing;
-	}
-
-	public void setFacing(EnumFacing facing) {
-		this.facing = facing;
-	}
-
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
-	}
-
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		super.onDataPacket(net, pkt);
-		readFromNBT(pkt.getNbtCompound());
+	private boolean getSmeltery() {
+		if(tileSmeltery == null) tileSmeltery = getMasterTile();
+		if(tileSmeltery != null && tileSmeltery.getTank() != null) {
+			if(!smeltery) {
+				smelteryTemp = getFluidFuelTemp();
+				setSmelteryTemp(smelteryTemp);
+				notifyMasterOfChange();
+				update = true;
+			}
+			smeltery = true;
+		} else {
+			if(smeltery) {
+				smeltery = false;
+				tileSmeltery = null;
+				update = true;
+			}
+			if(active) { 
+				activeCount = 0;
+				progress = 0;
+				targetTemp = 0;
+				currentTemp = 0;
+				update = true;
+			}
+		}
+		return smeltery;
 	}
 
 	private void updateSmelteryHeatingState() {
 		heatingItem = false;
 		atCapacity = false;
-		for(int item = 0; item < tileSmeltery.getSizeInventory(); item++) {
-			ItemStack stack = tileSmeltery.getStackInSlot(item);
-		    if(!stack.isEmpty()) {
-		    	if(tileSmeltery.hasFuel()) {
-		    		if(tileSmeltery.canHeat(item)) {
-		    			int temp = tileSmeltery.getTemperature(item);
-		    			int neededTemp = tileSmeltery.getTempRequired(item);
-		    			float progress = tileSmeltery.getProgress(item);
-		    			if(temp != 0 && temp <= neededTemp) heatingItem = true;
-		    			if(!heatingItem && progress >= 2) atCapacity = true;
-		    		}
-		    	}
-		    }
+		if(tileSmeltery.isActive()) {
+			for(int item = 0; item < tileSmeltery.getSizeInventory(); item++) {
+				ItemStack stack = tileSmeltery.getStackInSlot(item);
+				if(!stack.isEmpty()) {
+					if(tileSmeltery.hasFuel()) {
+						if(tileSmeltery.canHeat(item)) {
+							int temp = tileSmeltery.getTemperature(item);
+							int neededTemp = tileSmeltery.getTempRequired(item);
+							float progress = tileSmeltery.getProgress(item);
+							if(temp != 0 && temp <= neededTemp) heatingItem = true;
+							if(!heatingItem && progress >= 2) atCapacity = true;
+						}
+					}
+				}
+			}
 		}
 		if(heatingItem || atCapacity && activeCount != 0) update = true;
 		if(activeCount == 0 && atCapacity) {
@@ -201,7 +188,10 @@ public class TileEntityFC extends TileEntitySlotHandler implements ITickable {
 			consumeItemStack(ContainerFC.FUEL, 1);
 			update = true;
 		} if(currentTemp != 0) {
-			if(targetTemp != tileSmeltery.getTemperature()) setSmelteryTemp(targetTemp);
+			if(targetTemp != tileSmeltery.getTemperature()) {
+				setSmelteryTemp(targetTemp);
+				notifyMasterOfChange();
+			}
 			progress = (progress + 1) % PROGRESS;
 			activeCount = progress + 10;
 			if(progress == 0) {
@@ -213,16 +203,7 @@ public class TileEntityFC extends TileEntitySlotHandler implements ITickable {
 		}
 	}
 
-	public TileSmeltery getMasterTile() {
-		TileSmeltery tileSmeltery = null;
-		BlockPos masterPos = getMasterPosition();
-		World world = getWorld();
-		if(getHasMaster() && masterPos != null && world.getTileEntity(masterPos) instanceof TileSmeltery) tileSmeltery = (TileSmeltery) world.getTileEntity(masterPos);
-		return tileSmeltery;
-	}
-
 	private int getFluidFuelTemp() {
-		if(tileSmeltery == null) return 0;
 		FluidStack fluidStack = tileSmeltery.currentFuel;
 		if(fluidStack != null) return fluidStack.getFluid().getTemperature() - 300; // convert to degrees celcius as done in Tinkers Construct
 		return 0;
@@ -256,11 +237,6 @@ public class TileEntityFC extends TileEntitySlotHandler implements ITickable {
 	   	setSmelteryTempNBT(temperature);
 	}
 
-	public boolean isReady() {
-		if(progress != 0) return true;
-		return false;
-	}
-
 	public boolean atCapacity() {
 		return atCapacity;
 	}
@@ -276,6 +252,15 @@ public class TileEntityFC extends TileEntitySlotHandler implements ITickable {
 
 	public int getCurrentTemp() {
 		return currentTemp;
+	}
+
+	public boolean hasController() {
+		return smeltery;
+	}
+
+	public boolean isReady() {
+		if(progress != 0) return true;
+		return false;
 	}
 
 	@SideOnly(Side.CLIENT)

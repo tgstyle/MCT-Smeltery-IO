@@ -6,33 +6,48 @@ import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-
+import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 
-public class TileEntitySlotHandler extends TileSmelteryComponent {
+public class TileEntityBase extends TileSmelteryComponent {
+	public EnumFacing facing = EnumFacing.NORTH;
+	public int progress = 0;
+	public int activeCount = 0;
+	public int cooldown = 0;
+	public int upgradeSize1 = 0;
+	public int upgradeSize2 = 0;
+	public int upgradeSize3 = 0;
+	public int upgradeSize4 = 0;
+	public boolean active = false;
+	public boolean update = false;
+	public boolean smeltery = false;
+	public TileSmeltery tileSmeltery;
+
 	private final int itemSlotsSize;
 	private ItemStackHandler itemInventoryIO;
 	protected ItemStackHandler itemInventory;
 
-	protected TileEntitySlotHandler(int itemSlots) {
+	protected TileEntityBase(int itemSlots) {
 		itemSlotsSize = itemSlots;
 		itemInventory = new ItemStackHandler(itemSlotsSize) {
 			@Override
 			protected void onContentsChanged(int itemSlots) {
-				TileEntitySlotHandler.this.efficientMarkDirty();
-				TileEntitySlotHandler.this.onSlotChange(itemSlots);
+				TileEntityBase.this.efficientMarkDirty();
+				TileEntityBase.this.onSlotChange(itemSlots);
 			}
 		};
-
 		itemInventoryIO = new ItemStackHandler(itemSlotsSize) {
 			@Override
 			protected void onContentsChanged(int itemSlots) {
-				TileEntitySlotHandler.this.efficientMarkDirty();
+				TileEntityBase.this.efficientMarkDirty();
 			}
 
 			@Override
@@ -53,12 +68,12 @@ public class TileEntitySlotHandler extends TileSmelteryComponent {
 
 			@Override
 			public ItemStack insertItem(int itemSlots, @Nonnull ItemStack stack, boolean simulate) {
-				return TileEntitySlotHandler.this.insertItem(itemSlots, stack, simulate);
+				return TileEntityBase.this.insertItem(itemSlots, stack, simulate);
 			}
 
 			@Override
 			public ItemStack extractItem(int itemSlots, int amount, boolean simulate) {
-				return TileEntitySlotHandler.this.extractItem(itemSlots, amount, simulate);
+				return TileEntityBase.this.extractItem(itemSlots, amount, simulate);
 			}
 		};
 	}
@@ -109,6 +124,32 @@ public class TileEntitySlotHandler extends TileSmelteryComponent {
 		itemInventory.extractItem(slotId, amount, false);
 	}
 
+	@Override
+	public SPacketUpdateTileEntity getUpdatePacket() {
+		NBTTagCompound tag = new NBTTagCompound();
+		writeToNBT(tag);
+		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
+	}
+
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		super.onDataPacket(net, pkt);
+		readFromNBT(pkt.getNbtCompound());
+	}
+
+	public EnumFacing getFacing() {
+		return facing;
+	}
+
+	public void setFacing(EnumFacing facing) {
+		this.facing = facing;
+	}
+
 	public void efficientMarkDirty() {
 		world.getChunkFromBlockCoords(getPos()).markDirty();
 		this.markContainingBlockForUpdate(null);
@@ -123,6 +164,14 @@ public class TileEntitySlotHandler extends TileSmelteryComponent {
 		if(newState == null) newState = state;
 		world.notifyBlockUpdate(pos, state, newState, 3);
 		world.notifyNeighborsOfStateChange(pos, newState.getBlock(), true);
+	}
+
+	public TileSmeltery getMasterTile() {
+		TileSmeltery tileSmeltery = null;
+		BlockPos masterPos = getMasterPosition();
+		World world = getWorld();
+		if(getHasMaster() && masterPos != null && world.getTileEntity(masterPos) instanceof TileSmeltery) tileSmeltery = (TileSmeltery) world.getTileEntity(masterPos);
+		return tileSmeltery;
 	}
 
 }
