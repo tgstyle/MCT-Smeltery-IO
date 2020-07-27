@@ -35,9 +35,9 @@ public class GuiFC extends GuiContainer {
 		mc.getTextureManager().bindTexture(BG_TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 		drawTexturedModalRect(guiLeft - 110, guiTop, 146, 170, 110, 60);
-		if(tileEntity.isReady()) {
+		if(tileEntity.isActive()) {
 			int progress = tileEntity.getGUIProgress(PROGRESSHEIGHT);
-			if(tileEntity.getCurrentTemp() == 0) progress = PROGRESSHEIGHT;
+			if(!tileEntity.isActive()) progress = PROGRESSHEIGHT;
 			drawTexturedModalRect(guiLeft + 81, guiTop + 37 + progress, 176, 33 + progress, 13, 13 - progress);
 		}
 	}
@@ -53,16 +53,13 @@ public class GuiFC extends GuiContainer {
 		double ratio = tileEntity.getRatio();
 		String msgRatio = TextFormatting.AQUA + I18n.format("container.fuel_controller.ratio", new Object[0]) + " " + ratio;
 		fontRenderer.drawString(msgRatio, (-55 - (fontRenderer.getStringWidth(msgRatio))/2), 32, 4210752);
-		if(!tileEntity.hasController()) {
-			String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorsmelter", new Object[0]);
-			fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
-		} else if(tileEntity.atCapacity()) {
-			String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorcapacity", new Object[0]);
-			fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
-		} else if(tileEntity.getCurrentTemp() == 0) {
-			String warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.error", new Object[0]);
-			fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
-		}
+		String warn = null;
+		if(!tileEntity.isHeatingSmeltery()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.erroritems", new Object[0]);
+		if(tileEntity.atCapacity()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorcapacity", new Object[0]);
+		if(!tileEntity.isReady()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorfuel", new Object[0]);
+		if(!tileEntity.isFueled()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorsmelteryfuel", new Object[0]);
+		if(!tileEntity.hasController()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorsmeltery", new Object[0]);
+		if(warn != null) fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
 	}
 
 }

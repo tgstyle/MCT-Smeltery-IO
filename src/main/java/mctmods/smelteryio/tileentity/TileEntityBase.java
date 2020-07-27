@@ -8,16 +8,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
+import slimeknights.tconstruct.smeltery.tileentity.TileTank;
 
 public class TileEntityBase extends TileSmelteryComponent {
+	public static final String TAG_FACING = "facing";
+	public static final String TAG_IS_READY = "isReady";
+	public static final String TAG_ACTIVE = "active";
+	public static final String TAG_PROGRESS = "progress";
+	public static final String TAG_SMELTER = "smeltery";
+	public static final String TAG_FUELED = "fueled";
 	public EnumFacing facing = EnumFacing.NORTH;
 	public int progress = 0;
 	public int activeCount = 0;
@@ -26,30 +35,20 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public int upgradeSize2 = 0;
 	public int upgradeSize3 = 0;
 	public int upgradeSize4 = 0;
+	public boolean isReady = false;
 	public boolean active = false;
 	public boolean update = false;
 	public boolean smeltery = false;
+	public boolean fueled = false;
 	public TileSmeltery tileSmeltery;
-
 	private final int itemSlotsSize;
 	private ItemStackHandler itemInventoryIO;
 	protected ItemStackHandler itemInventory;
 
 	protected TileEntityBase(int itemSlots) {
 		itemSlotsSize = itemSlots;
-		itemInventory = new ItemStackHandler(itemSlotsSize) {
-			@Override
-			protected void onContentsChanged(int itemSlots) {
-				TileEntityBase.this.efficientMarkDirty();
-				TileEntityBase.this.onSlotChange(itemSlots);
-			}
-		};
+		itemInventory = new ItemStackHandler(itemSlotsSize) {};
 		itemInventoryIO = new ItemStackHandler(itemSlotsSize) {
-			@Override
-			protected void onContentsChanged(int itemSlots) {
-				TileEntityBase.this.efficientMarkDirty();
-			}
-
 			@Override
 			public void setStackInSlot(int itemSlots, @Nonnull ItemStack stack) {
 				itemInventory.setStackInSlot(itemSlots, stack);
@@ -79,24 +78,36 @@ public class TileEntityBase extends TileSmelteryComponent {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setTag("itemInventory", itemInventory.serializeNBT());
-		return super.writeToNBT(compound);
-	}
-
-	@Override
 	public void readFromNBT(NBTTagCompound compound) {
+		facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
+		isReady = compound.getBoolean(TAG_IS_READY);
+		active = compound.getBoolean(TAG_ACTIVE);
+		progress = compound.getInteger(TAG_PROGRESS);
+		smeltery = compound.getBoolean(TAG_SMELTER);
+		fueled = compound.getBoolean(TAG_FUELED);
 		itemInventory.deserializeNBT(compound.getCompoundTag("itemInventory"));
 		super.readFromNBT(compound);
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		compound.setInteger(TAG_FACING, facing.getIndex());
+		compound.setBoolean(TAG_IS_READY, isReady);
+		compound.setBoolean(TAG_ACTIVE, active);
+		compound.setInteger(TAG_PROGRESS, progress);
+		compound.setBoolean(TAG_SMELTER, smeltery);
+		compound.setBoolean(TAG_FUELED, fueled);
+		compound.setTag("itemInventory", itemInventory.serializeNBT());
+		super.writeToNBT(compound);
+		return compound;
+	}
+
+	@Override
+	public boolean hasCapability(final Capability<?> capability, @Nullable EnumFacing facing) {
 		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
-	@Nullable
 	@Override
 	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
@@ -172,6 +183,12 @@ public class TileEntityBase extends TileSmelteryComponent {
 		World world = getWorld();
 		if(getHasMaster() && masterPos != null && world.getTileEntity(masterPos) instanceof TileSmeltery) tileSmeltery = (TileSmeltery) world.getTileEntity(masterPos);
 		return tileSmeltery;
+	}
+
+	public IFluidTank getTankAt(BlockPos pos) {
+		TileEntity tileEntity = getWorld().getTileEntity(pos);
+		if(tileEntity instanceof TileTank) return ((TileTank) tileEntity).getInternalTank();
+		return null;
 	}
 
 }

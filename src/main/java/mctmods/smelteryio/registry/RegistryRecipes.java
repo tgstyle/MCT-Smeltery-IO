@@ -28,6 +28,7 @@ public class RegistryRecipes {
 	static ItemStack repeater = new ItemStack(Items.REPEATER ,1);
 	static ItemStack sugar = new ItemStack(Items.SUGAR, 1);
 	static ItemStack emerald = new ItemStack(Items.EMERALD, 1);
+	static ItemStack snowball = new ItemStack(Items.SNOWBALL, 1);
 	static ItemStack casting_table = new ItemStack(TinkerSmeltery.castingBlock, 1, BlockCasting.CastingType.TABLE.getMeta());
 	static ItemStack casting_basin = new ItemStack(TinkerSmeltery.castingBlock, 1, BlockCasting.CastingType.BASIN.getMeta());
 	static ItemStack seared_brick = new ItemStack(TinkerSmeltery.searedBlock, 1, 0);
@@ -43,6 +44,7 @@ public class RegistryRecipes {
 	static ItemStack upgrade_speed = new ItemStack(Registry.UPGRADE, 1, 6);
 	static ItemStack upgrade_redstone = new ItemStack(Registry.UPGRADE, 1, 7);
 	static ItemStack powdered_fuel = new ItemStack(Registry.POWDERED_FUEL, 3);
+	static ItemStack iceball = new ItemStack(Registry.ICEBALL, 1);
 
 	private static void registerRecipe() {
 		String ingotIronOrPlate = "plateIron";
@@ -63,6 +65,7 @@ public class RegistryRecipes {
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_basin, true, new Object[]{"ABA", "BCB","ABA", 'A', obsidian, 'B', casting_basin, 'C', upgrade_slot4}).setRegistryName("upgrade_basin"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_speed, true, new Object[]{"ABA", "BCB","ABA", 'A', emerald, 'B', sugar, 'C', upgrade_base}).setRegistryName("upgrade_speed"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_redstone, true, new Object[]{"ABA", "CDC","ABA", 'A', "blockRedstone", 'B', repeater, 'C', "gemQuartz", 'D', upgrade_base}).setRegistryName("upgrade_redstone"));
+		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), iceball, true, new Object[]{"AAA", "A A","AAA", 'A', snowball}).setRegistryName("iceball"));
 		ForgeRegistries.RECIPES.register(new ShapelessOreRecipe(new ResourceLocation(SmelteryIO.MODID), powdered_fuel, coalOrDustCoal, "gunpowder", coalOrDustCoal, coalOrDustCoal, ingotGoldOrDustGold, coalOrDustCoal, coalOrDustCoal, coalOrDustCoal, coalOrDustCoal).setRegistryName("powdered_fuel"));
 	}
 

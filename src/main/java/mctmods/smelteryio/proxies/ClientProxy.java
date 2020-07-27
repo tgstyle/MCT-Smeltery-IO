@@ -1,10 +1,13 @@
 package mctmods.smelteryio.proxies;
 
+import mctmods.smelteryio.entity.EntityIceball;
 import mctmods.smelteryio.registry.Registry;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.player.EntityPlayer;
 
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -18,6 +21,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
  	public void preInit() {
  	 	super.preInit();
+ 	 	RenderingRegistry.registerEntityRenderingHandler(EntityIceball.class, renderManager -> new RenderSnowball<EntityIceball>(renderManager, Registry.ICEBALL, Minecraft.getMinecraft().getRenderItem()));
 	}
 
 	@Override

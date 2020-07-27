@@ -75,11 +75,9 @@ public class SmelteryIO {
  	@EventHandler
  	public void preInit(FMLPreInitializationEvent event) {
  		config = new Configuration(event.getSuggestedConfigurationFile());
-
  		ConfigSIO.syncConfig();
  		RegistryTE.registerTileEntities();
  		NetworkHandler.registerNetwork();
-
  		proxy.preInit();
  	}
 
@@ -92,7 +90,6 @@ public class SmelteryIO {
  	public void postInit(FMLPostInitializationEvent event) {
 		Registry.registerTConstruct();
 		RegistryGUI.registerGUI();
-
  	 	proxy.postInit();
  	}
 

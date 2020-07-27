@@ -135,17 +135,17 @@ public class BlockMachine extends BlockBaseTE {
 		int meta = getMetaFromState(state);
 		int mode = 1;
 		if(tileEntity instanceof TileEntityFC) {
-			if(((TileEntityFC)tileEntity).active && ((TileEntityFC)tileEntity).smeltery) mode = 4;
-			if(!((TileEntityFC)tileEntity).active && ((TileEntityFC)tileEntity).smeltery) mode = 3;
-			if(((TileEntityFC)tileEntity).active && !((TileEntityFC)tileEntity).smeltery) mode = 2;
-			if(!((TileEntityFC)tileEntity).active && !((TileEntityFC)tileEntity).smeltery) mode = 1;
+			if(((TileEntityFC)tileEntity).isActive() && ((TileEntityFC)tileEntity).hasController()) mode = 4;
+			if(!((TileEntityFC)tileEntity).isActive() && ((TileEntityFC)tileEntity).hasController()) mode = 3;
+			if(((TileEntityFC)tileEntity).isActive() && !((TileEntityFC)tileEntity).hasController()) mode = 2;
+			if(!((TileEntityFC)tileEntity).isActive() && !((TileEntityFC)tileEntity).hasController()) mode = 1;
 			return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos, state));
 		}
 		if(tileEntity instanceof TileEntityCM) {
-			if(((TileEntityCM)tileEntity).active && ((TileEntityCM)tileEntity).smeltery) mode = 4;
-			if(!((TileEntityCM)tileEntity).active && ((TileEntityCM)tileEntity).smeltery) mode = 3;
-			if(((TileEntityCM)tileEntity).active && !((TileEntityCM)tileEntity).smeltery) mode = 2;
-			if(!((TileEntityCM)tileEntity).active && !((TileEntityCM)tileEntity).smeltery) mode = 1;
+			if(((TileEntityCM)tileEntity).isActive() && ((TileEntityCM)tileEntity).hasController()) mode = 4;
+			if(!((TileEntityCM)tileEntity).isActive() && ((TileEntityCM)tileEntity).hasController()) mode = 3;
+			if(((TileEntityCM)tileEntity).isActive() && !((TileEntityCM)tileEntity).hasController()) mode = 2;
+			if(!((TileEntityCM)tileEntity).isActive() && !((TileEntityCM)tileEntity).hasController()) mode = 1;
 			return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos, state));
 		}
 		return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos, state));

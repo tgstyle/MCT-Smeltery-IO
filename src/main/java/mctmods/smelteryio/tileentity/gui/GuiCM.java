@@ -65,7 +65,7 @@ public class GuiCM extends GuiContainer {
 		if(!tileEntity.isReady()) drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
 		if(tileEntity.getCurrentMode() == TileEntityCM.BASIN) drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
 		else drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
-		if(tileEntity.isFueled() && tileEntity.isProgressing() != 0) {
+		if(tileEntity.isFueled() && tileEntity.isActive()) {
 			int progress = tileEntity.getGUIProgress(PROGRESSWIDTH);
 			drawTexturedModalRect(guiLeft + 117, guiTop + 34, 176, 0, progress, 16);
 		}

@@ -7,6 +7,7 @@ tile.mctsmelteryio:machine.casting_machine.name=Casting Machine
 
 #Items
 item.mctsmelteryio:powdered_fuel.name=Powdered Fuel
+item.mctsmelteryio:iceball.name=Iceball
 item.mctsmelteryio:upgrade.upgrade_base.name=Base Upgrade
 item.mctsmelteryio:upgrade.upgrade_slot1.name=Slot Size Upgrade 1
 item.mctsmelteryio:upgrade.upgrade_slot2.name=Slot Size Upgrade 2
@@ -20,9 +21,11 @@ item.mctsmelteryio:upgrade.upgrade_redstone.name=Redstone Upgrade
 container.fuel_controller=Fuel Controller
 container.fuel_controller.temperature=Temperature
 container.fuel_controller.ratio=Ratio
-container.fuel_controller.errorsmelter=No Controller
+container.fuel_controller.erroritems=Smeltery needs Items
 container.fuel_controller.errorcapacity=Smeltery at Capacity
-container.fuel_controller.error=Insert Items/Fuel
+container.fuel_controller.errorfuel=No Fuel
+container.fuel_controller.errorsmelteryfuel=No Smeltery Fuel
+container.fuel_controller.errorsmeltery=No Controller
 container.casting_machine=Casting Machine
 container.casting_machine.buttontank.header=Empty Tank
 container.casting_machine.buttontank.info=Hold "Shift" to Unlock Button

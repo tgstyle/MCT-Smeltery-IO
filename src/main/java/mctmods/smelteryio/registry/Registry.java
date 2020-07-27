@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import mctmods.smelteryio.SmelteryIO;
 import mctmods.smelteryio.blocks.BlockMachine;
 import mctmods.smelteryio.itemblocks.ItemBlockMachine;
+import mctmods.smelteryio.items.ItemIceball;
 import mctmods.smelteryio.items.ItemPowderedFuel;
 import mctmods.smelteryio.items.ItemUpgrade;
 
@@ -26,6 +27,7 @@ public class Registry {
 
  	// items
  	public static final ItemPowderedFuel POWDERED_FUEL = new ItemPowderedFuel();
+ 	public static final ItemIceball ICEBALL = new ItemIceball();
  	public static final ItemUpgrade UPGRADE = new ItemUpgrade();
 
  	// blocks
@@ -36,6 +38,7 @@ public class Registry {
  	// items
 	private static final Item[] item = {
 		POWDERED_FUEL,
+		ICEBALL,
 		UPGRADE
 	};
 
@@ -80,6 +83,7 @@ public class Registry {
  		MACHINE.initItemBlockModels();
  		// items
  		POWDERED_FUEL.initItemModels();
+ 		ICEBALL.initItemModels();
  		UPGRADE.initItemModels();
  	}
 

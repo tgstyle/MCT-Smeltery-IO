@@ -46,6 +46,10 @@ repositories {
 		name = 'tterrag Maven'
 		url = 'http://maven.tterrag.com/'
 	}
+	maven {
+		name 'ModMaven'
+		url 'https://modmaven.k-4u.nl'
+	}
 }
 
 
@@ -79,6 +83,7 @@ dependencies {
 	compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
 	deobfCompile "slimeknights:TConstruct:${common.mcversion}-${common.tcon_version}"
 	deobfCompile "slimeknights.mantle:Mantle:${common.mcbaseversion}-${common.mant_version}"
+
 
 }
 
