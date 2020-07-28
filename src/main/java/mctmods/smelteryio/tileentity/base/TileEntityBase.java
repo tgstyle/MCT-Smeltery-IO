@@ -1,4 +1,4 @@
-package mctmods.smelteryio.tileentity;
+package mctmods.smelteryio.tileentity.base;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,14 +27,18 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public static final String TAG_PROGRESS = "progress";
 	public static final String TAG_SMELTER = "smeltery";
 	public static final String TAG_FUELED = "fueled";
+	public static final String TAG_TIME = "time";
+	public static final String TAG_SPEED_STACK_SIZE = "speedStackSize";
 	public EnumFacing facing = EnumFacing.NORTH;
 	public int progress = 0;
+	public int time = 0;
 	public int activeCount = 0;
 	public int cooldown = 0;
 	public int upgradeSize1 = 0;
 	public int upgradeSize2 = 0;
 	public int upgradeSize3 = 0;
 	public int upgradeSize4 = 0;
+	public int speedStackSize = 0;
 	public boolean isReady = false;
 	public boolean active = false;
 	public boolean update = false;
@@ -83,8 +87,10 @@ public class TileEntityBase extends TileSmelteryComponent {
 		isReady = compound.getBoolean(TAG_IS_READY);
 		active = compound.getBoolean(TAG_ACTIVE);
 		progress = compound.getInteger(TAG_PROGRESS);
+		time = compound.getInteger(TAG_TIME);
 		smeltery = compound.getBoolean(TAG_SMELTER);
 		fueled = compound.getBoolean(TAG_FUELED);
+		speedStackSize = compound.getInteger(TAG_SPEED_STACK_SIZE);
 		itemInventory.deserializeNBT(compound.getCompoundTag("itemInventory"));
 		super.readFromNBT(compound);
 	}
@@ -95,8 +101,10 @@ public class TileEntityBase extends TileSmelteryComponent {
 		compound.setBoolean(TAG_IS_READY, isReady);
 		compound.setBoolean(TAG_ACTIVE, active);
 		compound.setInteger(TAG_PROGRESS, progress);
+		compound.setInteger(TAG_TIME, time);
 		compound.setBoolean(TAG_SMELTER, smeltery);
 		compound.setBoolean(TAG_FUELED, fueled);
+		compound.setInteger(TAG_SPEED_STACK_SIZE, speedStackSize);
 		compound.setTag("itemInventory", itemInventory.serializeNBT());
 		super.writeToNBT(compound);
 		return compound;
@@ -133,6 +141,30 @@ public class TileEntityBase extends TileSmelteryComponent {
 
 	protected void consumeItemStack(int slotId, int amount) {
 		itemInventory.extractItem(slotId, amount, false);
+	}
+
+	public int getSlotStackSize(ItemStack itemStack) {
+		int size = 0;
+		int meta = itemStack.getItemDamage();
+		int count = itemStack.getCount();
+		switch(meta) {
+		case 1:
+			size = count * 1;
+			break;
+		case 2:
+			size = count * 2;
+			break;
+		case 3:
+			size = count * 3;
+			break;
+		case 4:
+			size = count * 4;
+			break;
+		case 6:
+			size = count * 1;
+			break;
+		}
+		return size;
 	}
 
 	@Override

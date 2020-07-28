@@ -2,12 +2,12 @@ package mctmods.smelteryio.tileentity.container.slots;
 
 import java.util.ArrayList;
 
-import mctmods.smelteryio.items.ItemUpgrade;
 import mctmods.smelteryio.items.meta.EnumUpgrade;
+import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.tileentity.container.ContainerCM;
 import mctmods.smelteryio.tileentity.container.ContainerFC;
 
-import net.minecraft.item.ItemSnowball;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 
@@ -43,36 +43,35 @@ public class SlotHandlerItems {
 			}
 			if(slot == ContainerFC.UPGRADESPEED) {
 				for(EnumUpgrade type : allowSpeedList) {
-					if(stack.getMetadata() == type.ordinal()) return true;
+					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
 				}
 			}
 			break;
 		// Casting Machine
 		case 1:
 			if(slot == ContainerCM.FUEL) {
-				if(stack.getItem() instanceof ItemSnowball) return true;
+				if(stack.getItem() == Items.SNOWBALL || stack.getItem() == Registry.ICEBALL) return true;
 			}
 			if(slot == ContainerCM.CAST) {
-				if(stack.getItem() instanceof ItemUpgrade) return true;
-				if(stack.getItem() instanceof ItemSnowball) return true;
+				if(stack.getItem() != Registry.UPGRADE || stack.getItem() != Items.SNOWBALL || stack.getItem() != Registry.ICEBALL) return true;
 			}
 			if(slot == ContainerCM.UPGRADE1 || slot == ContainerCM.UPGRADE2) {
 				for(EnumUpgrade type : allowUpgradeList) {
-					if(stack.getMetadata() == type.ordinal()) return true;
+					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
 				}
 			}
 			if(slot == ContainerCM.UPGRADESPEED) {
 				for(EnumUpgrade type : allowSpeedList) {
-					if(stack.getMetadata() == type.ordinal()) return true;
+					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
 				}
 			}
 			if(slot == ContainerCM.REDSTONE) {
 				for(EnumUpgrade type : allowRedstoneList) {
-					if(stack.getMetadata() == type.ordinal()) return true;
+					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
 				}
 			}
 			if(slot == ContainerCM.OUTPUT) {
-				return true;
+				return false;
 			}
 			break;
 		}

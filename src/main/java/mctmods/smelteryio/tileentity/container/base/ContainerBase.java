@@ -7,6 +7,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public abstract class ContainerBase extends Container {
+	protected abstract int getSizeInventory();
+
 	public void addPlayerInventorySlotToContainer(IInventory playerInventory) {
 		for(int i = 0; i < 3; ++i){
 			for(int j = 0; j < 9; ++j){
@@ -22,21 +24,24 @@ public abstract class ContainerBase extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = inventorySlots.get(index);
-		if(slot != null && slot.getHasStack()) {
-			ItemStack itemstack1 = slot.getStack();
-			itemstack = itemstack1.copy();
-			int containerSlots = inventorySlots.size() - player.inventory.mainInventory.size();
-			if(index < containerSlots) {
-				if(!mergeItemStack(itemstack1, containerSlots, inventorySlots.size(), true)) return ItemStack.EMPTY;
-			} else if(!mergeItemStack(itemstack1, 0, containerSlots, false)) return ItemStack.EMPTY;
-			if(itemstack1.getCount() == 0) slot.putStack(ItemStack.EMPTY);
-			else slot.onSlotChanged();
-			if(itemstack1.getCount() == itemstack.getCount()) return ItemStack.EMPTY;
-			slot.onTake(player, itemstack1);
+		Slot slot = (Slot)inventorySlots.get(index);
+		if(slot == null || !slot.getHasStack()) return ItemStack.EMPTY;
+		ItemStack sourceStack = slot.getStack();
+		ItemStack copyOfSourceStack = sourceStack.copy();
+		if(index >= 0 && index < 36) {
+			if(!mergeItemStack(sourceStack, 36, 36 + getSizeInventory(), false)) return ItemStack.EMPTY;
+		} else if(index >= 36 && index < 36 + getSizeInventory()) {
+			if(!mergeItemStack(sourceStack, 0, 36, false)) return ItemStack.EMPTY;
+		} else {
+			return ItemStack.EMPTY;
 		}
-		return itemstack;
+		if(sourceStack.getCount() == 0) {
+			slot.putStack(ItemStack.EMPTY);
+		} else {
+			slot.onSlotChanged();
+		}
+		slot.onTake(player, sourceStack);
+		return copyOfSourceStack;
 	}
 
 	@Override

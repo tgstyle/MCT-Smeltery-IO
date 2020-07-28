@@ -35,8 +35,8 @@ public class EntityIceball extends EntityThrowable {
 
     protected void onImpact(RayTraceResult result) {
         if(result.entityHit != null) {
-            int i = 3;
-            if(result.entityHit instanceof EntityBlaze) i = 9;
+            int i = 4;
+            if(result.entityHit instanceof EntityBlaze) i = 24;
             result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float)i);
         }
         if(!this.world.isRemote) {

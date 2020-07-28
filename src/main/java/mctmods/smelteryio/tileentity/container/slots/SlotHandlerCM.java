@@ -2,23 +2,22 @@ package mctmods.smelteryio.tileentity.container.slots;
 
 import javax.annotation.Nonnull;
 
+import mctmods.smelteryio.tileentity.TileEntityCM;
 import mctmods.smelteryio.tileentity.container.ContainerCM;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class SlotHandlerCM extends SlotItemHandler {
-	private int tileID;
+	private int tileID = TileEntityCM.TILEID;
 	private int tileSlot;
 	private int slotStackLimit;
 
-	public SlotHandlerCM(IItemHandler itemHandler, int index, int xPosition, int yPosition, int stacksize, int tileid) {
+	public SlotHandlerCM(IItemHandler itemHandler, int index, int xPosition, int yPosition, int stacksize) {
 		super(itemHandler, index, xPosition, yPosition);
 		this.tileSlot = index;
-		this.tileID = tileid;
 		this.slotStackLimit = stacksize;
 	}
 
@@ -28,7 +27,7 @@ public class SlotHandlerCM extends SlotItemHandler {
 		case ContainerCM.FUEL:
 			return SlotHandlerItems.validForSlot(stack, ContainerCM.FUEL, tileID);
 		case ContainerCM.CAST:
-	   		return !SlotHandlerItems.validForSlot(stack, ContainerCM.CAST, tileID);
+	   		return SlotHandlerItems.validForSlot(stack, ContainerCM.CAST, tileID);
 		case ContainerCM.UPGRADE1:
 			return SlotHandlerItems.validForSlot(stack, ContainerCM.UPGRADE1, tileID);
 		case ContainerCM.UPGRADE2:
@@ -36,7 +35,7 @@ public class SlotHandlerCM extends SlotItemHandler {
 		case ContainerCM.UPGRADESPEED:
 			return SlotHandlerItems.validForSlot(stack, ContainerCM.UPGRADESPEED, tileID);
 		case ContainerCM.OUTPUT:
-			return !SlotHandlerItems.validForSlot(stack, ContainerCM.OUTPUT, tileID);
+			return SlotHandlerItems.validForSlot(stack, ContainerCM.OUTPUT, tileID);
 		case ContainerCM.REDSTONE:
 			return SlotHandlerItems.validForSlot(stack, ContainerCM.REDSTONE, tileID);
 		}
@@ -46,12 +45,6 @@ public class SlotHandlerCM extends SlotItemHandler {
 	@Override
 	public int getSlotStackLimit() {
 		return slotStackLimit;
-	}
-
-	@Override
-	public boolean canTakeStack(EntityPlayer playerIn) {
-		if(tileSlot == ContainerCM.FUEL) return false;
-		return true;
 	}
 
 }

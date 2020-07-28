@@ -34,13 +34,8 @@ public class MessageLockSlots extends MessageBase<MessageLockSlots> {
 		int x = message.data.getInteger("x");
 		int y = message.data.getInteger("y");
 		int z = message.data.getInteger("z");
-
-		if(!player.world.isRemote) {
-			TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
-			if(tileEntity instanceof TileEntityCM) {
-				((TileEntityCM) tileEntity).slotsLocked();
-			}
-		}
+		TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
+		if(tileEntity instanceof TileEntityCM) ((TileEntityCM) tileEntity).slotsLocked();
 	}
 
 	@Override

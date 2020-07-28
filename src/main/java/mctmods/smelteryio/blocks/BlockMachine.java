@@ -165,12 +165,15 @@ public class BlockMachine extends BlockBaseTE {
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY) {
 		if(!world.isRemote) {
+			TileEntity tileEntity = world.getTileEntity(pos);
 			int meta = getMetaFromState(state);
 			switch(meta) {
 			case 0:
+				((TileEntityFC)tileEntity).guiOpen();
 				player.openGui(SmelteryIO.instance, GuiHandler.FUEL_CONTROLLER, world, pos.getX(), pos.getY(), pos.getZ());
 				return true;
 			case 1:
+				((TileEntityCM)tileEntity).guiOpen();
 				player.openGui(SmelteryIO.instance, GuiHandler.CASTING_MACHINE, world, pos.getX(), pos.getY(), pos.getZ());
 				return true;
 			}
