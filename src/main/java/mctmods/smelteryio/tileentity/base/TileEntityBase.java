@@ -14,6 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
@@ -41,9 +43,9 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public int speedStackSize = 0;
 	public boolean isReady = false;
 	public boolean active = false;
-	public boolean update = false;
 	public boolean smeltery = false;
 	public boolean fueled = false;
+	public boolean update = false;
 	public TileSmeltery tileSmeltery;
 	private final int itemSlotsSize;
 	private ItemStackHandler itemInventoryIO;
@@ -161,7 +163,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 			size = count * 4;
 			break;
 		case 6:
-			size = count * 1;
+			size = count * 2;
 			break;
 		}
 		return size;
@@ -221,6 +223,31 @@ public class TileEntityBase extends TileSmelteryComponent {
 		TileEntity tileEntity = getWorld().getTileEntity(pos);
 		if(tileEntity instanceof TileTank) return ((TileTank) tileEntity).getInternalTank();
 		return null;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public boolean isFueled() {
+		return fueled;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public boolean isReady() {
+		return isReady;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public boolean hasController() {
+		return smeltery;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public boolean isActive() {
+		return active;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public int getGUIProgress(int pixel) {
+		return (int) (((float)activeCount / (float)time) * pixel);
 	}
 
 }

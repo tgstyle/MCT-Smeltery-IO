@@ -36,12 +36,16 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	public static final String TAG_POWERED = "blockPowered";
 	public static final String TAG_BURN_COUNT = "burnCount";
 	public static final int TILEID = 1;
-	public static final int CAPACITY = 10368;
+	public static final int TANK_CAPACITY = 10368;
 	public static final int CAST = 0;
 	public static final int BASIN = 1;
 	public static final int SLOTS_SIZE = 7;
-	private static final int FUEL_AMOUNT_BASIN = ConfigSIO.snowballBasinAmount;
-	private static final int FUEL_AMOUNT_CAST = ConfigSIO.snowballCastingAmount;
+	private static final int FUEL_SNOW_AMOUNT_BASIN = ConfigSIO.snowballBasinAmount;
+	private static final int FUEL_SNOW_AMOUNT_CAST = ConfigSIO.snowballCastingAmount;
+	private static final int FUEL_ICE_AMOUNT_BASIN = ConfigSIO.iceballBasinAmount;
+	private static final int FUEL_ICE_AMOUNT_CAST = ConfigSIO.iceballCastingAmount;
+	private static final int FUEL_ICE_BASIN_AMOUNT = ConfigSIO.iceballAmountBasin;
+	private static final int FUEL_ICE_CAST_AMOUNT = ConfigSIO.iceballAmountCasting;
 	private static final int CASTING_MACHINE_SPEED = ConfigSIO.castingMachineSpeed;
 	private int outputStackSize = 0;
 	private int currentMode = CAST;
@@ -58,7 +62,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	private FluidStack castFluid;
 	private ICastingRecipe currentRecipe;
 
-	public TileEntityFluidTank tank = new TileEntityFluidTank(CAPACITY, this);
+	public TileEntityFluidTank tank = new TileEntityFluidTank(TANK_CAPACITY, this);
 
 	public TileEntityCM() {
 		super(SLOTS_SIZE);
@@ -130,12 +134,11 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	public void update() {
 		if(world.isRemote) {
 			if(active && progress != 0) {
-				System.out.println("CM:" + activeCount + ":" + time);
 				activeCount = progress;
 				progress = 0;
 				cooldown = 1;
 			} else if(active && cooldown % 2 == 0) {
-				activeCount = (activeCount + CASTING_MACHINE_SPEED + speedStackSize) % (time + CASTING_MACHINE_SPEED);
+				activeCount = (activeCount + CASTING_MACHINE_SPEED + speedStackSize) % (time + CASTING_MACHINE_SPEED + speedStackSize);
 			}
 		} else {
 			if(cooldown % 2 == 0) {
@@ -152,10 +155,10 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 					doCasting();
 				}
 			}
-		}
-		if(update) {
-			efficientMarkDirty();
-			update = false;
+			if(update) {
+				efficientMarkDirty();
+				update = false;
+			}
 		}
 		cooldown = (cooldown + 1) % 20;
 	}
@@ -172,23 +175,24 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 			}  else {
 				if(smeltery) {
 					notifyMasterOfChange();
-					cmReset();
+					resetCM();
 				}
 			}
 		} else {
 			if(smeltery) {
-				cmReset();
+				resetCM();
 			}
 		}
 	}
 
-	private void cmReset() {
+	private void resetCM() {
 		smeltery = false;
 		update = true;
 	}
 
 	private void inputFluid() {
 		if(tileSmeltery.getTank().getFluid() == null) return;
+		if(tank.getFluidAmount() == tank.getCapacity()) return;
 		FluidStack out = tileSmeltery.getTank().getFluid();
 		int accepted = tank.fill(out, false);
 		if(accepted == 0) return;
@@ -273,25 +277,26 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	}
 
 	private void canBurnSolidFuel() {
-		if(!isReady && itemInventory.getStackInSlot(ContainerCM.FUEL) != ItemStack.EMPTY || burnCount != 0) {
+		if(!isReady && itemInventory.getStackInSlot(ContainerCM.FUEL) != ItemStack.EMPTY) {
 			isReady = true;
+			update = true;
+		} else if(isReady && time == 0 && progress == 0 && burnCount == 0 && itemInventory.getStackInSlot(ContainerCM.FUEL) == ItemStack.EMPTY) {
+			isReady = false;
 			update = true;
 		}
 	}
 
 	private void doCasting() {
 		if(isReady) {
-			if(time != 0) {
-				progress = (progress + CASTING_MACHINE_SPEED + speedStackSize) % (time + CASTING_MACHINE_SPEED);
-			}
-			if(time == 0) {
+			if(time != 0) progress = (progress + CASTING_MACHINE_SPEED + speedStackSize) % (time + CASTING_MACHINE_SPEED + speedStackSize);
+			if(time == 0 && progress == 0) {
 				if(targetItemStack.isEmpty() && currentRecipe != null) {
 					if(castFluid != null && castFluid.amount >= currentRecipe.getFluidAmount()){
 						targetItemStack = getResult(cast, castFluid);
 						if(!targetItemStack.isEmpty() && canOutput() && burnSolidFuel()){
 							if(currentRecipe.consumesCast()) itemInventory.extractItem(ContainerCM.CAST, 1, false);
 							tank.drain(currentRecipe.getFluidAmount(), true);
-							time = currentRecipe.getTime();
+							time = currentRecipe.getTime() * 2;
 							burnCount--;
 							active = true;
 							update = true;
@@ -301,7 +306,6 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 					}
 				}
 			} else if(progress >= time) {
-				if(itemInventory.getStackInSlot(ContainerCM.FUEL) == ItemStack.EMPTY) isReady = false;
 				itemInventory.insertItem(ContainerCM.OUTPUT, targetItemStack, false);
 				targetItemStack = ItemStack.EMPTY;
 				time = 0;
@@ -325,19 +329,18 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 		if(burnCount != 0) return true;
 		ItemStack fuel = itemInventory.getStackInSlot(ContainerCM.FUEL);
 		if(fuel == ItemStack.EMPTY) return fueled = false;
-	   	fuelAmount = FUEL_AMOUNT_CAST;
-	   	if(currentMode == BASIN) fuelAmount = FUEL_AMOUNT_BASIN;
+		fuelAmount = 1;
+		if(currentMode == CAST) fuelAmount = FUEL_SNOW_AMOUNT_CAST;
+	   	if(currentMode == BASIN) fuelAmount = FUEL_SNOW_AMOUNT_BASIN;
 	   	boolean fuelIce = false;
 	   	if(fuel.isItemEqual(new ItemStack(Registry.ICEBALL))) fuelIce = true;
-		if(fuelIce && currentMode == BASIN) fuelAmount = FUEL_AMOUNT_BASIN / 8;
+	   	if(fuelIce && currentMode == CAST) fuelAmount = FUEL_ICE_AMOUNT_CAST;
+		if(fuelIce && currentMode == BASIN) fuelAmount = FUEL_ICE_AMOUNT_BASIN;
 		if(burnCount == 0 && fuel.getCount() >= fuelAmount) {
 			consumeItemStack(ContainerCM.FUEL, fuelAmount);
-			if(fuelIce) {
-				burnCount = 8;
-				if(currentMode == BASIN) burnCount = 1;
-			} else {
-				burnCount = 1;
-			}
+			burnCount = 1;
+			if(fuelIce && currentMode == CAST) burnCount = FUEL_ICE_CAST_AMOUNT;
+			if(fuelIce && currentMode == BASIN) burnCount = FUEL_ICE_BASIN_AMOUNT;
 			return fueled = true;
 		}
 		return fueled = false;
@@ -392,33 +395,8 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	}
 
 	@SideOnly(Side.CLIENT)
-	public boolean isFueled() {
-		return fueled;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public boolean isReady() {
-		return isReady;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public boolean hasController() {
-		return smeltery;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public boolean isActive() {
-		return active;
-	}
-
-	@SideOnly(Side.CLIENT)
 	public int getGUIFluidBarHeight(int pixel) {
-		return (int) (((float)tank.getFluidAmount() / (float)CAPACITY) * pixel);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public int getGUIProgress(int pixel) {
-		return (int) (((float)activeCount / (float)time) * pixel);
+		return (int) (((float)tank.getFluidAmount() / (float)TANK_CAPACITY) * pixel);
 	}
 
 	public void guiOpen() {

@@ -26,6 +26,7 @@ container.fuel_controller.errorcapacity=Smeltery at Capacity
 container.fuel_controller.errorfuel=No Fuel
 container.fuel_controller.errorsmelteryfuel=No Smeltery Fuel
 container.fuel_controller.errorsmeltery=No Controller
+container.fuel_controller.errorowner=Too Many Controllers
 container.casting_machine=Casting Machine
 container.casting_machine.buttontank.header=Empty Tank
 container.casting_machine.buttontank.info=Hold "Shift" to Unlock Button
@@ -34,6 +35,9 @@ container.casting_machine.buttonslot.info1=Hold "Shift" to Unlock Button
 container.casting_machine.buttonslot.info2=For Upgrade/Cast Extraction
 container.casting_machine.buttonslot.enabled=Lock Enabled
 container.casting_machine.buttonslot.disabled=Lock Disabled
+
+#Smeltery
+sio.smeltery.customname=Smeltery IO
 
 #Tool Tips
 sio.tooltips.common.holdshift=Hold "Shift" for More Information
