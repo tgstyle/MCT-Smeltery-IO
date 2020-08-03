@@ -10,13 +10,11 @@ import mctmods.smelteryio.tileentity.base.TileEntityBase;
 import mctmods.smelteryio.tileentity.container.ContainerFC;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
@@ -119,13 +117,12 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 					smeltery = true;
 					update = true;
 				} else {
-					if(!owner && !tileSmeltery.getName().contains(I18n.format("sio.smeltery.customname"))) {
-						resetSmelteryName(TextFormatting.DARK_RED, "sio.smeltery.customname");
+					if(!owner && !tileSmeltery.getName().toString().contains("sio.smeltery.customname")) {
+						resetSmelteryName("sio.smeltery.customname");
+						notifyMasterOfChange();
 						owner = true;
 						update = true;
-					} else if (owner && !tileSmeltery.getName().contains(I18n.format("sio.smeltery.customname"))) {
-						resetSmelteryName(TextFormatting.DARK_RED, "sio.smeltery.customname");
-					} else if (owner) {
+					} else if(owner) {
 						if(!fueled) {
 							smelteryTemp = getFluidFuelTemp();
 							setSmelteryTemp(smelteryTemp);
@@ -136,7 +133,6 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 			} else {
 				if(smeltery) {
 					resetSmeltery();
-					notifyMasterOfChange();
 					resetFC();
 				}
 			}
@@ -188,7 +184,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 						}
 					}
 				}
-			} else if (atCapacity) {
+			} else if(atCapacity) {
 				atCapacity = false;
 				update = true;
 			}
@@ -309,19 +305,17 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	}
 
 	public void resetSmeltery() {
-		resetSmelteryName(null, "gui.smeltery.name");
-		resetSmelteryTemp();	
+		resetSmelteryName("gui.smeltery.name");
+		resetSmelteryTemp();
+		notifyMasterOfChange();
 	}
-
-	public void resetSmelteryName(TextFormatting color, String name) {
-		if(tileSmeltery != null) {
-			if(color == null) tileSmeltery.setCustomName(I18n.format(name));
-			else tileSmeltery.setCustomName(color + I18n.format(name));
-		}
-	}
-
+	
 	public void resetSmelteryTemp() {
 		setSmelteryTemp(smelteryTemp);
+	}
+
+	public void resetSmelteryName(String name) {
+		tileSmeltery.setCustomName(name);
 	}
 
 	@SideOnly(Side.CLIENT)

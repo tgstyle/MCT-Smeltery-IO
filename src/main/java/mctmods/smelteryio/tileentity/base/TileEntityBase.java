@@ -225,6 +225,14 @@ public class TileEntityBase extends TileSmelteryComponent {
 		return null;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public boolean hasController() {
+		return smeltery;
+	}
+
 	@SideOnly(Side.CLIENT)
 	public boolean isFueled() {
 		return fueled;
@@ -233,16 +241,6 @@ public class TileEntityBase extends TileSmelteryComponent {
 	@SideOnly(Side.CLIENT)
 	public boolean isReady() {
 		return isReady;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public boolean hasController() {
-		return smeltery;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public boolean isActive() {
-		return active;
 	}
 
 	@SideOnly(Side.CLIENT)

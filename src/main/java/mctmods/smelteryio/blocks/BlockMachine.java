@@ -190,10 +190,7 @@ public class BlockMachine extends BlockBaseTE {
 				ItemStack stack = handler.getStackInSlot(slot);
 				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
 			}
-			if(((TileEntityFC)tileEntity).getMasterTile() != null) {
-				((TileEntityFC)tileEntity).resetSmeltery();
-				((TileEntityFC)tileEntity).notifyMasterOfChange();
-			}
+			if(((TileEntityFC)tileEntity).getMasterTile() != null) ((TileEntityFC)tileEntity).resetSmeltery();
 		}
 		if(tileEntity instanceof TileEntityCM) {
 			IItemHandler handler = ((TileEntityCM)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
