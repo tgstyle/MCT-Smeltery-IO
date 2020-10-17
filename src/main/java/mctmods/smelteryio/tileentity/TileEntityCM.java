@@ -99,9 +99,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 
 	@Override
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-		for(int slotNumber = 0; slotNumber < SLOTS_SIZE; slotNumber++) {
-			if(SlotHandlerItems.validForSlot(stack, slotNumber, TILEID)) return itemInventory.insertItem(slot, stack, simulate);
-		}
+		if(SlotHandlerItems.validForSlot(stack, slot, TILEID)) return itemInventory.insertItem(slot, stack, simulate);
 		return super.insertItem(slot, stack, simulate);
 	}
 

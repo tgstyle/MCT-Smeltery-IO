@@ -53,7 +53,8 @@ public class SlotHandlerItems {
 				if(stack.getItem() == Items.SNOWBALL || stack.getItem() == Registry.ICEBALL) return true;
 			}
 			if(slot == ContainerCM.CAST) {
-				if(stack.getItem() != Registry.UPGRADE || stack.getItem() != Items.SNOWBALL || stack.getItem() != Registry.ICEBALL) return true;
+				if(stack.getItem() == Registry.UPGRADE || stack.getItem() == Items.SNOWBALL || stack.getItem() == Registry.ICEBALL) return false;
+				return true;
 			}
 			if(slot == ContainerCM.UPGRADE1 || slot == ContainerCM.UPGRADE2) {
 				for(EnumUpgrade type : allowUpgradeList) {
