@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import mctmods.smelteryio.items.meta.EnumUpgrade;
 import mctmods.smelteryio.registry.Registry;
-import mctmods.smelteryio.tileentity.container.ContainerCM;
-import mctmods.smelteryio.tileentity.container.ContainerFC;
+import mctmods.smelteryio.tileentity.TileEntityCM;
+import mctmods.smelteryio.tileentity.TileEntityFC;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -38,10 +38,10 @@ public class SlotHandlerItems {
 		switch(tileID) {
 		// Fuel Controller
 		case 0:
-			if(slot == ContainerFC.FUEL) {
+			if(slot == TileEntityFC.SLOTFUEL) {
 				if(TileEntityFurnace.isItemFuel(stack)) return true;
 			}
-			if(slot == ContainerFC.UPGRADESPEED) {
+			if(slot == TileEntityFC.SLOTUPGRADESPEED) {
 				for(EnumUpgrade type : allowSpeedList) {
 					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
 				}
@@ -49,29 +49,29 @@ public class SlotHandlerItems {
 			break;
 		// Casting Machine
 		case 1:
-			if(slot == ContainerCM.FUEL) {
+			if(slot == TileEntityCM.SLOTFUEL) {
 				if(stack.getItem() == Items.SNOWBALL || stack.getItem() == Registry.ICEBALL) return true;
 			}
-			if(slot == ContainerCM.CAST) {
+			if(slot == TileEntityCM.SLOTCAST) {
 				if(stack.getItem() == Registry.UPGRADE || stack.getItem() == Items.SNOWBALL || stack.getItem() == Registry.ICEBALL) return false;
 				return true;
 			}
-			if(slot == ContainerCM.UPGRADE1 || slot == ContainerCM.UPGRADE2) {
+			if(slot == TileEntityCM.SLOTUPGRADE1 || slot == TileEntityCM.SLOTUPGRADE2) {
 				for(EnumUpgrade type : allowUpgradeList) {
 					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
 				}
 			}
-			if(slot == ContainerCM.UPGRADESPEED) {
+			if(slot == TileEntityCM.SLOTUPGRADESPEED) {
 				for(EnumUpgrade type : allowSpeedList) {
 					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
 				}
 			}
-			if(slot == ContainerCM.REDSTONE) {
+			if(slot == TileEntityCM.SLOTREDSTONE) {
 				for(EnumUpgrade type : allowRedstoneList) {
 					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
 				}
 			}
-			if(slot == ContainerCM.OUTPUT) {
+			if(slot == TileEntityCM.SLOTOUTPUT) {
 				return false;
 			}
 			break;

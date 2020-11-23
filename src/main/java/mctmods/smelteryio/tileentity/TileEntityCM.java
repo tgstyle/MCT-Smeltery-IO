@@ -7,7 +7,6 @@ import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.library.util.recipes.CMRecipeHandler;
 import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.tileentity.base.TileEntityBase;
-import mctmods.smelteryio.tileentity.container.ContainerCM;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank.TankListener;
@@ -27,6 +26,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
 
 public class TileEntityCM extends TileEntityBase implements ITickable, TankListener {
+
+	public static final int SLOTS_SIZE = 7;
+	public static final int SLOTFUEL = 0, SLOTCAST = 1, SLOTUPGRADE1 = 2, SLOTUPGRADE2 = 3, SLOTUPGRADESPEED = 4, SLOTOUTPUT = 5, SLOTREDSTONE = 6;
 	public static final String TAG_CAN_CAST = "canCast";
 	public static final String TAG_MODE = "currentMode";
 	public static final String TAG_OUTPUT_STACK_SIZE = "outputStackSize";
@@ -39,7 +41,6 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	public static final int TANK_CAPACITY = 10368;
 	public static final int CAST = 0;
 	public static final int BASIN = 1;
-	public static final int SLOTS_SIZE = 7;
 	private static final int FUEL_SNOW_AMOUNT_BASIN = ConfigSIO.snowballBasinAmount;
 	private static final int FUEL_SNOW_AMOUNT_CAST = ConfigSIO.snowballCastingAmount;
 	private static final int FUEL_ICE_AMOUNT_BASIN = ConfigSIO.iceballBasinAmount;
@@ -105,7 +106,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 
 	@Override
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if(slot == ContainerCM.OUTPUT) return itemInventory.extractItem(slot, amount, simulate);
+		if(slot == SLOTOUTPUT) return itemInventory.extractItem(slot, amount, simulate);
 		if(!slotsLocked) {
 			if(getCurrentFluid() == null && !isActive()) {
 				for(int slotNumber = 1; slotNumber < SLOTS_SIZE - 2; slotNumber++) {
@@ -200,7 +201,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	}
 
 	private boolean isChanged() {
-		cast = itemInventory.getStackInSlot(ContainerCM.CAST);
+		cast = itemInventory.getStackInSlot(SLOTCAST);
 		castFluid = tank.getFluid();
 		if(lastMode != currentMode) {
 			burnCount = 0;
@@ -234,10 +235,10 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	}
 
 	private void checkUpgradeSlots() {
-		ItemStack upgrade1 = itemInventory.getStackInSlot(ContainerCM.UPGRADE1);
-		ItemStack upgrade2 = itemInventory.getStackInSlot(ContainerCM.UPGRADE2);
-		ItemStack upgrade3 = itemInventory.getStackInSlot(ContainerCM.UPGRADESPEED);
-		ItemStack upgrade4 = itemInventory.getStackInSlot(ContainerCM.REDSTONE);
+		ItemStack upgrade1 = itemInventory.getStackInSlot(SLOTUPGRADE1);
+		ItemStack upgrade2 = itemInventory.getStackInSlot(SLOTUPGRADE2);
+		ItemStack upgrade3 = itemInventory.getStackInSlot(SLOTUPGRADESPEED);
+		ItemStack upgrade4 = itemInventory.getStackInSlot(SLOTREDSTONE);
 		int stackSize1 = upgrade1.getCount();
 		int stackSize2 = upgrade2.getCount();
 		int stackSize3 = upgrade3.getCount();
@@ -275,10 +276,10 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	}
 
 	private void canBurnSolidFuel() {
-		if(!isReady && itemInventory.getStackInSlot(ContainerCM.FUEL) != ItemStack.EMPTY) {
+		if(!isReady && itemInventory.getStackInSlot(SLOTFUEL) != ItemStack.EMPTY) {
 			isReady = true;
 			update = true;
-		} else if(isReady && time == 0 && progress == 0 && burnCount == 0 && itemInventory.getStackInSlot(ContainerCM.FUEL) == ItemStack.EMPTY) {
+		} else if(isReady && time == 0 && progress == 0 && burnCount == 0 && itemInventory.getStackInSlot(SLOTFUEL) == ItemStack.EMPTY) {
 			isReady = false;
 			update = true;
 		}
@@ -292,7 +293,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 					if(castFluid != null && castFluid.amount >= currentRecipe.getFluidAmount()){
 						targetItemStack = getResult(cast, castFluid);
 						if(!targetItemStack.isEmpty() && canOutput() && burnSolidFuel()){
-							if(currentRecipe.consumesCast()) itemInventory.extractItem(ContainerCM.CAST, 1, false);
+							if(currentRecipe.consumesCast()) itemInventory.extractItem(SLOTCAST, 1, false);
 							tank.drain(currentRecipe.getFluidAmount(), true);
 							time = currentRecipe.getTime() * 2;
 							burnCount--;
@@ -304,7 +305,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 					}
 				}
 			} else if(progress >= time) {
-				itemInventory.insertItem(ContainerCM.OUTPUT, targetItemStack, false);
+				itemInventory.insertItem(SLOTOUTPUT, targetItemStack, false);
 				targetItemStack = ItemStack.EMPTY;
 				time = 0;
 				progress = 0;
@@ -319,13 +320,13 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	}
 
 	private boolean canOutput() {
-		ItemStack outputSlot = itemInventory.getStackInSlot(ContainerCM.OUTPUT);
+		ItemStack outputSlot = itemInventory.getStackInSlot(SLOTOUTPUT);
 		return (outputSlot.isEmpty() || (outputSlot.isItemEqual(targetItemStack) && ItemStack.areItemStackTagsEqual(outputSlot, targetItemStack))) && outputStackSize - outputSlot.getCount() > 0;
 	}
 
 	private boolean burnSolidFuel() {
 		if(burnCount != 0) return true;
-		ItemStack fuel = itemInventory.getStackInSlot(ContainerCM.FUEL);
+		ItemStack fuel = itemInventory.getStackInSlot(SLOTFUEL);
 		if(fuel == ItemStack.EMPTY) return fueled = false;
 		fuelAmount = 1;
 		if(currentMode == CAST) fuelAmount = FUEL_SNOW_AMOUNT_CAST;
@@ -335,7 +336,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	   	if(fuelIce && currentMode == CAST) fuelAmount = FUEL_ICE_AMOUNT_CAST;
 		if(fuelIce && currentMode == BASIN) fuelAmount = FUEL_ICE_AMOUNT_BASIN;
 		if(burnCount == 0 && fuel.getCount() >= fuelAmount) {
-			consumeItemStack(ContainerCM.FUEL, fuelAmount);
+			consumeItemStack(SLOTFUEL, fuelAmount);
 			burnCount = 1;
 			if(fuelIce && currentMode == CAST) burnCount = FUEL_ICE_CAST_AMOUNT;
 			if(fuelIce && currentMode == BASIN) burnCount = FUEL_ICE_BASIN_AMOUNT;

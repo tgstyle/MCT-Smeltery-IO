@@ -3,7 +3,6 @@ package mctmods.smelteryio.tileentity.container.slots;
 import javax.annotation.Nonnull;
 
 import mctmods.smelteryio.tileentity.TileEntityFC;
-import mctmods.smelteryio.tileentity.container.ContainerFC;
 
 import net.minecraft.item.ItemStack;
 
@@ -24,10 +23,10 @@ public class SlotHandlerFC extends SlotItemHandler {
 	@Override
 	public boolean isItemValid(@Nonnull ItemStack stack) {
 		switch(tileSlot) {
-		case ContainerFC.FUEL:
-			return (SlotHandlerItems.validForSlot(stack, ContainerFC.FUEL, tileID));
-		case ContainerFC.UPGRADESPEED:
-			return (SlotHandlerItems.validForSlot(stack, ContainerFC.UPGRADESPEED, tileID));
+		case TileEntityFC.SLOTFUEL:
+			return (SlotHandlerItems.validForSlot(stack, TileEntityFC.SLOTFUEL, tileID));
+		case TileEntityFC.SLOTUPGRADESPEED:
+			return (SlotHandlerItems.validForSlot(stack, TileEntityFC.SLOTUPGRADESPEED, tileID));
 		}
 		return false;
 	}

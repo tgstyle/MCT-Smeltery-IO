@@ -10,13 +10,12 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class ContainerFC extends ContainerBase {
-	public static final int UPGRADESPEED = 0, FUEL = 1;
 	private IItemHandler handler;
 
-	public ContainerFC(IInventory playerInventory, final TileEntityFC tileentity) {
-		handler = tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-		addSlotToContainer(new SlotHandlerFC(handler, UPGRADESPEED, 25, 34, 64));
-		addSlotToContainer(new SlotHandlerFC(handler, FUEL, 134, 34, 64));
+	public ContainerFC(IInventory playerInventory, final TileEntityFC tileEntity) {
+		handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		addSlotToContainer(new SlotHandlerFC(handler, TileEntityFC.SLOTUPGRADESPEED, 25, 34, 64));
+		addSlotToContainer(new SlotHandlerFC(handler, TileEntityFC.SLOTFUEL, 134, 34, 64));
 		addPlayerInventorySlotToContainer(playerInventory);
 	}
 

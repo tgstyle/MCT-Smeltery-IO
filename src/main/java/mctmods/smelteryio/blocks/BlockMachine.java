@@ -5,6 +5,7 @@ import mctmods.smelteryio.blocks.base.BlockBaseTE;
 import mctmods.smelteryio.blocks.meta.EnumMachine;
 import mctmods.smelteryio.tileentity.TileEntityCM;
 import mctmods.smelteryio.tileentity.TileEntityFC;
+import mctmods.smelteryio.tileentity.TileEntitySI;
 import mctmods.smelteryio.tileentity.gui.handler.GuiHandler;
 
 import net.minecraft.block.material.MapColor;
@@ -115,6 +116,7 @@ public class BlockMachine extends BlockBaseTE {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityFC) return ((TileEntityFC)tileEntity) != null ? ((TileEntityFC)tileEntity).getFacing() : EnumFacing.NORTH;
 		if(tileEntity instanceof TileEntityCM) return ((TileEntityCM)tileEntity) != null ? ((TileEntityCM)tileEntity).getFacing() : EnumFacing.NORTH;
+		if(tileEntity instanceof TileEntitySI) return ((TileEntitySI)tileEntity) != null ? ((TileEntitySI)tileEntity).getFacing() : EnumFacing.NORTH;
 		return null;
 	}
 
@@ -122,6 +124,7 @@ public class BlockMachine extends BlockBaseTE {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityFC) ((TileEntityFC)tileEntity).setFacing(facing);
 		if(tileEntity instanceof TileEntityCM) ((TileEntityCM)tileEntity).setFacing(facing);
+		if(tileEntity instanceof TileEntitySI) ((TileEntitySI)tileEntity).setFacing(facing);
 	}
 
 	@Override
@@ -148,7 +151,7 @@ public class BlockMachine extends BlockBaseTE {
 			if(!((TileEntityCM)tileEntity).isActive() && !((TileEntityCM)tileEntity).hasController()) mode = 1;
 			return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos, state));
 		}
-		return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos, state));
+		return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(FACING, getFacing(world, pos, state));
 	}
 
 	@Override
@@ -158,6 +161,8 @@ public class BlockMachine extends BlockBaseTE {
 			return new TileEntityFC();
 		case 1:
 			return new TileEntityCM();
+		case 2:
+			return new TileEntitySI();
 		}
 		return null;
 	}
@@ -199,6 +204,13 @@ public class BlockMachine extends BlockBaseTE {
 				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
 			}
 			if(((TileEntityCM)tileEntity).getMasterTile() != null) ((TileEntityCM)tileEntity).notifyMasterOfChange();
+		}
+		if(tileEntity instanceof TileEntitySI) {
+			IItemHandler handler = ((TileEntitySI)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+			for(int slot = 0; slot < handler.getSlots(); slot++) {
+				ItemStack stack = handler.getStackInSlot(slot);
+				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+			}
 		}
 		world.removeTileEntity(pos);
 		super.breakBlock(world, pos, state);

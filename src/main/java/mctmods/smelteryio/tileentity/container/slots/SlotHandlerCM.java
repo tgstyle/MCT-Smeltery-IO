@@ -3,7 +3,6 @@ package mctmods.smelteryio.tileentity.container.slots;
 import javax.annotation.Nonnull;
 
 import mctmods.smelteryio.tileentity.TileEntityCM;
-import mctmods.smelteryio.tileentity.container.ContainerCM;
 
 import net.minecraft.item.ItemStack;
 
@@ -24,20 +23,20 @@ public class SlotHandlerCM extends SlotItemHandler {
 	@Override
 	public boolean isItemValid(@Nonnull ItemStack stack) {
 		switch(tileSlot) {
-		case ContainerCM.FUEL:
-			return SlotHandlerItems.validForSlot(stack, ContainerCM.FUEL, tileID);
-		case ContainerCM.CAST:
-	   		return SlotHandlerItems.validForSlot(stack, ContainerCM.CAST, tileID);
-		case ContainerCM.UPGRADE1:
-			return SlotHandlerItems.validForSlot(stack, ContainerCM.UPGRADE1, tileID);
-		case ContainerCM.UPGRADE2:
-			return SlotHandlerItems.validForSlot(stack, ContainerCM.UPGRADE2, tileID);
-		case ContainerCM.UPGRADESPEED:
-			return SlotHandlerItems.validForSlot(stack, ContainerCM.UPGRADESPEED, tileID);
-		case ContainerCM.OUTPUT:
-			return SlotHandlerItems.validForSlot(stack, ContainerCM.OUTPUT, tileID);
-		case ContainerCM.REDSTONE:
-			return SlotHandlerItems.validForSlot(stack, ContainerCM.REDSTONE, tileID);
+		case TileEntityCM.SLOTFUEL:
+			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTFUEL, tileID);
+		case TileEntityCM.SLOTCAST:
+	   		return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTCAST, tileID);
+		case TileEntityCM.SLOTUPGRADE1:
+			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADE1, tileID);
+		case TileEntityCM.SLOTUPGRADE2:
+			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADE2, tileID);
+		case TileEntityCM.SLOTUPGRADESPEED:
+			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADESPEED, tileID);
+		case TileEntityCM.SLOTOUTPUT:
+			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTOUTPUT, tileID);
+		case TileEntityCM.SLOTREDSTONE:
+			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTREDSTONE, tileID);
 		}
 		return false;
 	}

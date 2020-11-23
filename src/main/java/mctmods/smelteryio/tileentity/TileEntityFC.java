@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.tileentity.base.TileEntityBase;
-import mctmods.smelteryio.tileentity.container.ContainerFC;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 
 import net.minecraft.item.ItemStack;
@@ -23,13 +22,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import slimeknights.tconstruct.smeltery.tileentity.TileHeatingStructure;
 
 public class TileEntityFC extends TileEntityBase implements ITickable {
+
+	public static final int SLOTS_SIZE = 2;
+	public static final int SLOTUPGRADESPEED = 0, SLOTFUEL = 1;
 	public static final String TAG_RATIO = "ratio";
 	public static final String TAG_TARGET_TEMP = "targetTemp";
 	public static final String TAG_CURRENT_TEMP = "currentTemp";
 	public static final String TAG_SMELTERY_TEMP = "smelteryTemp";
 	public static final String TAG_AT_CAPACITY = "atCapacity";
 	public static final String TAG_OWNER = "owner";
-	public static final int SLOTS_SIZE = 2;
 	public static final int TILEID = 0;
 	private static final int FUEL_CONTROLLER_SPEED = ConfigSIO.fuelControllerSpeed; 
 	private static final double FUEL_RATIO = ConfigSIO.fuelControllerRatio;
@@ -190,7 +191,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	}
 
 	private void calculateRatio() {
-		ItemStack upgrade1 = itemInventory.getStackInSlot(ContainerFC.UPGRADESPEED);
+		ItemStack upgrade1 = itemInventory.getStackInSlot(SLOTUPGRADESPEED);
 		int stackSize1 = upgrade1.getCount();
 		if(stackSize1 != upgradeSize1) {
 			ratio = 0.01;
@@ -216,7 +217,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	}
 
 	private int getBurnTime() {
-		ItemStack solidFuel = itemInventory.getStackInSlot(ContainerFC.FUEL);
+		ItemStack solidFuel = itemInventory.getStackInSlot(SLOTFUEL);
 		if(solidFuel != ItemStack.EMPTY) {
 			int burnTime;
 			burnTime = TileEntityFurnace.getItemBurnTime(solidFuel);
@@ -226,10 +227,10 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	}
 
 	private void canBurnSolidFuel() {
-		if(!isReady && itemInventory.getStackInSlot(ContainerFC.FUEL) != ItemStack.EMPTY) {
+		if(!isReady && itemInventory.getStackInSlot(SLOTFUEL) != ItemStack.EMPTY) {
 			isReady = true;
 			update = true;
-		} else if(isReady && time == 0 && progress == 0 && itemInventory.getStackInSlot(ContainerFC.FUEL) == ItemStack.EMPTY) {
+		} else if(isReady && time == 0 && progress == 0 && itemInventory.getStackInSlot(SLOTFUEL) == ItemStack.EMPTY) {
 			isReady = false;
 			update = true;
 		}
@@ -263,7 +264,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	}
 
 	private boolean burnSolidFuel() {
-		consumeItemStack(ContainerFC.FUEL, 1);
+		consumeItemStack(SLOTFUEL, 1);
 		return true;
 	}
 
