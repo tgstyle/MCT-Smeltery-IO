@@ -20,9 +20,9 @@ public class RegistryRecipes {
 		registerRecipe();
 	}
 
-	static ItemStack chest = new ItemStack(Blocks.CHEST, 1);
 	static ItemStack coal = new ItemStack(Items.COAL, 1);
 	static ItemStack hopper = new ItemStack(Blocks.HOPPER, 1);
+	static ItemStack furnace = new ItemStack(Blocks.FURNACE, 1);
 	static ItemStack ice = new ItemStack(Blocks.ICE, 1);
 	static ItemStack obsidian = new ItemStack(Blocks.OBSIDIAN ,1);
 	static ItemStack repeater = new ItemStack(Items.REPEATER ,1);
@@ -35,6 +35,7 @@ public class RegistryRecipes {
 	static ItemStack smeltery_machine = new ItemStack(TinkerSmeltery.smelteryIO, 1, 0);
 	static ItemStack fuel_controller = new ItemStack(Registry.MACHINE, 1, 0);
 	static ItemStack casting_machine = new ItemStack(Registry.MACHINE, 1, 1);
+	static ItemStack smeltery_input = new ItemStack(Registry.MACHINE, 1, 2);
 	static ItemStack upgrade_base = new ItemStack(Registry.UPGRADE, 1, 0);
 	static ItemStack upgrade_slot1 = new ItemStack(Registry.UPGRADE, 1, 1);
 	static ItemStack upgrade_slot2 = new ItemStack(Registry.UPGRADE, 1, 2);
@@ -55,11 +56,12 @@ public class RegistryRecipes {
 		if(OreDictionary.getOres("plateGold").isEmpty()) ingotGoldOrPlate = "ingotGold";
 		if(OreDictionary.getOres("dustGold").isEmpty()) ingotGoldOrDustGold = "ingotGold";
 		if(OreDictionary.getOres("dustCoal").isEmpty()) coalOrDustCoal = "itemCoal";
-		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), fuel_controller, new Object[]{"AAA", "ABA","AAA", 'A', seared_brick, 'B', hopper}).setRegistryName("fuel_controller"));
+		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), fuel_controller, new Object[]{"AAA", "ABA","ACA", 'A', seared_brick, 'B', hopper, 'C', furnace}).setRegistryName("fuel_controller"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), casting_machine, new Object[]{"ADA", "BCB","ABA", 'A', seared_brick, 'B', ice, 'C', casting_table, 'D', smeltery_machine}).setRegistryName("casting_machine"));
+		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), smeltery_input, new Object[]{"ABA", "BCB","ABA", 'A', seared_brick, 'B', hopper, 'C', "chest"}).setRegistryName("smeltery_input"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_base, true, new Object[]{"ACA", "CBC","ACA", 'A', "dyeBlue", 'B', ingotIronOrPlate, 'C', "paper"}).setRegistryName("upgrade_base"));
-		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_slot1, true, new Object[]{"ABA", "BCB","ABA", 'A', "plankWood", 'B', chest, 'C', upgrade_base}).setRegistryName("upgrade_slot1"));
-		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_slot2, true, new Object[]{"ABA", "BCB","ABA", 'A', ingotIronOrPlate, 'B', chest, 'C', upgrade_slot1}).setRegistryName("upgrade_slot2"));
+		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_slot1, true, new Object[]{"ABA", "BCB","ABA", 'A', "plankWood", 'B', "chest", 'C', upgrade_base}).setRegistryName("upgrade_slot1"));
+		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_slot2, true, new Object[]{"ABA", "BCB","ABA", 'A', ingotIronOrPlate, 'B', "chest", 'C', upgrade_slot1}).setRegistryName("upgrade_slot2"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_slot3, true, new Object[]{"ABA", "BCB","ABA", 'A', ingotGoldOrPlate, 'B', "chest", 'C', upgrade_slot2}).setRegistryName("upgrade_slot3"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_slot4, true, new Object[]{"ABA", "BCB","ABA", 'A', "gemDiamond", 'B', "chest", 'C', upgrade_slot3}).setRegistryName("upgrade_slot4"));
 		ForgeRegistries.RECIPES.register(new ShapedOreRecipe(new ResourceLocation(SmelteryIO.MODID), upgrade_basin, true, new Object[]{"ABA", "BCB","ABA", 'A', obsidian, 'B', casting_basin, 'C', upgrade_slot4}).setRegistryName("upgrade_basin"));
