@@ -2,7 +2,7 @@ package mctmods.smelteryio.items;
 
 import mctmods.smelteryio.entity.EntityIceball;
 import mctmods.smelteryio.items.base.ItemBase;
-
+import mctmods.smelteryio.library.util.ConfigSIO;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemIceball extends ItemBase {
-	private int maxSize = 16;
+	private int maxSize = ConfigSIO.iceBallStackSize;
 
 	public ItemIceball() {
  	 	super("iceball");

@@ -18,6 +18,7 @@ public class ConfigSIO {
 	public static int iceballAmountCasting;
 	public static int castingMachineSpeed;
 	public static int fuelControllerSpeed;
+	public static int iceBallStackSize;
 	public static double fuelControllerRatio;
 
 	private static int powderedFuelBurnTimeCheck = 24000;
@@ -29,6 +30,7 @@ public class ConfigSIO {
 	private static int iceballAmountCastingCheck = 8;
 	private static int castingMachineSpeedCheck = 2;
 	private static int fuelControllerSpeedCheck = 8;
+	private static int iceBallStackSizeCheck = 16;
 	private static double fuelControllerRatioCheck = 4.44;
 
 	public static void syncConfig() {
@@ -49,6 +51,20 @@ public class ConfigSIO {
 	 	 		powderedFuelBurnTimeProperty.setValue(powderedFuelBurnTimeCheck);
 	 	 	}
 	 	 	powderedFuelBurnTime = powderedFuelBurnTimeCheck;
+	 	 	
+	 	 	Property iceBallStackProperty = config.get(Configuration.CATEGORY_GENERAL,
+		 	 	 	"iceBallStackSize",
+		 	 	 	String.valueOf(iceBallStackSizeCheck),
+		 	 	 	"Ice Ball stack Size (Valid value 1-64) (Default = 16)");
+	 	 	iceBallStackSizeCheck = iceBallStackProperty.getInt();
+		 	if(iceBallStackSizeCheck < 0) {
+		 		iceBallStackSizeCheck = 1;
+		 		iceBallStackProperty.setValue(iceBallStackSizeCheck);
+		 	} else if(iceBallStackSizeCheck > 64) {
+		 		iceBallStackSizeCheck = 64;
+		 		iceBallStackProperty.setValue(iceBallStackSizeCheck);
+		 	}
+		 	iceBallStackSize = iceBallStackSizeCheck;
 
 	 	 	Property snowballBasinAmountProperty = config.get(CATEGORY_CASTING_MACHINE,
 	 	 	 	"snowballBasinAmount",
@@ -175,6 +191,7 @@ public class ConfigSIO {
 	 	 		fuelControllerRatioProperty.setValue(fuelControllerRatioCheck);
 	 	 	}
 	 	 	fuelControllerRatio = fuelControllerRatioCheck;
+
 	 	} catch (Exception e) {
 	 		SmelteryIO.logger.error("Config Error %d" + e);
 	 	} finally {
