@@ -168,17 +168,19 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 				for(int item = 0; item < tileSmeltery.getSizeInventory(); item++) {
 					ItemStack stack = tileSmeltery.getStackInSlot(item);
 					if(!stack.isEmpty()) {
-						if(tileSmeltery.canHeat(item)) {
-							int temp = tileSmeltery.getTemperature(item);
-							int neededTemp = tileSmeltery.getTempRequired(item);
-							float progress = tileSmeltery.getProgress(item);
-							if(temp <= neededTemp) {
-								heatingItem = true;
-								update = true;
-							}
-							if(!atCapacity && progress >= 2) {
-								atCapacity = true;
-								update = true;
+						if(tileSmeltery.getTempRequired(item) > 0) {
+							if(tileSmeltery.canHeat(item)) {
+								int temp = tileSmeltery.getTemperature(item);
+								int neededTemp = tileSmeltery.getTempRequired(item);
+								float progress = tileSmeltery.getProgress(item);
+								if(temp <= neededTemp) {
+									heatingItem = true;
+									update = true;
+								}
+								if(!atCapacity && progress >= 2) {
+									atCapacity = true;
+									update = true;
+								}
 							}
 						}
 					}
