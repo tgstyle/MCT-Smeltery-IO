@@ -8,6 +8,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import slimeknights.tconstruct.library.Util;
 
 public class GuiFC extends GuiContainer {
 	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/container/fuel_controller.png");
@@ -48,7 +49,7 @@ public class GuiFC extends GuiContainer {
 		fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 5, 0xffffff);
 		String temperatureInfo = TextFormatting.RED + I18n.format("container.fuel_controller.temperature", new Object[0]);
 		fontRenderer.drawString(temperatureInfo, (-55 - (fontRenderer.getStringWidth(temperatureInfo))/2), 9, 4210752);
-		String currentTemperature = TextFormatting.RED + String.valueOf(tileEntity.getFuelTemp() + "°C");
+		String currentTemperature = TextFormatting.RED + Util.temperatureString(tileEntity.getFuelTemp() + 300);
 		fontRenderer.drawString(currentTemperature, (-55 - (fontRenderer.getStringWidth(currentTemperature))/2), 21, 4210752);
 		double ratio = tileEntity.getRatio();
 		String msgRatio = TextFormatting.AQUA + I18n.format("container.fuel_controller.ratio", new Object[0]) + " " + ratio;
