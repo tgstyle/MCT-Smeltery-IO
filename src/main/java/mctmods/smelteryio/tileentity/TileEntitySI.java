@@ -22,16 +22,18 @@ public class TileEntitySI extends TileEntityBase implements ITickable{
 			return;
 		} else {
 			if(cooldown % 20 == 0) {
-				getSmeltery();
-				if(smeltery) {
-					for(int item = 0; item < tileSmeltery.getSizeInventory(); item++) {
-						ItemStack stack = tileSmeltery.getStackInSlot(item);
-						if(stack.isEmpty()) {
-							ItemStack items = itemInventory.getStackInSlot(SLOTITEMS);
-							boolean valid = tileSmeltery.getItemHandler().isItemValid(item, items);
-							if(valid) {
-								tileSmeltery.getItemHandler().insertItem(item, items, false);
-								itemInventory.extractItem(SLOTITEMS, 1, false);
+				if(!itemInventory.getStackInSlot(SLOTITEMS).isEmpty()); {
+					getSmeltery();
+					if(smeltery) {
+						for(int item = 0; item < tileSmeltery.getSizeInventory(); item++) {
+							ItemStack stack = tileSmeltery.getStackInSlot(item);
+							if(stack.isEmpty()) {
+								ItemStack items = itemInventory.getStackInSlot(SLOTITEMS);
+								boolean valid = tileSmeltery.getItemHandler().isItemValid(item, items);
+								if(valid) {
+									tileSmeltery.getItemHandler().insertItem(item, items, false);
+									itemInventory.extractItem(SLOTITEMS, 1, false);
+								}
 							}
 						}
 					}
