@@ -295,7 +295,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 						if(!targetItemStack.isEmpty() && canOutput() && burnSolidFuel()){
 							if(currentRecipe.consumesCast()) itemInventory.extractItem(SLOTCAST, 1, false);
 							tank.drain(currentRecipe.getFluidAmount(), true);
-							time = currentRecipe.getTime() * 2;
+							time = currentRecipe.getTime() / 2;
 							burnCount--;
 							active = true;
 							update = true;
