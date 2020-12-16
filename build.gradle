@@ -18,38 +18,10 @@ configFile.withReader {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
-	maven {
-		name = 'CoFH Maven'
-		url = 'http://maven.covers1624.net/'
-	}
-	maven {
-		name = 'ChickenBones Maven'
-		url = "http://chickenbones.net/maven/"
-	}
-	maven {
-		name = 'JEI Maven'
-		url = 'http://dvs1.progwml6.com/files/maven'
-	}
-	maven {
-		name = 'HWYLA Maven'
-		url = 'http://maven.tehnut.info'
-	}
     maven {
         name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
+        url = "https://www.cursemaven.com"
     }
-	maven {
-		name = 'Immersive Maven'
-		url = 'http://maven.blamejared.com'
-	}
-	maven {
-		name = 'tterrag Maven'
-		url = 'http://maven.tterrag.com/'
-	}
-	maven {
-		name 'ModMaven'
-		url 'https://modmaven.k-4u.nl'
-	}
 }
 
 
@@ -70,7 +42,7 @@ minecraft {
 }
 
 dependencies {
-	compile "mezz.jei:jei_${common.mcversion}:${common.jei_version}"
+	compile "curse.maven:${common.jei_version}"
 
 
 
@@ -79,10 +51,10 @@ dependencies {
 
 
 
-	compileOnly "mcjty.theoneprobe:TheOneProbe-${common.mcbaseversion}:${common.mcbaseversion}-${common.top_version}"
-	compileOnly "mcp.mobius.waila:Hwyla:${common.hwya_version}"
-	deobfCompile "slimeknights:TConstruct:${common.mcversion}-${common.tcon_version}"
-	deobfCompile "slimeknights.mantle:Mantle:${common.mcbaseversion}-${common.mant_version}"
+	compileOnly "curse.maven:${common.top_version}"
+	compileOnly "curse.maven:${common.hwya_version}"
+	deobfCompile "curse.maven:${common.tcon_version}"
+	deobfCompile "curse.maven:${common.mant_version}"
 
 
 }
