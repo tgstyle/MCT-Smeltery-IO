@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import slimeknights.tconstruct.library.smeltery.ISmelteryTankHandler;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 import slimeknights.tconstruct.smeltery.tileentity.TileTank;
@@ -47,6 +48,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public boolean fueled = false;
 	public boolean update = false;
 	public TileSmeltery tileSmeltery;
+	public ISmelteryTankHandler tileSmelteryTank;
 	private final int itemSlotsSize;
 	private ItemStackHandler itemInventoryIO;
 	protected ItemStackHandler itemInventory;
@@ -215,7 +217,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 		TileSmeltery tileSmeltery = null;
 		BlockPos masterPos = getMasterPosition();
 		World world = getWorld();
-		if(getHasMaster() && masterPos != null && world.getTileEntity(masterPos) instanceof TileSmeltery) tileSmeltery = (TileSmeltery) world.getTileEntity(masterPos);
+		if(getHasMaster() && masterPos != null && world.getTileEntity(masterPos) instanceof ISmelteryTankHandler) tileSmeltery = (TileSmeltery) world.getTileEntity(masterPos);
 		return tileSmeltery;
 	}
 

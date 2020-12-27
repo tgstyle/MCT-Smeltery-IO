@@ -5,6 +5,7 @@ itemGroup.mctsmelteryio=MCT Smeltery IO
 tile.mctsmelteryio:machine.fuel_controller.name=Fuel Controller
 tile.mctsmelteryio:machine.casting_machine.name=Casting Machine
 tile.mctsmelteryio:machine.smeltery_input.name=Smeltery Input
+tile.mctsmelteryio:machine.advanced_drain.name=Advanced Seared Drain
 
 #Items
 item.mctsmelteryio:powdered_fuel.name=Powdered Fuel

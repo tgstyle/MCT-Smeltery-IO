@@ -6,7 +6,8 @@ import net.minecraft.util.IStringSerializable;
 public enum EnumMachine implements IStringSerializable {
 	FUEL_CONTROLLER ("fuel_controller", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
 	CASTING_MACHINE ("casting_machine", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
-	SMELTERY_INPUT ("smeltery_input", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64);
+	SMELTERY_INPUT ("smeltery_input", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
+	ADVANCED_DRAIN ("advanced_drain", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64);
 
 	private String name;
 	private EnumRarity rarity;

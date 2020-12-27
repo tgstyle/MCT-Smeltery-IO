@@ -3,9 +3,11 @@ package mctmods.smelteryio.blocks;
 import mctmods.smelteryio.SmelteryIO;
 import mctmods.smelteryio.blocks.base.BlockBaseTE;
 import mctmods.smelteryio.blocks.meta.EnumMachine;
+import mctmods.smelteryio.tileentity.TileEntityAD;
 import mctmods.smelteryio.tileentity.TileEntityCM;
 import mctmods.smelteryio.tileentity.TileEntityFC;
 import mctmods.smelteryio.tileentity.TileEntitySI;
+import mctmods.smelteryio.tileentity.base.TileEntityBase;
 import mctmods.smelteryio.tileentity.gui.handler.GuiHandler;
 
 import net.minecraft.block.material.MapColor;
@@ -114,17 +116,13 @@ public class BlockMachine extends BlockBaseTE {
 
 	public EnumFacing getFacing(IBlockAccess world, BlockPos pos, IBlockState state) {
 		TileEntity tileEntity = world.getTileEntity(pos);
-		if(tileEntity instanceof TileEntityFC) return ((TileEntityFC)tileEntity) != null ? ((TileEntityFC)tileEntity).getFacing() : EnumFacing.NORTH;
-		if(tileEntity instanceof TileEntityCM) return ((TileEntityCM)tileEntity) != null ? ((TileEntityCM)tileEntity).getFacing() : EnumFacing.NORTH;
-		if(tileEntity instanceof TileEntitySI) return ((TileEntitySI)tileEntity) != null ? ((TileEntitySI)tileEntity).getFacing() : EnumFacing.NORTH;
+		if(tileEntity instanceof TileEntityBase) return ((TileEntityBase)tileEntity) != null ? ((TileEntityBase)tileEntity).getFacing() : EnumFacing.NORTH;
 		return null;
 	}
 
 	public void setFacing(IBlockAccess world, BlockPos pos, EnumFacing facing, IBlockState state) {
 		TileEntity tileEntity = world.getTileEntity(pos);
-		if(tileEntity instanceof TileEntityFC) ((TileEntityFC)tileEntity).setFacing(facing);
-		if(tileEntity instanceof TileEntityCM) ((TileEntityCM)tileEntity).setFacing(facing);
-		if(tileEntity instanceof TileEntitySI) ((TileEntitySI)tileEntity).setFacing(facing);
+		((TileEntityBase)tileEntity).setFacing(facing);
 	}
 
 	@Override
@@ -136,19 +134,12 @@ public class BlockMachine extends BlockBaseTE {
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		int meta = getMetaFromState(state);
-		int mode = 1;
-		if(tileEntity instanceof TileEntityFC) {
-			if(((TileEntityFC)tileEntity).isActive() && ((TileEntityFC)tileEntity).hasController()) mode = 4;
-			if(!((TileEntityFC)tileEntity).isActive() && ((TileEntityFC)tileEntity).hasController()) mode = 3;
-			if(((TileEntityFC)tileEntity).isActive() && !((TileEntityFC)tileEntity).hasController()) mode = 2;
-			if(!((TileEntityFC)tileEntity).isActive() && !((TileEntityFC)tileEntity).hasController()) mode = 1;
-			return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos, state));
-		}
-		if(tileEntity instanceof TileEntityCM) {
-			if(((TileEntityCM)tileEntity).isActive() && ((TileEntityCM)tileEntity).hasController()) mode = 4;
-			if(!((TileEntityCM)tileEntity).isActive() && ((TileEntityCM)tileEntity).hasController()) mode = 3;
-			if(((TileEntityCM)tileEntity).isActive() && !((TileEntityCM)tileEntity).hasController()) mode = 2;
-			if(!((TileEntityCM)tileEntity).isActive() && !((TileEntityCM)tileEntity).hasController()) mode = 1;
+		if(tileEntity instanceof TileEntityFC || tileEntity instanceof TileEntityCM) {
+			int mode = 1;
+			if(((TileEntityBase)tileEntity).isActive() && ((TileEntityBase)tileEntity).hasController()) mode = 4;
+			if(!((TileEntityBase)tileEntity).isActive() && ((TileEntityBase)tileEntity).hasController()) mode = 3;
+			if(((TileEntityBase)tileEntity).isActive() && !((TileEntityBase)tileEntity).hasController()) mode = 2;
+			if(!((TileEntityBase)tileEntity).isActive() && !((TileEntityBase)tileEntity).hasController()) mode = 1;
 			return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos, state));
 		}
 		return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(FACING, getFacing(world, pos, state));
@@ -163,12 +154,14 @@ public class BlockMachine extends BlockBaseTE {
 			return new TileEntityCM();
 		case 2:
 			return new TileEntitySI();
+		case 3:
+			return new TileEntityAD();
 		}
 		return null;
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if(!world.isRemote) {
 			TileEntity tileEntity = world.getTileEntity(pos);
 			int meta = getMetaFromState(state);
@@ -189,26 +182,15 @@ public class BlockMachine extends BlockBaseTE {
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
 		TileEntity tileEntity = world.getTileEntity(pos);
+		ItemStack stack = null;
+		IItemHandler handler = ((TileEntityBase)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		if(tileEntity instanceof TileEntityFC) {
-			IItemHandler handler = ((TileEntityFC)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-			for(int slot = 0; slot < handler.getSlots(); slot++) {
-				ItemStack stack = handler.getStackInSlot(slot);
-				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
-			}
 			if(((TileEntityFC)tileEntity).getMasterTile() != null) ((TileEntityFC)tileEntity).resetSmeltery();
 		}
-		if(tileEntity instanceof TileEntityCM) {
-			IItemHandler handler = ((TileEntityCM)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		if(((TileEntityBase)tileEntity).getMasterTile() != null) ((TileEntityBase)tileEntity).notifyMasterOfChange();
+		if(handler != null) {
 			for(int slot = 0; slot < handler.getSlots(); slot++) {
-				ItemStack stack = handler.getStackInSlot(slot);
-				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
-			}
-			if(((TileEntityCM)tileEntity).getMasterTile() != null) ((TileEntityCM)tileEntity).notifyMasterOfChange();
-		}
-		if(tileEntity instanceof TileEntitySI) {
-			IItemHandler handler = ((TileEntitySI)tileEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-			for(int slot = 0; slot < handler.getSlots(); slot++) {
-				ItemStack stack = handler.getStackInSlot(slot);
+				stack = handler.getStackInSlot(slot);
 				InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
 			}
 		}
@@ -220,7 +202,7 @@ public class BlockMachine extends BlockBaseTE {
 	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityFC) {
-			if(((TileEntityFC)tileEntity).active) {
+			if(((TileEntityBase)tileEntity).active) {
 				EnumFacing enumfacing = getFacing(world, pos, state);
 				double d0 = (double)pos.getX() + 0.5D;
 				double d1 = (double)pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
@@ -249,7 +231,7 @@ public class BlockMachine extends BlockBaseTE {
 			}
 		}
 		if(tileEntity instanceof TileEntityCM) {
-			if(((TileEntityCM)tileEntity).active) {
+			if(((TileEntityBase)tileEntity).active) {
 				world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.25F, 0.1F, false);
 				world.spawnParticle(EnumParticleTypes.getParticleFromId(12), pos.getX() + .5D , pos.getY() + .99D, pos.getZ() + .5D , 0.0, 0.0, 0.0);
 				world.spawnParticle(EnumParticleTypes.getParticleFromId(11), pos.getX() + .99D, pos.getY() + .5D , pos.getZ() + .5D , 0.0, 0.0, 0.0);
