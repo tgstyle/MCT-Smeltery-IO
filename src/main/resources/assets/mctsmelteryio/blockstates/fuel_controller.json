@@ -5,7 +5,7 @@
 		"textures": {
 			"active": "mctsmelteryio:blocks/fuel_controller/fuel_controller_front_active",
 			"front": "mctsmelteryio:blocks/fuel_controller/fuel_controller_front",
-			"side": "mctsmelteryio:blocks/shared_side",
+			"side": "tconstruct:blocks/smeltery/seared_brick",
 			"back": "#side",
 			"top": "#side",
 			"bottom": "#side",

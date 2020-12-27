@@ -8,7 +8,7 @@
 			"back": "#front",
 			"top": "mctsmelteryio:blocks/smeltery_input/smeltery_input_top",
 			"bottom": "#top",
-			"particle": "mctsmelteryio:blocks/shared_side"
+			"particle": "#side"
 		},
         "uvlock": true
 	},

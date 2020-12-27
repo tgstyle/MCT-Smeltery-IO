@@ -5,8 +5,8 @@
 		"textures": {
 			"active": "mctsmelteryio:blocks/casting_machine/casting_machine_active",
 			"front": "mctsmelteryio:blocks/casting_machine/casting_machine_side",
-			"side": "mctsmelteryio:blocks/shared_side",
-			"back": "mctsmelteryio:blocks/casting_machine/casting_machine_drain",
+			"side": "tconstruct:blocks/smeltery/seared_brick",
+			"back": "tconstruct:blocks/smeltery/drain_back",
 			"top": "mctsmelteryio:blocks/casting_machine/casting_machine_top",
 			"bottom": "mctsmelteryio:blocks/casting_machine/casting_machine_bottom",
 			"particle": "#side"
