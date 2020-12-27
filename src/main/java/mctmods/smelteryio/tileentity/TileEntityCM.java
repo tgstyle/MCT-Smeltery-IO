@@ -187,6 +187,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 	private void resetCM() {
 		smeltery = false;
 		update = true;
+		tileSmeltery = null;
 	}
 
 	private void inputFluid() {

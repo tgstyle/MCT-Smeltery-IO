@@ -160,6 +160,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		smeltery = false;
 		fueled = false;
 		update = true;
+		tileSmeltery = null;
 	}
 
 	private void updateSmelteryHeatingState() {

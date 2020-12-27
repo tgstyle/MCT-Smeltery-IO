@@ -71,6 +71,7 @@ public class TileEntitySI extends TileEntityBase implements ITickable{
 	private void resetSI() {
 		smeltery = false;
 		update = true;
+		tileSmeltery = null;
 	}
 
 	@Override
