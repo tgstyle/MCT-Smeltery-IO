@@ -122,7 +122,7 @@ public class BlockMachine extends BlockBaseTE {
 
 	public void setFacing(IBlockAccess world, BlockPos pos, EnumFacing facing, IBlockState state) {
 		TileEntity tileEntity = world.getTileEntity(pos);
-		((TileEntityBase)tileEntity).setFacing(facing);
+		if(tileEntity instanceof TileEntityBase) ((TileEntityBase)tileEntity).setFacing(facing);
 	}
 
 	@Override
