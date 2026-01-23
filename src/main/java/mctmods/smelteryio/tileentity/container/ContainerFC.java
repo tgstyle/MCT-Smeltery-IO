@@ -10,14 +10,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class ContainerFC extends ContainerBase {
-    public ContainerFC(IInventory playerInventory, final TileEntityFC tileEntity) {
-        IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+	public ContainerFC(IInventory playerInventory, final TileEntityFC tileEntity) {
+		IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		addSlotToContainer(new SlotHandlerFC(handler, TileEntityFC.SLOTUPGRADESPEED, 25, 34, 64));
 		addSlotToContainer(new SlotHandlerFC(handler, TileEntityFC.SLOTFUEL, 134, 34, 64));
 		addPlayerInventorySlotToContainer(playerInventory);
-	}
-
-	@Override protected int getSizeInventory() {
-		return TileEntityFC.SLOTS_SIZE;
 	}
 }

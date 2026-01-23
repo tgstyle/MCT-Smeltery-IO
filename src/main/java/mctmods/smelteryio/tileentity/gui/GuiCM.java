@@ -2,8 +2,6 @@ package mctmods.smelteryio.tileentity.gui;
 
 import com.google.common.collect.Lists;
 
-import java.io.IOException;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,19 +26,19 @@ import net.minecraftforge.fluids.IFluidTank;
 import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.library.client.GuiUtil;
 
+import javax.annotation.Nonnull;
+
 public class GuiCM extends GuiContainer {
 	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/container/casting_machine.png");
-	private TileEntityCM tileEntity;
+	private final TileEntityCM tileEntity;
 	public static final int WIDTH = 176;
 	public static final int HEIGHT = 166;
-	private static int PROGRESSWIDTH = 22;
-	private static int FLUIDHEIGHT = 52;
 	private GuiButton buttonEmptyTank;
 	private GuiButton buttonLockSlots;
 	public static final int BUTTON_EMPTY_TANK = 0, BUTTON_LOCK_SLOTS = 1;
 
-	public GuiCM(ContainerBase serverGuiElement, TileEntityCM tileEntity) {
-		super(serverGuiElement);
+	public GuiCM(ContainerBase container, TileEntityCM tileEntity) {
+		super(container);
 		this.tileEntity = tileEntity;
 		this.xSize = WIDTH;
 		this.ySize = HEIGHT;
@@ -57,19 +55,21 @@ public class GuiCM extends GuiContainer {
 		drawDefaultBackground();
 		mc.getTextureManager().bindTexture(BG_TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-		if(!tileEntity.isControlledByRedstone()) drawTexturedModalRect(guiLeft + 123, guiTop + 52, 179, 63, 10, 10);
-		if(!tileEntity.canWork()) {
+		if (!tileEntity.isControlledByRedstone()) drawTexturedModalRect(guiLeft + 123, guiTop + 52, 179, 63, 10, 10);
+		if (!tileEntity.canWork()) {
 			drawTexturedModalRect(guiLeft + 126, guiTop + 51, 192, 60, 4, 4);
 			drawTexturedModalRect(guiLeft + 119, guiTop + 34, 176, 60, 16, 16);
 		}
-		if(tileEntity.isReady()) drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
-		if(tileEntity.getCurrentMode() == TileEntityCM.BASIN) drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
+		if (tileEntity.isReady()) drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
+		if (tileEntity.getCurrentMode() == TileEntityCM.BASIN) drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
 		else drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
-		if(tileEntity.isFueled() && tileEntity.isActive()) {
+		if (tileEntity.isFueled() && tileEntity.isActive()) {
+			int PROGRESSWIDTH = 22;
 			int progress = tileEntity.getGUIProgress(PROGRESSWIDTH);
 			drawTexturedModalRect(guiLeft + 117, guiTop + 34, 176, 0, progress, 16);
 		}
-		if(tileEntity.getCurrentFluid() != null) {
+		if (tileEntity.getCurrentFluid() != null) {
+			int FLUIDHEIGHT = 52;
 			int fluidAmount = tileEntity.getGUIFluidBarHeight(FLUIDHEIGHT);
 			GuiUtil.renderTiledFluid(guiLeft + 19, guiTop + 15 + FLUIDHEIGHT - fluidAmount, 12, fluidAmount, zLevel, tileEntity.getCurrentFluid());
 		}
@@ -81,21 +81,19 @@ public class GuiCM extends GuiContainer {
 		String name = I18n.format("container.casting_machine");
 		fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 5, 0xffffff);
 		int outputSize = tileEntity.getOutputStackSize();
-		String outputname = String.valueOf(outputSize);
-		fontRenderer.drawString(outputname, 151 - fontRenderer.getStringWidth(outputname) / 2, 18, 0x0000aa);
-		if(tileEntity.getCurrentFluid() != null) {
-			List<String> tooltip = getTankTooltip(tileEntity.getTank(), tileEntity.getCurrentFluid(), mouseX, mouseY, guiLeft + 19, guiTop + 15, guiLeft + 38, guiTop + 67);
-			if(tooltip != null) drawHoveringText(tooltip, mouseX-guiLeft, mouseY-guiTop);
-		}
+		String outputName = String.valueOf(outputSize);
+		fontRenderer.drawString(outputName, 151 - fontRenderer.getStringWidth(outputName) / 2, 18, 0x0000aa);
+		List<String> tooltip = getTankTooltip(tileEntity.getTank(), tileEntity.getCurrentFluid(), mouseX, mouseY, guiLeft + 19, guiTop + 15, guiLeft + 38, guiTop + 67);
+		if (tooltip != null) drawHoveringText(tooltip, mouseX - guiLeft, mouseY - guiTop);
 		buttonEmptyTank.enabled = Util.isShiftKeyDown();
 		buttonLockSlots.enabled = Util.isShiftKeyDown();
-		if(buttonEmptyTank.isMouseOver()) {
+		if (buttonEmptyTank.isMouseOver()) {
 			String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttontank.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttontank.info")};
 			List<String> temp = Arrays.asList(desc);
 			drawHoveringText(temp, mouseX - guiLeft, mouseY - guiTop, fontRenderer);
 		}
-		if(buttonLockSlots.isMouseOver()) {
-			if(tileEntity.isSlotsLocked()) {
+		if (buttonLockSlots.isMouseOver()) {
+			if (tileEntity.isSlotsLocked()) {
 				String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttonslot.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info1"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info2"), TextFormatting.DARK_GREEN + I18n.format("container.casting_machine.buttonslot.enabled")};
 				List<String> temp = Arrays.asList(desc);
 				drawHoveringText(temp, mouseX - guiLeft, mouseY - guiTop, fontRenderer);
@@ -110,17 +108,15 @@ public class GuiCM extends GuiContainer {
 	@Override
 	public void initGui() {
 		super.initGui();
-		buttonEmptyTank = new GuiButton(BUTTON_EMPTY_TANK, guiLeft - 20,  guiTop + ySize - 166, 20, 20, "") {
-			@Override
-			public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+		buttonEmptyTank = new GuiButton(BUTTON_EMPTY_TANK, guiLeft - 20, guiTop, 20, 20, "") {
+			@Override public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 				super.drawButton(mc, mouseX, mouseY, partialTicks);
 				GuiCM.this.mc.getTextureManager().bindTexture(GuiCM.BG_TEXTURE);
 				drawTexturedModalRect(x, y, 177, 17, 20, 20);
 			}
 		};
-		buttonLockSlots = new GuiButton(BUTTON_LOCK_SLOTS, guiLeft - 20,  guiTop + ySize - 146, 20, 20, "") {
-			@Override
-			public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+		buttonLockSlots = new GuiButton(BUTTON_LOCK_SLOTS, guiLeft - 20, guiTop + 20, 20, 20, "") {
+			@Override public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 				super.drawButton(mc, mouseX, mouseY, partialTicks);
 				GuiCM.this.mc.getTextureManager().bindTexture(GuiCM.BG_TEXTURE);
 				drawTexturedModalRect(x, y, 177, 39, 20, 20);
@@ -133,8 +129,8 @@ public class GuiCM extends GuiContainer {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton button) throws IOException {
-		switch(button.id) {
+	protected void actionPerformed(GuiButton button) {
+		switch (button.id) {
 			case BUTTON_EMPTY_TANK:
 				tileEntity.emptyTank();
 				NetworkHandler.sendToServer(new MessageEmptyTank(tileEntity.getPos()));
@@ -142,23 +138,22 @@ public class GuiCM extends GuiContainer {
 			case BUTTON_LOCK_SLOTS:
 				tileEntity.slotsLocked();
 				NetworkHandler.sendToServer(new MessageLockSlots(tileEntity.getPos()));
-			default:
 				break;
 		}
 	}
 
-	private static List<String> getTankTooltip(IFluidTank tank, FluidStack fluid, int mouseX, int mouseY, int xmin, int ymin, int xmax, int ymax) {
-		if(xmin <= mouseX && mouseX < xmax && ymin <= mouseY && mouseY < ymax) {
-			FluidStack hovered = fluid;
+	private static List<String> getTankTooltip(IFluidTank tank, FluidStack hovered, int mouseX, int mouseY, int xMin, int yMin, int xMax, int yMax) {
+		if (xMin <= mouseX && mouseX < xMax && yMin <= mouseY && mouseY < yMax) {
 			List<String> text = Lists.newArrayList();
-			if(hovered == null) text.add(Util.translateFormatted("gui.smeltery.capacity_used"));
-			else {
+			int amount = hovered != null ? hovered.amount : 0;
+			if (amount == 0) {
+				text.add(TextFormatting.GRAY + "Empty");
+			} else {
 				text.add(TextFormatting.WHITE + hovered.getLocalizedName());
-				GuiUtil.liquidToString(hovered, text);
 			}
+			text.add(String.format("%d / %d mB", amount, tank.getCapacity()));
 			return text;
 		}
 		return null;
 	}
-
 }

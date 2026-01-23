@@ -8,8 +8,7 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public abstract class ContainerBase extends Container {
-	protected abstract int getSizeInventory();
+public class ContainerBase extends Container {
 
 	public void addPlayerInventorySlotToContainer(IInventory playerInventory) {
 		for(int i = 0; i < 3; ++i){
@@ -46,5 +45,4 @@ public abstract class ContainerBase extends Container {
 	public boolean canInteractWith(@Nonnull EntityPlayer player) {
 		return true;
 	}
-
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 
 import mctmods.smelteryio.SmelteryIO;
 import mctmods.smelteryio.blocks.BlockMachine;
+import mctmods.smelteryio.entity.EntityIceball;
 import mctmods.smelteryio.itemblocks.ItemBlockMachine;
 import mctmods.smelteryio.items.ItemIceball;
 import mctmods.smelteryio.items.ItemPowderedFuel;
@@ -25,67 +26,73 @@ import java.util.Objects;
 @GameRegistry.ObjectHolder(SmelteryIO.MODID)
 public class Registry {
 	// blocks
- 	public static final BlockMachine MACHINE = new BlockMachine();
+	public static final BlockMachine MACHINE = new BlockMachine();
 
- 	// items
- 	public static final ItemPowderedFuel POWDERED_FUEL = new ItemPowderedFuel();
- 	public static final ItemIceball ICEBALL = new ItemIceball();
- 	public static final ItemUpgrade UPGRADE = new ItemUpgrade();
+	// items
+	public static final ItemPowderedFuel POWDERED_FUEL = new ItemPowderedFuel();
+	public static final ItemIceball ICEBALL = new ItemIceball();
+	public static final ItemUpgrade UPGRADE = new ItemUpgrade();
 
- 	// blocks
- 	private static final Block[] block = {
- 		MACHINE
- 	};
+	// blocks
+	private static final Block[] block = {
+			MACHINE
+	};
 
- 	// items
+	// items
 	private static final Item[] item = {
-		POWDERED_FUEL,
-		ICEBALL,
-		UPGRADE
+			POWDERED_FUEL,
+			ICEBALL,
+			UPGRADE
 	};
 
 	// itemblocks
-	 private static final ItemBlock[] itemblock = {
- 		new ItemBlockMachine(MACHINE)
- 	};
+	private static final ItemBlock[] itemblock = {
+			new ItemBlockMachine(MACHINE)
+	};
 
 	public static void registerBlocks(IForgeRegistry<Block> registry) {
-		for(Block block : block) {
+		for (Block block : block) {
 			registry.register(block);
-            SmelteryIO.logger.info("Added block: {}", block.getRegistryName());
-		 }
+			SmelteryIO.logger.info("Added block: {}", block.getRegistryName());
+		}
 	}
 
 	public static void registerItems(IForgeRegistry<Item> registry) {
-		for(Item item : item) {
+		for (Item item : item) {
 			registry.register(item);
-            SmelteryIO.logger.info("Added item: {}", item.getRegistryName());
+			SmelteryIO.logger.info("Added item: {}", item.getRegistryName());
 		}
 	}
 
 	public static void registerItemBlocks(IForgeRegistry<Item> registry) {
-		for(ItemBlock item_block : itemblock) {
+		for (ItemBlock item_block : itemblock) {
 			registry.register(item_block.setRegistryName(Objects.requireNonNull(item_block.getBlock().getRegistryName())));
-            SmelteryIO.logger.info("Added itemblock: {}", item_block.getBlock().getRegistryName());
+			SmelteryIO.logger.info("Added itemblock: {}", item_block.getBlock().getRegistryName());
 		}
 	}
 
-	public static void registerTConstruct () {
-		ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
- 	 	for(Block block : TinkerSmeltery.validSmelteryBlocks) {
- 	 	 	builder.add(block);
- 	 	}
- 	 	builder.add(MACHINE);
- 	 	TinkerSmeltery.validSmelteryBlocks = builder.build();
+	public static void registerEntities() {
+		EntityIceball.registerEntity();
 	}
 
- 	@SideOnly(Side.CLIENT)
- 	public static void initModels() {
- 		// blocks
- 		MACHINE.initItemBlockModels();
- 		// items
- 		POWDERED_FUEL.initItemModels();
- 		ICEBALL.initItemModels();
- 		UPGRADE.initItemModels();
- 	}
+	public static void registerTConstruct() {
+		ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
+		for (Block block : TinkerSmeltery.validSmelteryBlocks) {
+			builder.add(block);
+		}
+		builder.add(MACHINE);
+		TinkerSmeltery.validSmelteryBlocks = builder.build();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void initModels() {
+		// blocks
+		MACHINE.initItemBlockModels();
+		// items
+		POWDERED_FUEL.initItemModels();
+		ICEBALL.initItemModels();
+		UPGRADE.initItemModels();
+		// entities
+		EntityIceball.registerRenderer();
+	}
 }

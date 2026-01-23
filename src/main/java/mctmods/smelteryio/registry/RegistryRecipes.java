@@ -20,7 +20,6 @@ public class RegistryRecipes {
 		registerRecipe();
 	}
 
-	static ItemStack coal = new ItemStack(Items.COAL, 1);
 	static ItemStack hopper = new ItemStack(Blocks.HOPPER, 1);
 	static ItemStack furnace = new ItemStack(Blocks.FURNACE, 1);
 	static ItemStack ice = new ItemStack(Blocks.ICE, 1);

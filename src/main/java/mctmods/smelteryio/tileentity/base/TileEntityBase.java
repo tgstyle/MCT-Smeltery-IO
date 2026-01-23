@@ -49,35 +49,23 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public boolean update = false;
 	public TileSmeltery tileSmeltery;
 	public ISmelteryTankHandler tileSmelteryTank;
-    private final ItemStackHandler itemInventoryIO;
+	private final ItemStackHandler itemInventoryIO;
 	protected ItemStackHandler itemInventory;
 
 	protected TileEntityBase(int itemSlots) {
-        itemInventory = new ItemStackHandler(itemSlots) {};
+		itemInventory = new ItemStackHandler(itemSlots) {};
 		itemInventoryIO = new ItemStackHandler(itemSlots) {
-			@Override
-			public void setStackInSlot(int itemSlots, @Nonnull ItemStack stack) {
-				itemInventory.setStackInSlot(itemSlots, stack);
-			}
+			@Override public void setStackInSlot(int slot, @Nonnull ItemStack stack) { itemInventory.setStackInSlot(slot, stack); }
 
 			@Override
-			public int getSlots() {
-				return itemInventory.getSlots();
-			}
+			public int getSlots() { return itemInventory.getSlots(); }
 
-			@Override
-			@Nonnull
-			public ItemStack getStackInSlot(int itemSlots) {
-				return itemInventory.getStackInSlot(itemSlots);
-			}
+			@Override @Nonnull
+			public ItemStack getStackInSlot(int slot) { return itemInventory.getStackInSlot(slot); }
 
-			@Override @Nonnull public ItemStack insertItem(int itemSlots, @Nonnull ItemStack stack, boolean simulate) {
-				return TileEntityBase.this.insertItem(itemSlots, stack, simulate);
-			}
+			@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return TileEntityBase.this.insertItem(slot, stack, simulate); }
 
-			@Override @Nonnull public ItemStack extractItem(int itemSlots, int amount, boolean simulate) {
-				return TileEntityBase.this.extractItem(itemSlots, amount, simulate);
-			}
+			@Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return TileEntityBase.this.extractItem(slot, amount, simulate); }
 		};
 	}
 
@@ -116,48 +104,39 @@ public class TileEntityBase extends TileSmelteryComponent {
 	@SuppressWarnings("unchecked")
 	@Override public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			if(facing == null) {
-				return (T) itemInventory;
-			} else {
-				return (T) itemInventoryIO;
-			}
+			if(facing == null) { return (T) itemInventory; }
+			else { return (T) itemInventoryIO; }
 		}
 		return super.getCapability(capability, facing);
 	}
 
-	public ItemStack insertItem(int itemSlots, @Nonnull ItemStack stack, boolean simulate) {
-		return stack;
-	}
+	@SuppressWarnings("unused")
+	protected ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return stack; }
 
-	public ItemStack extractItem(int itemSlots, int amount, boolean simulate) {
-		return ItemStack.EMPTY;
-	}
+	@SuppressWarnings("unused")
+	protected ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
 
-	protected void onSlotChange(int itemSlots) {}
-
-	protected void consumeItemStack(int slotId, int amount) {
-		itemInventory.extractItem(slotId, amount, false);
-	}
+	protected void consumeItemStack(int slotId, int amount) { itemInventory.extractItem(slotId, amount, false); }
 
 	public int getSlotStackSize(ItemStack itemStack) {
 		int size = 0;
 		int meta = itemStack.getItemDamage();
 		int count = itemStack.getCount();
 		switch(meta) {
-		case 1:
-			size = count;
-			break;
-		case 2:
-            case 6:
-                size = count * 2;
-			break;
-		case 3:
-			size = count * 3;
-			break;
-		case 4:
-			size = count * 4;
-			break;
-        }
+			case 1:
+				size = count;
+				break;
+			case 2:
+			case 6:
+				size = count * 2;
+				break;
+			case 3:
+				size = count * 3;
+				break;
+			case 4:
+				size = count * 4;
+				break;
+		}
 		return size;
 	}
 
@@ -174,22 +153,16 @@ public class TileEntityBase extends TileSmelteryComponent {
 		readFromNBT(pkt.getNbtCompound());
 	}
 
-	public EnumFacing getFacing() {
-		return facing;
-	}
+	public EnumFacing getFacing() { return facing; }
 
-	public void setFacing(EnumFacing facing) {
-		this.facing = facing;
-	}
+	public void setFacing(EnumFacing facing) { this.facing = facing; }
 
 	public void efficientMarkDirty() {
 		world.getChunk(getPos()).markDirty();
 		this.markContainingBlockForUpdate(null);
 	}
 
-	public void markContainingBlockForUpdate(@Nullable IBlockState newState) {
-		markBlockForUpdate(getPos(), newState);
-	}
+	public void markContainingBlockForUpdate(@Nullable IBlockState newState) { markBlockForUpdate(getPos(), newState); }
 
 	public void markBlockForUpdate(BlockPos pos, @Nullable IBlockState newState) {
 		IBlockState state = world.getBlockState(pos);
@@ -212,26 +185,16 @@ public class TileEntityBase extends TileSmelteryComponent {
 		return null;
 	}
 
-	public boolean isActive() {
-		return active;
-	}
+	public boolean isActive() { return active; }
 
-	public boolean hasController() {
-		return smeltery;
-	}
+	public boolean hasController() { return smeltery; }
 
 	@SideOnly(Side.CLIENT)
-	public boolean isFueled() {
-		return fueled;
-	}
+	public boolean isFueled() { return fueled; }
 
 	@SideOnly(Side.CLIENT)
-	public boolean isReady() {
-		return !isReady;
-	}
+	public boolean isReady() { return !isReady; }
 
 	@SideOnly(Side.CLIENT)
-	public int getGUIProgress(int pixel) {
-		return (int) (((float)activeCount / (float)time) * pixel);
-	}
+	public int getGUIProgress(int pixel) { return (int) (((float)activeCount / (float)time) * pixel); }
 }

@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
 
 public class TileEntitySI extends TileEntityBase implements ITickable{
-
 	public static final int SLOTS_SIZE = 1;
 	public static final int SLOTITEMS = 0;
 

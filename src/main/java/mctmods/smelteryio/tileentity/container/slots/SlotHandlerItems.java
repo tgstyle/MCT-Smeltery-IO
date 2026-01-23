@@ -20,13 +20,9 @@ public class SlotHandlerItems {
 		add(EnumUpgrade.UPGRADE_BASIN);
 	}};
 
-	static ArrayList<EnumUpgrade> allowSpeedList = new ArrayList<EnumUpgrade>() {{
-		add(EnumUpgrade.UPGRADE_SPEED);
-	}};
+	static ArrayList<EnumUpgrade> allowSpeedList = new ArrayList<EnumUpgrade>() {{ add(EnumUpgrade.UPGRADE_SPEED); }};
 
-	static ArrayList<EnumUpgrade> allowRedstoneList = new ArrayList<EnumUpgrade>() {{
-		add(EnumUpgrade.UPGRADE_REDSTONE);
-	}};
+	static ArrayList<EnumUpgrade> allowRedstoneList = new ArrayList<EnumUpgrade>() {{ add(EnumUpgrade.UPGRADE_REDSTONE); }};
 
 	public static boolean validForSlot(ItemStack stack, int slot, int tileID) {
 		if(stack == null || stack.isEmpty()) {

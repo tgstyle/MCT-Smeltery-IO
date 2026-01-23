@@ -26,7 +26,7 @@ public class ItemPowderedFuel extends ItemBase {
 		return maxSize;
 	}
 
-	@Override public int getItemBurnTime(ItemStack i) { return ConfigSIO.powderedFuelBurnTime; }
+	@Override public int getItemBurnTime(@Nonnull ItemStack i) { return ConfigSIO.powderedFuelBurnTime; }
 
 	@SideOnly(Side.CLIENT)
  	public void initItemModels() {

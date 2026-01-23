@@ -195,10 +195,7 @@ public class ConfigSIO {
 	 	} catch (Exception e) {
             SmelteryIO.logger.error("Config Error %d{}", String.valueOf(e));
 	 	} finally {
-	 	 	if(config.hasChanged()) {
-	 	 		config.save();
-	 	 	}
+	 	 	if(config.hasChanged()) { config.save(); }
 	 	}
 	}
-
 }

@@ -55,9 +55,7 @@ public class BlockMachine extends BlockBaseTE {
 	public static final IProperty<EnumFacing> FACING = PropertyDirection.create("facing");
 	public static final PropertyInteger ACTIVE = PropertyInteger.create("active", 1, 4);
 
-	public BlockMachine() {
-		super(Material.IRON, MapColor.GRAY, "machine");
-	}
+	public BlockMachine() { super(Material.IRON, MapColor.GRAY, "machine"); }
 
 	@Override @Nonnull protected BlockStateContainer createBlockState() {
 		BlockStateContainer.Builder builder = new BlockStateContainer.Builder(this);
@@ -67,64 +65,37 @@ public class BlockMachine extends BlockBaseTE {
 		return builder.build();
 	}
 
-	@Override public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list)	{
-		for(EnumMachine variant : EnumMachine.values()) list.add(new ItemStack(this, 1, variant.ordinal()));
-	}
+	@Override public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) { for(EnumMachine variant : EnumMachine.values()) list.add(new ItemStack(this, 1, variant.ordinal())); }
 
 	@SuppressWarnings("deprecation")
-	@Override @Nonnull public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(VARIANT, EnumMachine.values()[meta]);
-	}
+	@Override @Nonnull public IBlockState getStateFromMeta(int meta) { return getDefaultState().withProperty(VARIANT, EnumMachine.values()[meta]); }
 
-	@Override public int getMetaFromState(IBlockState state) {
-		return state.getValue(VARIANT).ordinal();
-	}
+	@Override public int getMetaFromState(IBlockState state) { return state.getValue(VARIANT).ordinal(); }
 
-	@Override public int damageDropped(@Nonnull IBlockState state) {
-		return getMetaFromState(state);
-	}
+	@Override public int damageDropped(@Nonnull IBlockState state) { return getMetaFromState(state); }
 
-	public String getRecipeOreDict1(IBlockState state) {
-		return state.getValue(VARIANT).getRecipeOreDict1();
-	}
+	@Override public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) { return state.getValue(VARIANT).getLight(); }
 
-	public String getRecipeOreDict2(IBlockState state) {
-		return state.getValue(VARIANT).getRecipeOreDict2();
-	}
-
-	@Override public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-		return state.getValue(VARIANT).getLight();
-	}
-
-	@Override
-	public int getHarvestLevel(IBlockState state) {
-		return state.getValue(VARIANT).getHarvestLevel();
-	}
+	@Override public int getHarvestLevel(IBlockState state) { return state.getValue(VARIANT).getHarvestLevel(); }
 
 	@SuppressWarnings("deprecation")
-	@Override public float getBlockHardness(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
-		return state.getValue(VARIANT).getHardness();
-	}
+	@Override public float getBlockHardness(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) { return state.getValue(VARIANT).getHardness(); }
 
-	@Override public float getExplosionResistance(World world, @Nonnull BlockPos pos, Entity exploder, @Nonnull Explosion explosion) {
-		return world.getBlockState(pos).getValue(VARIANT).getResistance() / 5F;
-	}
+	@Override public float getExplosionResistance(World world, @Nonnull BlockPos pos, Entity exploder, @Nonnull Explosion explosion) { return world.getBlockState(pos).getValue(VARIANT).getResistance() / 5F; }
 
-	public EnumFacing getFacing(IBlockAccess world, BlockPos pos, IBlockState state) {
+	public EnumFacing getFacing(IBlockAccess world, BlockPos pos) {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityBase) return ((TileEntityBase)tileEntity).getFacing();
 		return null;
 	}
 
-	public void setFacing(IBlockAccess world, BlockPos pos, EnumFacing facing, IBlockState state) {
+	public void setFacing(IBlockAccess world, BlockPos pos, EnumFacing facing) {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityBase) ((TileEntityBase)tileEntity).setFacing(facing);
 	}
 
 	@Override
-	public void onBlockPlacedBy(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
-		setFacing(world, pos, EnumFacing.getDirectionFromEntityLiving(pos, placer), state);
-	}
+	public void onBlockPlacedBy(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) { setFacing(world, pos, EnumFacing.getDirectionFromEntityLiving(pos, placer)); }
 
 	@SuppressWarnings("deprecation")
 	@Override @Nonnull public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
@@ -136,21 +107,21 @@ public class BlockMachine extends BlockBaseTE {
 			if(!((TileEntityBase)tileEntity).isActive() && ((TileEntityBase)tileEntity).hasController()) mode = 3;
 			if(((TileEntityBase)tileEntity).isActive() && !((TileEntityBase)tileEntity).hasController()) mode = 2;
 			if(!((TileEntityBase)tileEntity).isActive() && !((TileEntityBase)tileEntity).hasController()) mode = 1;
-			return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos, state));
+			return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(ACTIVE, mode).withProperty(FACING, getFacing(world, pos));
 		}
-		return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(FACING, getFacing(world, pos, state));
+		return state.withProperty(VARIANT, EnumMachine.values()[meta]).withProperty(FACING, getFacing(world, pos));
 	}
 
 	@Override public TileEntity createNewTileEntity(@Nonnull World world, int meta) {
 		switch(meta) {
-		case 0:
-			return new TileEntityFC();
-		case 1:
-			return new TileEntityCM();
-		case 2:
-			return new TileEntitySI();
-		case 3:
-			return new TileEntityAD();
+			case 0:
+				return new TileEntityFC();
+			case 1:
+				return new TileEntityCM();
+			case 2:
+				return new TileEntitySI();
+			case 3:
+				return new TileEntityAD();
 		}
 		return null;
 	}
@@ -160,16 +131,16 @@ public class BlockMachine extends BlockBaseTE {
 			TileEntity tileEntity = world.getTileEntity(pos);
 			int meta = getMetaFromState(state);
 			switch(meta) {
-			case 0:
-                assert tileEntity != null;
-                ((TileEntityFC)tileEntity).guiOpen();
-				player.openGui(SmelteryIO.instance, GuiHandler.FUEL_CONTROLLER, world, pos.getX(), pos.getY(), pos.getZ());
-				return true;
-			case 1:
-                assert tileEntity != null;
-                ((TileEntityCM)tileEntity).guiOpen();
-				player.openGui(SmelteryIO.instance, GuiHandler.CASTING_MACHINE, world, pos.getX(), pos.getY(), pos.getZ());
-				return true;
+				case 0:
+					assert tileEntity != null;
+					((TileEntityFC)tileEntity).guiOpen();
+					player.openGui(SmelteryIO.instance, GuiHandler.FUEL_CONTROLLER, world, pos.getX(), pos.getY(), pos.getZ());
+					return true;
+				case 1:
+					assert tileEntity != null;
+					((TileEntityCM)tileEntity).guiOpen();
+					player.openGui(SmelteryIO.instance, GuiHandler.CASTING_MACHINE, world, pos.getX(), pos.getY(), pos.getZ());
+					return true;
 			}
 		}
 		return false;
@@ -178,8 +149,8 @@ public class BlockMachine extends BlockBaseTE {
 	@Override public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		ItemStack stack;
-        assert tileEntity != null;
-        IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		assert tileEntity != null;
+		IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		if(tileEntity instanceof TileEntityFC) {
 			if(((TileEntityFC)tileEntity).getMasterTile() != null) ((TileEntityFC)tileEntity).resetSmeltery();
 		}
@@ -199,7 +170,7 @@ public class BlockMachine extends BlockBaseTE {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityFC) {
 			if(((TileEntityBase)tileEntity).active) {
-				EnumFacing enumfacing = getFacing(world, pos, state);
+				EnumFacing enumfacing = getFacing(world, pos);
 				double d0 = (double)pos.getX() + 0.5D;
 				double d1 = (double)pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
 				double d2 = (double)pos.getZ() + 0.5D;
@@ -250,7 +221,7 @@ public class BlockMachine extends BlockBaseTE {
 	public static class BlockStateMachine extends StateMapperBase {
 		@Override @Nonnull protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
 			String block = state.getValue(VARIANT).getName();
-            String builder = ACTIVE.getName() + "=" + state.getValue(ACTIVE) + "," + FACING.getName() + "=" + state.getValue(FACING);
+			String builder = ACTIVE.getName() + "=" + state.getValue(ACTIVE) + "," + FACING.getName() + "=" + state.getValue(FACING);
 			ResourceLocation baseLocation = new ResourceLocation(SmelteryIO.MODID + ":" + block);
 			return new ModelResourceLocation(baseLocation, builder);
 		}

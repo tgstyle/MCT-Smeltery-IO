@@ -5,6 +5,4 @@ import mctmods.smelteryio.tileentity.gui.handler.GuiHandler;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-public class RegistryGUI { public static void registerGUI() {
-		NetworkRegistry.INSTANCE.registerGuiHandler(SmelteryIO.instance, new GuiHandler());
-	}}
+public class RegistryGUI { public static void registerGUI() { NetworkRegistry.INSTANCE.registerGuiHandler(SmelteryIO.instance, new GuiHandler()); }}

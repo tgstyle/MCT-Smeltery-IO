@@ -29,27 +29,27 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(
-	modid = SmelteryIO.MODID,
-	name = SmelteryIO.MODNAME,
-	version = SmelteryIO.VERSION,
-	acceptedMinecraftVersions = "[1.12.2,1.13)",
-	dependencies=
-			"required-after:forge@[14.23.+,);" +
-			"required-after:tconstruct;" +
-			"after:waila;" +
-			"after:jei;")
+		modid = SmelteryIO.MODID,
+		name = SmelteryIO.MODNAME,
+		version = SmelteryIO.VERSION,
+		acceptedMinecraftVersions = "[1.12.2,1.13)",
+		dependencies =
+				"required-after:forge@[14.23.+,);" +
+						"required-after:tconstruct;" +
+						"after:waila;" +
+						"after:jei;")
 
 @EventBusSubscriber
 public class SmelteryIO {
- 	public static final String MODID = "mctsmelteryio";
- 	public static final String MODNAME = "MCT Smeltery IO";
- 	public static final String VERSION = "${version}";
+	public static final String MODID = "mctsmelteryio";
+	public static final String MODNAME = "MCT Smeltery IO";
+	public static final String VERSION = "${version}";
 
- 	public static Logger logger = LogManager.getLogger(MODID);
+	public static Logger logger = LogManager.getLogger(MODID);
 
- 	@SidedProxy(clientSide = "mctmods.smelteryio.proxies.ClientProxy", serverSide = "mctmods.smelteryio.proxies.CommonProxy")
- 	public static CommonProxy proxy;
- 	public static Configuration config;
+	@SidedProxy(clientSide = "mctmods.smelteryio.proxies.ClientProxy", serverSide = "mctmods.smelteryio.proxies.CommonProxy")
+	public static CommonProxy proxy;
+	public static Configuration config;
 
 	@Instance(MODID)
 	public static SmelteryIO instance = new SmelteryIO();
@@ -72,24 +72,25 @@ public class SmelteryIO {
 		proxy.registerRenders();
 	}
 
- 	@EventHandler
- 	public void preInit(FMLPreInitializationEvent event) {
- 		config = new Configuration(event.getSuggestedConfigurationFile());
- 		ConfigSIO.syncConfig();
- 		RegistryTE.registerTileEntities();
- 		NetworkHandler.registerNetwork();
- 		proxy.preInit();
- 	}
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		config = new Configuration(event.getSuggestedConfigurationFile());
+		ConfigSIO.syncConfig();
+		RegistryTE.registerTileEntities();
+		Registry.registerEntities();
+		NetworkHandler.registerNetwork();
+		proxy.preInit();
+	}
 
- 	@EventHandler
- 	public void init(FMLInitializationEvent event) {
- 		proxy.init();
- 	}
+	@EventHandler
+	public void init(FMLInitializationEvent event) {
+		proxy.init();
+	}
 
- 	@EventHandler
- 	public void postInit(FMLPostInitializationEvent event) {
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
 		Registry.registerTConstruct();
 		RegistryGUI.registerGUI();
- 	 	proxy.postInit();
- 	}
+		proxy.postInit();
+	}
 }

@@ -1,6 +1,7 @@
 package mctmods.smelteryio.tileentity;
 
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -22,7 +23,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import slimeknights.tconstruct.smeltery.tileentity.TileHeatingStructure;
 
 public class TileEntityFC extends TileEntityBase implements ITickable {
-
 	public static final int SLOTS_SIZE = 2;
 	public static final int SLOTUPGRADESPEED = 0, SLOTFUEL = 1;
 	public static final String TAG_RATIO = "ratio";
@@ -117,7 +117,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 					smeltery = true;
 					update = true;
 				} else {
-					if(!owner && !tileSmeltery.getName().toString().contains("sio.smeltery.customname")) {
+					if(!owner && !tileSmeltery.getName().contains("sio.smeltery.customname")) {
 						resetSmelteryName("sio.smeltery.customname");
 						notifyMasterOfChange();
 						owner = true;
@@ -278,7 +278,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		for(BlockPos pos : tileSmeltery.tanks) {
 			if(pos == tileSmeltery.currentTank) continue;
 			IFluidTank tank = getTankAt(pos);
-			if(tank != null && tank.getFluidAmount() > 0) temp = tank.getFluid().getFluid().getTemperature() - 300; // convert to degrees celcius as done in Tinkers Construct
+			if(tank != null && tank.getFluidAmount() > 0) temp = Objects.requireNonNull(tank.getFluid()).getFluid().getTemperature() - 300;
 	    }
 		if(temp != 0) fueled = true;
 		return temp;
@@ -290,8 +290,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 
 	private void setSmelteryTempNBT(int temperature) {
 		final NBTTagCompound nbt = getNBT();
-		if(nbt == null) return;
-		nbt.setInteger(TileHeatingStructure.TAG_TEMPERATURE, temperature);
+        nbt.setInteger(TileHeatingStructure.TAG_TEMPERATURE, temperature);
 		tileSmeltery.readFromNBT(nbt);
 		notifyMasterOfChange();
 	}
@@ -332,10 +331,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public boolean isHeatingSmeltery() {
-		if(!atCapacity && currentTemp != 0) return true;
-		return false;
-	}
+	public boolean isHeatingSmeltery() { return !atCapacity && currentTemp != 0; }
 
 	@SideOnly(Side.CLIENT)
 	public double getRatio() {

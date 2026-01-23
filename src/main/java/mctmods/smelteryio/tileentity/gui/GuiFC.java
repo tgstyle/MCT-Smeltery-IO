@@ -12,12 +12,11 @@ import slimeknights.tconstruct.library.Util;
 
 public class GuiFC extends GuiContainer {
 	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/container/fuel_controller.png");
-	private TileEntityFC tileEntity;
+	private final TileEntityFC tileEntity;
 	public static final int WIDTH = 176;
 	public static final int HEIGHT = 166;
-	private static int PROGRESSHEIGHT = 13;
 
-	public GuiFC(ContainerBase serverGuiElement, TileEntityFC tileEntity) {
+    public GuiFC(ContainerBase serverGuiElement, TileEntityFC tileEntity) {
 		super(serverGuiElement);
 		this.tileEntity = tileEntity;
 		this.xSize = WIDTH;
@@ -37,7 +36,8 @@ public class GuiFC extends GuiContainer {
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 		drawTexturedModalRect(guiLeft - 110, guiTop, 146, 170, 110, 60);
 		if(tileEntity.isActive()) {
-			int progress = tileEntity.getGUIProgress(PROGRESSHEIGHT);
+            int PROGRESSHEIGHT = 13;
+            int progress = tileEntity.getGUIProgress(PROGRESSHEIGHT);
 			if(!tileEntity.isActive()) progress = PROGRESSHEIGHT;
 			drawTexturedModalRect(guiLeft + 81, guiTop + 37 + progress, 176, 33 + progress, 13, 13 - progress);
 		}
@@ -63,5 +63,4 @@ public class GuiFC extends GuiContainer {
 		if(!tileEntity.hasController()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorsmeltery", new Object[0]);		
 		if(warn != null) fontRenderer.drawString(warn, (-55 - (fontRenderer.getStringWidth(warn))/2), 44, 4210752);
 	}
-
 }
