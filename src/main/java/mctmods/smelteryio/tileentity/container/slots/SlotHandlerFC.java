@@ -10,9 +10,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class SlotHandlerFC extends SlotItemHandler {
-	private int tileID = TileEntityFC.TILEID;
-	private int tileSlot;
-	private int slotStackLimit;
+    private final int tileSlot;
+	private final int slotStackLimit;
 
 	public SlotHandlerFC(IItemHandler itemHandler, int index, int xPosition, int yPosition, int stacksize) {
 		super(itemHandler, index, xPosition, yPosition);
@@ -20,9 +19,9 @@ public class SlotHandlerFC extends SlotItemHandler {
 		this.slotStackLimit = stacksize;
 	}
 
-	@Override
-	public boolean isItemValid(@Nonnull ItemStack stack) {
-		switch(tileSlot) {
+	@Override public boolean isItemValid(@Nonnull ItemStack stack) {
+        int tileID = TileEntityFC.TILEID;
+        switch(tileSlot) {
 		case TileEntityFC.SLOTFUEL:
 			return (SlotHandlerItems.validForSlot(stack, TileEntityFC.SLOTFUEL, tileID));
 		case TileEntityFC.SLOTUPGRADESPEED:
@@ -31,9 +30,7 @@ public class SlotHandlerFC extends SlotItemHandler {
 		return false;
 	}
 
-	@Override
-	public int getSlotStackLimit() {
+	@Override public int getSlotStackLimit() {
 		return slotStackLimit;
 	}
-
 }

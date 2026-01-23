@@ -3,21 +3,23 @@ package mctmods.smelteryio.blocks.meta;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
+
 public enum EnumMachine implements IStringSerializable {
 	FUEL_CONTROLLER ("fuel_controller", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
 	CASTING_MACHINE ("casting_machine", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
 	SMELTERY_INPUT ("smeltery_input", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
 	ADVANCED_DRAIN ("advanced_drain", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64);
 
-	private String name;
-	private EnumRarity rarity;
-	private String recipeOreDict1;
-	private String recipeOreDict2;
-	private int light;
-	private int harvestLevel;
-	private float hardness;
-	private float resistance;
-	private int maxSize;
+	private final String name;
+	private final EnumRarity rarity;
+	private final String recipeOreDict1;
+	private final String recipeOreDict2;
+	private final int light;
+	private final int harvestLevel;
+	private final float hardness;
+	private final float resistance;
+	private final int maxSize;
 
 	EnumMachine (String name, EnumRarity rarity, String recipeOreDict1, String recipeOreDict2, int light, int harvestLevel, float hardness, float resistance, int maxSize) {
 		this.name = name;
@@ -31,8 +33,7 @@ public enum EnumMachine implements IStringSerializable {
 		this.maxSize = maxSize;
 	}
 
-	@Override
-	public String getName() {
+	@Override @Nonnull public String getName() {
 		return name;
 	}
 
@@ -67,5 +68,4 @@ public enum EnumMachine implements IStringSerializable {
  	public int getMaxSize() {
  		return maxSize;
  	}
-
 }

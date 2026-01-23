@@ -18,11 +18,10 @@ public class TileEntitySI extends TileEntityBase implements ITickable{
 
 	@Override
 	public void update() {
-		if(world.isRemote) {
-			return;
-		} else {
+		if(world.isRemote) { return; }
+		else {
 			if(cooldown % 20 == 0) {
-				if(!itemInventory.getStackInSlot(SLOTITEMS).isEmpty()); {
+                itemInventory.getStackInSlot(SLOTITEMS); {
 					getSmeltery();
 					if(smeltery) {
 						for(int item = 0; item < tileSmeltery.getSizeInventory(); item++) {
@@ -56,16 +55,10 @@ public class TileEntitySI extends TileEntityBase implements ITickable{
 					smeltery = true;
 					update = true;
 				}
-			} else {
-				if(smeltery) {
-					resetSI();
-				}
 			}
-		} else {
-			if(smeltery) {
-				resetSI();
-			}
+			else { if(smeltery) { resetSI(); }}
 		}
+		else { if(smeltery) { resetSI(); } }
 	}
 
 	private void resetSI() {
@@ -78,5 +71,4 @@ public class TileEntitySI extends TileEntityBase implements ITickable{
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		return itemInventory.insertItem(slot, stack, simulate);
 	}
-
 }

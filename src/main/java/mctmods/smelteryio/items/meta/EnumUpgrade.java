@@ -3,6 +3,8 @@ package mctmods.smelteryio.items.meta;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
+
 public enum EnumUpgrade implements IStringSerializable {
 	UPGRADE_BASE ("upgrade_base", EnumRarity.COMMON, "", "", 64),
 	UPGRADE_SLOT1 ("upgrade_slot1", EnumRarity.COMMON, "", "", 8),
@@ -13,11 +15,11 @@ public enum EnumUpgrade implements IStringSerializable {
 	UPGRADE_SPEED ("upgrade_speed", EnumRarity.COMMON, "", "", 8),
 	UPGRADE_REDSTONE ("upgrade_redstone", EnumRarity.COMMON, "", "", 1);
 
-	private String name;
-	private EnumRarity rarity;
-	private String recipeOreDict1;
-	private String recipeOreDict2;
-	private int maxSize;
+	private final String name;
+	private final EnumRarity rarity;
+	private final String recipeOreDict1;
+	private final String recipeOreDict2;
+	private final int maxSize;
 
 	EnumUpgrade (String name, EnumRarity rarity, String recipeOreDict1, String recipeOreDict2, int maxSize) {
 		this.name = name;
@@ -27,13 +29,11 @@ public enum EnumUpgrade implements IStringSerializable {
 		this.maxSize = maxSize;
 	}
 
- 	@Override
- 	public String getName() {
+ 	@Override @Nonnull public String getName() {
  		return name;
  	}
 
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		return getName();
 	}
 
@@ -52,5 +52,4 @@ public enum EnumUpgrade implements IStringSerializable {
  	public int getMaxSize() {
  		return maxSize;
  	}
-
 }

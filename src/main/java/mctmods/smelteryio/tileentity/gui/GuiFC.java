@@ -57,7 +57,7 @@ public class GuiFC extends GuiContainer {
 		String warn = null;
 		if(!tileEntity.isHeatingSmeltery()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.erroritems", new Object[0]);
 		if(tileEntity.atCapacity()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorcapacity", new Object[0]);
-		if(!tileEntity.isReady()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorfuel", new Object[0]);
+		if(tileEntity.isReady()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorfuel", new Object[0]);
 		if(!tileEntity.isFueled()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorsmelteryfuel", new Object[0]);
 		if(!tileEntity.getOwner()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorowner", new Object[0]);
 		if(!tileEntity.hasController()) warn = TextFormatting.DARK_RED + I18n.format("container.fuel_controller.errorsmeltery", new Object[0]);		

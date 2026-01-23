@@ -46,8 +46,7 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 		return this.recipe.cast != null;
 	}
 
-	@Override
-	public void getIngredients(IIngredients ingredients) {
+	@Override public void getIngredients(IIngredients ingredients) {
 		ingredients.setInputLists(VanillaTypes.ITEM, ImmutableList.of(cast));
 		ingredients.setInputs(VanillaTypes.FLUID, inputFluid);
 		ingredients.setOutputs(VanillaTypes.ITEM, lazyInitOutput());
@@ -61,8 +60,7 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 		return this.output;
 	}
 
-	@Override
-	public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+	@Override public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
 		if(this.recipe.consumesCast()) {
 			String s = I18n.format("gui.jei.casting.consume");
 			int x = 55;
@@ -80,5 +78,4 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 				&& !this.output.isEmpty()
 				&& !this.output.get(0).isEmpty();
 	}
-
 }

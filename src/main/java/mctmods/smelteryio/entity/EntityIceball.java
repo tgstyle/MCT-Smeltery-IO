@@ -44,5 +44,4 @@ public class EntityIceball extends EntityThrowable {
             this.setDead();
         }
     }
-
 }

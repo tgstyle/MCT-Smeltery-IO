@@ -92,5 +92,4 @@ public class SmelteryIO {
 		RegistryGUI.registerGUI();
  	 	proxy.postInit();
  	}
-
 }

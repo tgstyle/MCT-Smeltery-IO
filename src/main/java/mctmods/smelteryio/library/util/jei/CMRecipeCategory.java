@@ -24,10 +24,12 @@ import net.minecraftforge.fluids.FluidStack;
 
 import slimeknights.tconstruct.library.materials.Material;
 
+import javax.annotation.Nonnull;
+
 @SuppressWarnings("rawtypes")
 public class CMRecipeCategory implements IRecipeCategory {
 	public static String CATEGORY = SmelteryIO.MODID + ":" + "casting_machine";
-	private static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/jei/casting_machine.png");
+	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/jei/casting_machine.png");
 	private final IDrawable background;
 	protected final IDrawableAnimated arrow;
 
@@ -37,33 +39,27 @@ public class CMRecipeCategory implements IRecipeCategory {
 		arrow = guiHelper.createAnimatedDrawable(arrowDrawable, 30, IDrawableAnimated.StartDirection.LEFT, false);
 	}
 
-	@Override
-	public String getUid() {
+	@Override @Nonnull public String getUid() {
 		return CATEGORY;
 	}
 
-	@Override
-	public String getTitle() {
-		return I18n.format(Registry.MACHINE.getUnlocalizedName() + ".casting_machine.name");
+	@Override @Nonnull public String getTitle() {
+		return I18n.format(Registry.MACHINE.getTranslationKey() + ".casting_machine.name");
 	}
 
-	@Override
-	public String getModName() {
+	@Override @Nonnull public String getModName() {
 		return SmelteryIO.MODNAME;
 	}
 
-	@Override
-	public IDrawable getBackground() {
+	@Override @Nonnull public IDrawable getBackground() {
 		return background;
 	}
 
-	@Override
-	public void drawExtras(Minecraft minecraft) {
+	@Override public void drawExtras(@Nonnull Minecraft minecraft) {
 		arrow.draw(minecraft, 103, 24);
 	}
 
-	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	@Override public void setRecipe(IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		IGuiItemStackGroup items = recipeLayout.getItemStacks();
 		IGuiFluidStackGroup fluids = recipeLayout.getFluidStacks();
 		List<FluidStack> input = ingredients.getInputs(VanillaTypes.FLUID).get(0);
@@ -96,5 +92,4 @@ public class CMRecipeCategory implements IRecipeCategory {
 		}
 		fluids.init(0, true, 5, 5, 12, 52, Material.VALUE_Block, false, null);
 	}
-
 }

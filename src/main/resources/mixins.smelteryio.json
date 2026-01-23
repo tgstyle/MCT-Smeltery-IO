@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "mctmods.smelteryio.mixin",
+  "refmap": "mixins.smelteryio.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinNetworkRegistry"
+  ]
+}

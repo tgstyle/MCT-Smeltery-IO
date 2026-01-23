@@ -27,8 +27,7 @@ public class TileEntityFluidTank extends FluidTank {
 		this(new FluidStack(fluid, amount), capacity, listener);
 	}
 
-	@Override
-	protected void onContentsChanged() {
+	@Override protected void onContentsChanged() {
 		listener.TankContentsChanged();
 		super.onContentsChanged();
 	}

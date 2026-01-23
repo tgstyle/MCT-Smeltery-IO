@@ -20,6 +20,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
+import java.util.Objects;
+
 @GameRegistry.ObjectHolder(SmelteryIO.MODID)
 public class Registry {
 	// blocks
@@ -50,21 +52,21 @@ public class Registry {
 	public static void registerBlocks(IForgeRegistry<Block> registry) {
 		for(Block block : block) {
 			registry.register(block);
-			SmelteryIO.logger.info("Added block: " + block.getRegistryName());
+            SmelteryIO.logger.info("Added block: {}", block.getRegistryName());
 		 }
 	}
 
 	public static void registerItems(IForgeRegistry<Item> registry) {
 		for(Item item : item) {
 			registry.register(item);
-			SmelteryIO.logger.info("Added item: " + item.getRegistryName());
+            SmelteryIO.logger.info("Added item: {}", item.getRegistryName());
 		}
 	}
 
 	public static void registerItemBlocks(IForgeRegistry<Item> registry) {
 		for(ItemBlock item_block : itemblock) {
-			registry.register(item_block.setRegistryName(item_block.getBlock().getRegistryName()));
-			SmelteryIO.logger.info("Added itemblock: " + item_block.getBlock().getRegistryName());
+			registry.register(item_block.setRegistryName(Objects.requireNonNull(item_block.getBlock().getRegistryName())));
+            SmelteryIO.logger.info("Added itemblock: {}", item_block.getBlock().getRegistryName());
 		}
 	}
 
@@ -86,5 +88,4 @@ public class Registry {
  		ICEBALL.initItemModels();
  		UPGRADE.initItemModels();
  	}
-
 }

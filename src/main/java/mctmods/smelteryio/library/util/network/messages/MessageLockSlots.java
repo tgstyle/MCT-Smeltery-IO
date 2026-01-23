@@ -14,9 +14,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 public class MessageLockSlots extends MessageBase<MessageLockSlots> {
 	private NBTTagCompound data;
 
-	public MessageLockSlots() {
-
-	}
+	public MessageLockSlots() {}
 
 	public MessageLockSlots(BlockPos pos) {
 		data = new NBTTagCompound();
@@ -25,12 +23,9 @@ public class MessageLockSlots extends MessageBase<MessageLockSlots> {
 		data.setInteger("z", pos.getZ());
 	}
 
-	@Override
-	public void handleClientSide(MessageLockSlots message, EntityPlayer player) {
-	}
+	@Override public void handleClientSide(MessageLockSlots message, EntityPlayer player) {}
 
-	@Override
-	public void handleServerSide(MessageLockSlots message, EntityPlayer player) {
+	@Override public void handleServerSide(MessageLockSlots message, EntityPlayer player) {
 		int x = message.data.getInteger("x");
 		int y = message.data.getInteger("y");
 		int z = message.data.getInteger("z");
@@ -38,14 +33,11 @@ public class MessageLockSlots extends MessageBase<MessageLockSlots> {
 		if(tileEntity instanceof TileEntityCM) ((TileEntityCM) tileEntity).slotsLocked();
 	}
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
+	@Override public void fromBytes(ByteBuf buf) {
 		data = ByteBufUtils.readTag(buf);
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+	@Override public void toBytes(ByteBuf buf) {
 		ByteBufUtils.writeTag(buf, data);
 	}
-
 }

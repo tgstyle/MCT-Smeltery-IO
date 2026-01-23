@@ -62,7 +62,7 @@ public class GuiCM extends GuiContainer {
 			drawTexturedModalRect(guiLeft + 126, guiTop + 51, 192, 60, 4, 4);
 			drawTexturedModalRect(guiLeft + 119, guiTop + 34, 176, 60, 16, 16);
 		}
-		if(!tileEntity.isReady()) drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
+		if(tileEntity.isReady()) drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
 		if(tileEntity.getCurrentMode() == TileEntityCM.BASIN) drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
 		else drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
 		if(tileEntity.isFueled() && tileEntity.isActive()) {

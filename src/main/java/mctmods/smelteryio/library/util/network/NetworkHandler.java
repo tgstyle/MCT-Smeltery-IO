@@ -40,5 +40,4 @@ public class NetworkHandler {
 	public static void sendToDimension(IMessage message, int dimensionId) {
 		INSTANCE.sendToDimension(message, dimensionId);
 	}
-
 }

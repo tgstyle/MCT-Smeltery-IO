@@ -14,7 +14,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import slimeknights.tconstruct.library.smeltery.SmelteryTank;
 
 public class TileEntityAD extends TileEntityBase implements ITickable {
-
 	public static final int SLOTS_SIZE = 0;
 	private SmelteryTank tank;
 
@@ -24,7 +23,7 @@ public class TileEntityAD extends TileEntityBase implements ITickable {
 
 	@Override
 	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return capability == null;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return false;
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return tileSmelteryTank != null && tileSmelteryTank.getTank()!= null;
 		}
@@ -94,5 +93,4 @@ public class TileEntityAD extends TileEntityBase implements ITickable {
 		tileSmelteryTank = null;
 		tileSmeltery = null;
 	}
-
 }

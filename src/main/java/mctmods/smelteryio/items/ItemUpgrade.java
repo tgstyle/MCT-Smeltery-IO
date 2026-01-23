@@ -1,6 +1,7 @@
 package mctmods.smelteryio.items;
 
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import mctmods.smelteryio.items.base.ItemBase;
@@ -24,12 +25,11 @@ import org.lwjgl.input.Keyboard;
 
 public class ItemUpgrade extends ItemBase {
 	public ItemUpgrade() {
- 	 	super("upgrade");
+		super("upgrade");
 		setHasSubtypes(true);
 	}
 
-	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
+	@Override public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
 		if(isInCreativeTab(tab)) {
 			for(EnumUpgrade type : EnumUpgrade.values()) {
 				list.add(new ItemStack(this, 1, type.ordinal()));
@@ -37,34 +37,30 @@ public class ItemUpgrade extends ItemBase {
 		}
 	}
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
- 	 	return super.getUnlocalizedName() + "." + EnumUpgrade.values()[stack.getMetadata()].getName();
- 	}
+	@Override @Nonnull public String getTranslationKey(ItemStack stack) {
+		return super.getTranslationKey() + "." + EnumUpgrade.values()[stack.getMetadata()].getName();
+	}
 
-	@Override
-	public EnumRarity getRarity(ItemStack stack) {
+	@SuppressWarnings("deprecation")
+	@Override @Nonnull public EnumRarity getRarity(ItemStack stack) {
 		return EnumUpgrade.values()[stack.getMetadata()].getRarity();
 	}
 
-	@Override
-	public int getItemStackLimit(ItemStack stack) {
+	@Override public int getItemStackLimit(ItemStack stack) {
 		return EnumUpgrade.values()[stack.getMetadata()].getMaxSize();
 	}
 
- 	@Override
- 	public int getMetadata(int damage) {
- 	 	return damage;
- 	}
+	@Override public int getMetadata(int damage) {
+		return damage;
+	}
 
 	@SideOnly(Side.CLIENT)
 	public boolean isShiftKeyDown() {
- 	 	return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54);
- 	}
+		return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54);
+	}
 
-	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+	@Override public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
 		if(isShiftKeyDown()) {
 			switch (stack.getItemDamage()) {
 				case 0:
@@ -106,10 +102,9 @@ public class ItemUpgrade extends ItemBase {
 	}
 
 	@SideOnly(Side.CLIENT)
- 	public void initItemModels() {
- 		for(EnumUpgrade variant : EnumUpgrade.values()) {
- 			ModelLoader.setCustomModelResourceLocation(this, variant.ordinal(), new ModelResourceLocation(getRegistryName() + "/" + variant.getName(), "inventory"));
- 		}
- 	}
-
+	public void initItemModels() {
+		for(EnumUpgrade variant : EnumUpgrade.values()) {
+			ModelLoader.setCustomModelResourceLocation(this, variant.ordinal(), new ModelResourceLocation(getRegistryName() + "/" + variant.getName(), "inventory"));
+		}
+	}
 }

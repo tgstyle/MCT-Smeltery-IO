@@ -6,6 +6,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public abstract class ContainerBase extends Container {
 	protected abstract int getSizeInventory();
 
@@ -22,8 +24,7 @@ public abstract class ContainerBase extends Container {
 		}
 	}
 
-	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+	@Override @Nonnull public ItemStack transferStackInSlot(@Nonnull EntityPlayer player, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get(index);
 		if(slot != null && slot.getHasStack()) {
@@ -42,7 +43,7 @@ public abstract class ContainerBase extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer player) {
+	public boolean canInteractWith(@Nonnull EntityPlayer player) {
 		return true;
 	}
 

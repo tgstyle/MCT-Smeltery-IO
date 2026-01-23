@@ -13,9 +13,7 @@ public class FCRecipeWrapper implements IRecipeWrapper {
 		this.input = itemStack;
 	}
 
-	@Override
-	public void getIngredients(IIngredients ingredients) {
+	@Override public void getIngredients(IIngredients ingredients) {
 		ingredients.setInput(VanillaTypes.ITEM, this.input);
 	}
-
 }

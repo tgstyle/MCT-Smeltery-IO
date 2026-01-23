@@ -9,7 +9,6 @@ import mctmods.smelteryio.tileentity.TileEntitySI;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class RegistryTE {
-
 	@SuppressWarnings("deprecation")
 	public static void registerTileEntities() {
 		GameRegistry.registerTileEntity(TileEntityFC.class, SmelteryIO.MODID + "TileEntityFC");
@@ -17,5 +16,4 @@ public class RegistryTE {
 		GameRegistry.registerTileEntity(TileEntitySI.class, SmelteryIO.MODID + "TileEntitySI");
 		GameRegistry.registerTileEntity(TileEntityAD.class, SmelteryIO.MODID + "TileEntityAD");
 	}
-
 }

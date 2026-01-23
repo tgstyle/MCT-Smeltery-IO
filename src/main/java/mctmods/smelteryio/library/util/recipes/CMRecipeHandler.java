@@ -22,5 +22,4 @@ public class CMRecipeHandler {
 		}
 		return recipe;
 	}
-
 }

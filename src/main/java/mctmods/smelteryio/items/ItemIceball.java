@@ -18,8 +18,11 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class ItemIceball extends ItemBase {
-	private int maxSize = ConfigSIO.iceBallStackSize;
+	private final int maxSize = ConfigSIO.iceBallStackSize;
 
 	public ItemIceball() {
  	 	super("iceball");
@@ -27,27 +30,25 @@ public class ItemIceball extends ItemBase {
  	 	setMaxStackSize(maxSize);
 	}
 
-	@Override
-	public int getItemStackLimit(ItemStack stack) {
+	@Override public int getItemStackLimit(@Nonnull ItemStack stack) {
 		return maxSize;
 	}
 
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    @Nonnull public ActionResult<ItemStack> onItemRightClick(@Nonnull World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         if(!playerIn.capabilities.isCreativeMode) itemstack.shrink(1);
-        worldIn.playSound((EntityPlayer)null, playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+        worldIn.playSound(null, playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
         if(!worldIn.isRemote) {
         	EntityIceball entityiceball = new EntityIceball(worldIn, playerIn);
         	entityiceball.shoot(playerIn, playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 1.5F, 1.0F);
             worldIn.spawnEntity(entityiceball);
         }
-        playerIn.addStat(StatList.getObjectUseStats(this));
-        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
+        playerIn.addStat(Objects.requireNonNull(StatList.getObjectUseStats(this)));
+        return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
     }
 
 	@SideOnly(Side.CLIENT)
  	public void initItemModels() {
-   		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+   		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Objects.requireNonNull(getRegistryName()), "inventory"));
  	}
-
 }

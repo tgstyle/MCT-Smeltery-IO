@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 
 public class SlotHandlerItems {
-	@SuppressWarnings("serial")
 	static ArrayList<EnumUpgrade> allowUpgradeList = new ArrayList<EnumUpgrade>() {{
 		add(EnumUpgrade.UPGRADE_SLOT1);
 		add(EnumUpgrade.UPGRADE_SLOT2);
@@ -21,12 +20,10 @@ public class SlotHandlerItems {
 		add(EnumUpgrade.UPGRADE_BASIN);
 	}};
 
-	@SuppressWarnings("serial")
 	static ArrayList<EnumUpgrade> allowSpeedList = new ArrayList<EnumUpgrade>() {{
 		add(EnumUpgrade.UPGRADE_SPEED);
 	}};
 
-	@SuppressWarnings("serial")
 	static ArrayList<EnumUpgrade> allowRedstoneList = new ArrayList<EnumUpgrade>() {{
 		add(EnumUpgrade.UPGRADE_REDSTONE);
 	}};
@@ -53,9 +50,8 @@ public class SlotHandlerItems {
 				if(stack.getItem() == Items.SNOWBALL || stack.getItem() == Registry.ICEBALL) return true;
 			}
 			if(slot == TileEntityCM.SLOTCAST) {
-				if(stack.getItem() == Registry.UPGRADE || stack.getItem() == Items.SNOWBALL || stack.getItem() == Registry.ICEBALL) return false;
-				return true;
-			}
+                return stack.getItem() != Registry.UPGRADE && stack.getItem() != Items.SNOWBALL && stack.getItem() != Registry.ICEBALL;
+            }
 			if(slot == TileEntityCM.SLOTUPGRADE1 || slot == TileEntityCM.SLOTUPGRADE2) {
 				for(EnumUpgrade type : allowUpgradeList) {
 					if(stack.getItem() == Registry.UPGRADE && stack.getMetadata() == type.ordinal()) return true;
@@ -78,5 +74,4 @@ public class SlotHandlerItems {
 		}
 		return false;
 	}
-
 }

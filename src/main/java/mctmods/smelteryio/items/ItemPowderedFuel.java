@@ -10,8 +10,11 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class ItemPowderedFuel extends ItemBase {
-	private int maxSize = 64;
+	private final int maxSize = 64;
 
 	public ItemPowderedFuel() {
  	 	super("powdered_fuel");
@@ -19,20 +22,14 @@ public class ItemPowderedFuel extends ItemBase {
  	 	setMaxStackSize(maxSize);
 	}
 
-	@Override
-	public int getItemStackLimit(ItemStack stack) {
+	@Override public int getItemStackLimit(@Nonnull ItemStack stack) {
 		return maxSize;
 	}
 
-	@Override
-	public int getItemBurnTime(ItemStack i) {
-		int solidFuelBurnTime = ConfigSIO.powderedFuelBurnTime;
-		return solidFuelBurnTime;
-	}
+	@Override public int getItemBurnTime(ItemStack i) { return ConfigSIO.powderedFuelBurnTime; }
 
 	@SideOnly(Side.CLIENT)
  	public void initItemModels() {
-   		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+   		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Objects.requireNonNull(getRegistryName()), "inventory"));
  	}
-
 }

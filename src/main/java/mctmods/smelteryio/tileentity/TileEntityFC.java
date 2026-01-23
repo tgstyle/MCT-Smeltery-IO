@@ -57,7 +57,8 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		super.readFromNBT(compound);
 	}
 
-	@Override
+	@Nonnull
+    @Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setDouble(TAG_RATIO, ratio);
 		compound.setInteger(TAG_TARGET_TEMP, targetTemp);

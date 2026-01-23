@@ -82,7 +82,8 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 		super.readFromNBT(compound);
 	}
 
-	@Override
+	@Nonnull
+    @Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setInteger(TAG_MODE, currentMode);
 		compound.setInteger(TAG_OUTPUT_STACK_SIZE, outputStackSize);
@@ -124,7 +125,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TankListe
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) tank;
 		return super.getCapability(capability, facing);
 	}

@@ -15,9 +15,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 public class MessageEmptyTank extends MessageBase<MessageEmptyTank> {
 	private NBTTagCompound data;
 
-	public MessageEmptyTank() {
-
-	}
+	public MessageEmptyTank() {}
 
 	public MessageEmptyTank(BlockPos pos) {
 		data = new NBTTagCompound();
@@ -26,12 +24,9 @@ public class MessageEmptyTank extends MessageBase<MessageEmptyTank> {
 		data.setInteger("z", pos.getZ());
 	}
 
-	@Override
-	public void handleClientSide(MessageEmptyTank message, EntityPlayer player) {
-	}
+	@Override public void handleClientSide(MessageEmptyTank message, EntityPlayer player) {}
 
-	@Override
-	public void handleServerSide(MessageEmptyTank message, EntityPlayer player) {
+	@Override public void handleServerSide(MessageEmptyTank message, EntityPlayer player) {
 		int x = message.data.getInteger("x");
 		int y = message.data.getInteger("y");
 		int z = message.data.getInteger("z");
@@ -39,14 +34,11 @@ public class MessageEmptyTank extends MessageBase<MessageEmptyTank> {
 		if(tileEntity instanceof TileEntityCM) ((TileEntityCM) tileEntity).emptyTank();
 	}
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
+	@Override public void fromBytes(ByteBuf buf) {
 		data = ByteBufUtils.readTag(buf);
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+	@Override public void toBytes(ByteBuf buf) {
 		ByteBufUtils.writeTag(buf, data);
 	}
-
 }

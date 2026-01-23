@@ -49,14 +49,12 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public boolean update = false;
 	public TileSmeltery tileSmeltery;
 	public ISmelteryTankHandler tileSmelteryTank;
-	private final int itemSlotsSize;
-	private ItemStackHandler itemInventoryIO;
+    private final ItemStackHandler itemInventoryIO;
 	protected ItemStackHandler itemInventory;
 
 	protected TileEntityBase(int itemSlots) {
-		itemSlotsSize = itemSlots;
-		itemInventory = new ItemStackHandler(itemSlotsSize) {};
-		itemInventoryIO = new ItemStackHandler(itemSlotsSize) {
+        itemInventory = new ItemStackHandler(itemSlots) {};
+		itemInventoryIO = new ItemStackHandler(itemSlots) {
 			@Override
 			public void setStackInSlot(int itemSlots, @Nonnull ItemStack stack) {
 				itemInventory.setStackInSlot(itemSlots, stack);
@@ -73,13 +71,11 @@ public class TileEntityBase extends TileSmelteryComponent {
 				return itemInventory.getStackInSlot(itemSlots);
 			}
 
-			@Override
-			public ItemStack insertItem(int itemSlots, @Nonnull ItemStack stack, boolean simulate) {
+			@Override @Nonnull public ItemStack insertItem(int itemSlots, @Nonnull ItemStack stack, boolean simulate) {
 				return TileEntityBase.this.insertItem(itemSlots, stack, simulate);
 			}
 
-			@Override
-			public ItemStack extractItem(int itemSlots, int amount, boolean simulate) {
+			@Override @Nonnull public ItemStack extractItem(int itemSlots, int amount, boolean simulate) {
 				return TileEntityBase.this.extractItem(itemSlots, amount, simulate);
 			}
 		};
@@ -87,7 +83,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		facing = EnumFacing.getFront(compound.getInteger(TAG_FACING));
+		facing = EnumFacing.byHorizontalIndex(compound.getInteger(TAG_FACING));
 		isReady = compound.getBoolean(TAG_IS_READY);
 		active = compound.getBoolean(TAG_ACTIVE);
 		progress = compound.getInteger(TAG_PROGRESS);
@@ -99,8 +95,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 		super.readFromNBT(compound);
 	}
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+	@Override @Nonnull public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setInteger(TAG_FACING, facing.getIndex());
 		compound.setBoolean(TAG_IS_READY, isReady);
 		compound.setBoolean(TAG_ACTIVE, active);
@@ -114,14 +109,12 @@ public class TileEntityBase extends TileSmelteryComponent {
 		return compound;
 	}
 
-	@Override
-	public boolean hasCapability(final Capability<?> capability, @Nullable EnumFacing facing) {
+	@Override public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable EnumFacing facing) {
 		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+	@Override public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			if(facing == null) {
 				return (T) itemInventory;
@@ -140,8 +133,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 		return ItemStack.EMPTY;
 	}
 
-	protected void onSlotChange(int itemSlots) {
-	}
+	protected void onSlotChange(int itemSlots) {}
 
 	protected void consumeItemStack(int slotId, int amount) {
 		itemInventory.extractItem(slotId, amount, false);
@@ -153,10 +145,11 @@ public class TileEntityBase extends TileSmelteryComponent {
 		int count = itemStack.getCount();
 		switch(meta) {
 		case 1:
-			size = count * 1;
+			size = count;
 			break;
 		case 2:
-			size = count * 2;
+            case 6:
+                size = count * 2;
 			break;
 		case 3:
 			size = count * 3;
@@ -164,27 +157,19 @@ public class TileEntityBase extends TileSmelteryComponent {
 		case 4:
 			size = count * 4;
 			break;
-		case 6:
-			size = count * 2;
-			break;
-		}
+        }
 		return size;
 	}
 
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
+	@Override public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
 		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
 	}
 
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
-	}
+	@Override @Nonnull public NBTTagCompound getUpdateTag() { return writeToNBT(new NBTTagCompound()); }
 
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+	@Override public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		super.onDataPacket(net, pkt);
 		readFromNBT(pkt.getNbtCompound());
 	}
@@ -198,7 +183,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 	}
 
 	public void efficientMarkDirty() {
-		world.getChunkFromBlockCoords(getPos()).markDirty();
+		world.getChunk(getPos()).markDirty();
 		this.markContainingBlockForUpdate(null);
 	}
 
@@ -242,12 +227,11 @@ public class TileEntityBase extends TileSmelteryComponent {
 
 	@SideOnly(Side.CLIENT)
 	public boolean isReady() {
-		return isReady;
+		return !isReady;
 	}
 
 	@SideOnly(Side.CLIENT)
 	public int getGUIProgress(int pixel) {
 		return (int) (((float)activeCount / (float)time) * pixel);
 	}
-
 }

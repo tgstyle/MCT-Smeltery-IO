@@ -8,15 +8,23 @@ gradle-app.setting
 .gradletasknamecache
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
-gradle/wrapper/gradle-wrapper.properties
+# gradle/wrapper/gradle-wrapper.properties
 
 *.launch
 *.cmd
 build.bat
+gradlesetup.bat
 .classpath
 .gradle
 .project
 .settings
-/build/
-/bin/
-/run/
+build
+bin
+run
+.idea
+.iml
+.ipr
+.iws
+gradle/wrapper/gradle-wrapper.properties
+*/Thumbs.db
+*/directory.txt

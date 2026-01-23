@@ -17,6 +17,7 @@ import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 
 import net.minecraft.item.ItemStack;
 
+@SuppressWarnings("unused")
 @mezz.jei.api.JEIPlugin
 public class JEI implements IModPlugin{
 	public static IJeiHelpers jeiHelpers;

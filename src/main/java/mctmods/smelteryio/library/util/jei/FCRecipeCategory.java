@@ -19,10 +19,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 @SuppressWarnings("rawtypes")
 public class FCRecipeCategory implements IRecipeCategory {
 	public static String CATEGORY = SmelteryIO.MODID + ":" + "fuel_controller";
-	private static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/jei/fuel_controller.png");
+	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/jei/fuel_controller.png");
 	protected final IDrawable background;
 	protected final IDrawableAnimated arrow;
 
@@ -33,33 +35,27 @@ public class FCRecipeCategory implements IRecipeCategory {
 		arrow = guiHelper.createAnimatedDrawable(arrowDrawable, 100, IDrawableAnimated.StartDirection.TOP, true);
 	}
 
-	@Override
-	public String getUid() {
+	@Override @Nonnull public String getUid() {
 		return CATEGORY;
 	}
 
-	@Override
-	public String getTitle() {
-		return I18n.format(Registry.MACHINE.getUnlocalizedName() + ".fuel_controller.name");
+	@Override @Nonnull public String getTitle() {
+		return I18n.format(Registry.MACHINE.getTranslationKey() + ".fuel_controller.name");
 	}
 
-	@Override
-	public String getModName() {
+	@Override @Nonnull public String getModName() {
 		return SmelteryIO.MODNAME;
 	}
 
-	@Override
-	public IDrawable getBackground() {
+	@Override @Nonnull public IDrawable getBackground() {
 		return background;
 	}
 
-	@Override
-	public void drawExtras(Minecraft minecraft) {
+	@Override public void drawExtras(@Nonnull Minecraft minecraft) {
 		arrow.draw(minecraft, 64, 24);
 	}
 
-	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	@Override public void setRecipe(IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		IGuiItemStackGroup items = recipeLayout.getItemStacks();
 		items.init(0, true, 116, 21);
 		items.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
@@ -68,5 +64,4 @@ public class FCRecipeCategory implements IRecipeCategory {
 		items.init(1, false, 7, 21);
 		items.set(1, speedUpg);
 	}
-
 }

@@ -20,14 +20,13 @@ import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
 import slimeknights.tconstruct.plugin.jei.JEIPlugin;
 
 public class CMRecipeChecker {
-	private static CMRecipeWrapper recipeWrapper;
-
-	public static List<CMRecipeWrapper> getCastingRecipes() {
+    public static List<CMRecipeWrapper> getCastingRecipes() {
 		List<CMRecipeWrapper> recipes = new ArrayList<>();
 		Map<Triple<Item, Item, Fluid>, List<ItemStack>> castDict = Maps.newHashMap();
 		List<ICastingRecipe> allRecipes = Lists.newLinkedList();
 		allRecipes.addAll(TinkerRegistry.getAllTableCastingRecipes());
-		for(ICastingRecipe irecipe : allRecipes) {
+        CMRecipeWrapper recipeWrapper;
+        for(ICastingRecipe irecipe : allRecipes) {
 			if(irecipe instanceof CastingRecipe) {
 				CastingRecipe recipe = (CastingRecipe) irecipe;
 				if(recipe.cast != null && recipe.getResult() != null && recipe.getResult().getItem() instanceof Cast) {
@@ -63,5 +62,4 @@ public class CMRecipeChecker {
 		}
 		return recipes;
 	}
-
 }

@@ -34,5 +34,4 @@ public class RegistryDict {
 			OreDictionary.registerOre("itemCoal", new ItemStack(Items.COAL, 1));
 		}
 	}
-
 }
