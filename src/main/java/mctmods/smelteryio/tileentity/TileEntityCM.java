@@ -23,18 +23,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
-
-import java.util.Objects;
+import slimeknights.tconstruct.library.smeltery.SmelteryTank;
 
 public class TileEntityCM extends TileEntityBase implements ITickable, TileEntityFluidTank.TankListener {
 	public static final int SLOTS_SIZE = 7;
 	public static final int SLOTFUEL = 0, SLOTCAST = 1, SLOTUPGRADE1 = 2, SLOTUPGRADE2 = 3, SLOTUPGRADESPEED = 4, SLOTOUTPUT = 5, SLOTREDSTONE = 6;
-	public static final String TAG_MODE = "currentMode";
-	public static final String TAG_OUTPUT_STACK_SIZE = "outputStackSize";
 	public static final String TAG_LOCK_SLOTS = "currentLockSlots";
 	public static final String TAG_OUTPUT_ITEM_STACK = "targetItemStack";
-	public static final String TAG_REDSTONE = "controlledByRedstone";
-	public static final String TAG_POWERED = "blockPowered";
 	public static final String TAG_BURN_COUNT = "burnCount";
 	public static final int TILEID = 1;
 	public static final int TANK_CAPACITY = 10368;
@@ -53,8 +48,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	private int burnCount = 0;
 	private boolean slotsLocked = true;
 	private boolean controlledByRedstone = false;
-	private boolean blockPowered = false;
-	private ItemStack targetItemStack = ItemStack.EMPTY;
+    private ItemStack targetItemStack = ItemStack.EMPTY;
 	private ItemStack lastCast = ItemStack.EMPTY;
 	private ItemStack cast;
 	private FluidStack lastCastFluid;
@@ -69,12 +63,8 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		currentMode = compound.getInteger(TAG_MODE);
-		outputStackSize = compound.getInteger(TAG_OUTPUT_STACK_SIZE);
 		slotsLocked = compound.getBoolean(TAG_LOCK_SLOTS);
 		targetItemStack = new ItemStack(compound.getCompoundTag(TAG_OUTPUT_ITEM_STACK));
-		controlledByRedstone = compound.getBoolean(TAG_REDSTONE);
-		blockPowered = compound.getBoolean(TAG_POWERED);
 		burnCount = compound.getInteger(TAG_BURN_COUNT);
 		tank.readFromNBT(compound);
 		super.readFromNBT(compound);
@@ -82,14 +72,10 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 
 	@Override @Nonnull
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setInteger(TAG_MODE, currentMode);
-		compound.setInteger(TAG_OUTPUT_STACK_SIZE, outputStackSize);
 		compound.setBoolean(TAG_LOCK_SLOTS, slotsLocked);
 		NBTTagCompound tagItemStack = new NBTTagCompound();
 		targetItemStack.writeToNBT(tagItemStack);
 		compound.setTag(TAG_OUTPUT_ITEM_STACK, tagItemStack);
-		compound.setBoolean(TAG_REDSTONE, controlledByRedstone);
-		compound.setBoolean(TAG_POWERED, blockPowered);
 		compound.setInteger(TAG_BURN_COUNT, burnCount);
 		tank.writeToNBT(compound);
 		super.writeToNBT(compound);
@@ -189,14 +175,19 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	}
 
 	private void inputFluid() {
-		if (Objects.requireNonNull(tileSmeltery.getTank()).getFluid() == null) return;
-		if (tank.getFluidAmount() == tank.getCapacity()) return;
-		FluidStack out = tileSmeltery.getTank().getFluid();
-		int accepted = tank.fill(out, false);
-		if (accepted == 0) return;
-		FluidStack transfer = new FluidStack(out, Math.min(accepted, 144));
-		tileSmeltery.getTank().drain(transfer, true);
-		tank.fill(transfer, true);
+		if (tank.getFluidAmount() >= tank.getCapacity()) return;
+		if (tileSmeltery == null) return;
+		SmelteryTank sourceTank = tileSmeltery.getTank();
+		if (sourceTank == null) return;
+		FluidStack sourceFluid = sourceTank.getFluid();
+		if (sourceFluid == null) return;
+		int canFill = tank.fill(sourceFluid, false);
+		if (canFill <= 0) return;
+		int transferAmount = Math.min(canFill, 144);
+		FluidStack drained = sourceTank.drain(transferAmount, true);
+		if (drained != null && drained.amount > 0) {
+			tank.fill(drained, true);
+		}
 	}
 
 	private boolean isChanged() {
@@ -228,8 +219,8 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	}
 
 	public boolean canWork() {
-		blockPowered = world.isBlockPowered(pos);
 		if (!controlledByRedstone) return true;
+        boolean blockPowered = world.isBlockPowered(pos);
 		return !blockPowered;
 	}
 
