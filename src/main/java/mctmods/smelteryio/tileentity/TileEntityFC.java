@@ -44,8 +44,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		super(SLOTS_SIZE);
 	}
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
+	@Override public void readFromNBT(NBTTagCompound compound) {
 		ratio = compound.getDouble(TAG_RATIO);
 		targetTemp = compound.getInteger(TAG_TARGET_TEMP);
 		currentTemp = compound.getInteger(TAG_CURRENT_TEMP);
@@ -55,26 +54,22 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		super.readFromNBT(compound);
 	}
 
-	@Override @Nonnull
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+	@Override @Nonnull public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setDouble(TAG_RATIO, ratio);
 		compound.setInteger(TAG_TARGET_TEMP, targetTemp);
 		compound.setInteger(TAG_CURRENT_TEMP, currentTemp);
 		compound.setInteger(TAG_SMELTERY_TEMP, smelteryTemp);
 		compound.setBoolean(TAG_AT_CAPACITY, atCapacity);
 		compound.setBoolean(TAG_OWNER, owner);
-		super.writeToNBT(compound);
-		return compound;
+		return super.writeToNBT(compound);
 	}
 
-	@Override @Nonnull
-	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+	@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		if (SlotHandlerItems.validForSlot(stack, slot, TILEID)) return itemInventory.insertItem(slot, stack, simulate);
 		return super.insertItem(slot, stack, simulate);
 	}
 
-	@Override
-	public void update() {
+	@Override public void update() {
 		if (world.isRemote) {
 			if (active && progress != 0) {
 				activeCount = progress;
@@ -260,7 +255,6 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		int maxTemp = 0;
 		fueled = false;
 		for (BlockPos pos : tileSmeltery.tanks) {
-			if (pos.equals(tileSmeltery.currentTank)) continue;
 			IFluidTank tank = getTankAt(pos);
 			if (tank == null) continue;
 			FluidStack fluid = tank.getFluid();
@@ -280,6 +274,9 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	private void setSmelteryTempNBT(int temperature) {
 		NBTTagCompound nbt = getNBT();
 		nbt.setInteger(TileHeatingStructure.TAG_TEMPERATURE, temperature);
+		int fuelValue = (temperature > 0) ? Integer.MAX_VALUE : 0;
+		nbt.setInteger(TileHeatingStructure.TAG_FUEL, fuelValue);
+		nbt.setBoolean(TileHeatingStructure.TAG_NEEDS_FUEL, fuelValue == 0);
 		tileSmeltery.readFromNBT(nbt);
 		notifyMasterOfChange();
 	}

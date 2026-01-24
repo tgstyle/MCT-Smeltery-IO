@@ -16,19 +16,19 @@ public class ItemBlockMachine extends ItemBlockBase {
 	}
 
 	@Override @Nonnull public String getTranslationKey(ItemStack stack) {
-		return super.getTranslationKey() + "." + EnumMachine.values()[stack.getMetadata()].getName();
+		return super.getTranslationKey() + "." + EnumMachine.values()[stack.getMetadata() & 3].getName();
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override @Nonnull public EnumRarity getRarity(ItemStack stack) {
-		return EnumMachine.values()[stack.getMetadata()].getRarity();
+		return EnumMachine.values()[stack.getMetadata() & 3].getRarity();
 	}
 
 	@Override public int getItemStackLimit(ItemStack stack) {
-		return EnumMachine.values()[stack.getMetadata()].getMaxSize();
+		return EnumMachine.values()[stack.getMetadata() & 3].getMaxSize();
 	}
 
 	@Override public int getMetadata(int damage) {
-		return damage;
+		return damage & 3;
 	}
 }

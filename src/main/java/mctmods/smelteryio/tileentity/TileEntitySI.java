@@ -1,44 +1,47 @@
 package mctmods.smelteryio.tileentity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import mctmods.smelteryio.tileentity.base.TileEntityBase;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class TileEntitySI extends TileEntityBase implements ITickable {
-	public static final int SLOTS_SIZE = 1;
-	public static final int SLOTITEMS = 0;
+	public TileEntitySI() { super(0); }
 
-	public TileEntitySI() {
-		super(SLOTS_SIZE);
-	}
-
-	@Override @Nonnull
-	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-		return itemInventory.insertItem(slot, stack, simulate);
-	}
-
-	@Override @Nonnull
-	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		return ItemStack.EMPTY;
-	}
-
-	@Override
-	public void update() {
-		if (world.isRemote) return;
-		if (cooldown % 20 == 0) {
-			getSmeltery();
-			if (smeltery) transferItems();
+	@Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			return smeltery && tileSmeltery != null && tileSmeltery.getItemHandler() != null;
 		}
+		return super.hasCapability(capability, facing);
+	}
+
+	@Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			if (smeltery && tileSmeltery != null) {
+				IItemHandler target = tileSmeltery.getItemHandler();
+				if (target != null) {
+					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new InputProxyHandler(target));
+				}
+			}
+		}
+		return super.getCapability(capability, facing);
+	}
+
+	@Override public void update() {
+		if (world.isRemote) return;
+		getSmeltery();
 		if (update) {
 			efficientMarkDirty();
 			update = false;
 		}
-		cooldown = (cooldown + 1) % 20;
 	}
 
 	private void getSmeltery() {
@@ -70,25 +73,24 @@ public class TileEntitySI extends TileEntityBase implements ITickable {
 		tileSmeltery = null;
 	}
 
-	private void transferItems() {
-		if (tileSmeltery == null) return;
-		IItemHandler handler = tileSmeltery.getItemHandler();
-		if (handler == null) return;
-		boolean transferred = false;
-		for (int i = 0; i < handler.getSlots(); i++) {
-			ItemStack targetStack = handler.getStackInSlot(i);
-			if (!targetStack.isEmpty()) continue;
-			ItemStack sourceStack = itemInventory.getStackInSlot(SLOTITEMS);
-			if (sourceStack.isEmpty()) break;
-			if (!handler.isItemValid(i, sourceStack)) continue;
-			ItemStack toInsert = sourceStack.copy();
-			toInsert.setCount(1);
-			ItemStack remainder = handler.insertItem(i, toInsert, false);
-			if (remainder.isEmpty()) {
-				itemInventory.extractItem(SLOTITEMS, 1, false);
-				transferred = true;
-			}
-		}
-		if (transferred) update = true;
+	private static class InputProxyHandler implements IItemHandler {
+		private final IItemHandler target;
+
+		private InputProxyHandler(IItemHandler target) { this.target = target; }
+
+		@Override
+		public int getSlots() { return target.getSlots(); }
+
+		@Override @Nonnull
+		public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
+
+		@Override @Nonnull
+		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return target.insertItem(slot, stack, simulate); }
+
+		@Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
+
+		@Override public int getSlotLimit(int slot) { return target.getSlotLimit(slot); }
+
+		@Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return target.isItemValid(slot, stack); }
 	}
 }
