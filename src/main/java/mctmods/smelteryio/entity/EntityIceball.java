@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.item.Item;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
@@ -47,8 +48,12 @@ public class EntityIceball extends EntityThrowable {
     @Override
     public void handleStatusUpdate(byte id) {
         if (id == 3) {
+            int itemId = Item.getIdFromItem(Registry.ICEBALL);
             for (int i = 0; i < 8; ++i) {
-                this.world.spawnParticle(EnumParticleTypes.SNOWBALL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D);
+                double vx = ((double)this.rand.nextFloat() - 0.5D) * 0.08D;
+                double vy = ((double)this.rand.nextFloat() - 0.5D) * 0.08D + 0.2D;
+                double vz = ((double)this.rand.nextFloat() - 0.5D) * 0.08D;
+                this.world.spawnParticle(EnumParticleTypes.ITEM_CRACK, this.posX, this.posY, this.posZ, vx, vy, vz, itemId);
             }
         }
     }
