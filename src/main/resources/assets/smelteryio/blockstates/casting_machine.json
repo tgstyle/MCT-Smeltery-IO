@@ -1,1 +1,66 @@
-{"forge_marker":1,"defaults":{"model":"orientable","textures":{"front":"smelteryio:blocks/casting_machine/casting_machine_side","active":"smelteryio:blocks/casting_machine/casting_machine_active","side":"tconstruct:blocks/smeltery/seared_brick","top":"smelteryio:blocks/casting_machine/casting_machine_top","bottom":"smelteryio:blocks/casting_machine/casting_machine_bottom","particle":"#side"},"uvlock":true},"variants":{"inventory":[{}],"normal":[{}],"active":{"1":{"textures":{"side":"#front"}},"2":{"textures":{"front":"#active","side":"#active"}},"3":{"textures":{"top":"#side","bottom":"#side"}},"4":{"textures":{"top":"#side","bottom":"#side"}}},"facing":{"north":{"y":0},"south":{"y":180},"west":{"y":270},"east":{"y":90},"up":{"x":-90},"down":{"x":90}}}}
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model": "cube",
+    "uvlock": true,
+    "textures": {
+      "particle": "tconstruct:blocks/smeltery/seared_brick",
+      "up": "smelteryio:blocks/casting_machine/casting_machine_top",
+      "down": "smelteryio:blocks/casting_machine/casting_machine_bottom",
+      "north": "tconstruct:blocks/smeltery/seared_brick",
+      "south": "smelteryio:blocks/casting_machine/casting_machine_side",
+      "east": "tconstruct:blocks/smeltery/seared_brick",
+      "west": "tconstruct:blocks/smeltery/seared_brick"
+    }
+  },
+  "variants": {
+    "inventory": [
+      {
+        "textures": {
+          "north": "smelteryio:blocks/casting_machine/casting_machine_side",
+          "south": "smelteryio:blocks/casting_machine/casting_machine_side",
+          "east": "smelteryio:blocks/casting_machine/casting_machine_side",
+          "west": "smelteryio:blocks/casting_machine/casting_machine_side",
+          "up": "smelteryio:blocks/casting_machine/casting_machine_top",
+          "down": "smelteryio:blocks/casting_machine/casting_machine_bottom"
+        }
+      }
+    ],
+    "active": {
+      "1": {
+        "textures": {
+          "north": "smelteryio:blocks/casting_machine/casting_machine_side",
+          "east": "smelteryio:blocks/casting_machine/casting_machine_side",
+          "west": "smelteryio:blocks/casting_machine/casting_machine_side"
+        }
+      },
+      "2": {
+        "textures": {
+          "north": "smelteryio:blocks/casting_machine/casting_machine_active",
+          "south": "smelteryio:blocks/casting_machine/casting_machine_active",
+          "east": "smelteryio:blocks/casting_machine/casting_machine_active",
+          "west": "smelteryio:blocks/casting_machine/casting_machine_active"
+        }
+      },
+      "3": {
+        "textures": {
+          "up": "tconstruct:blocks/smeltery/seared_brick",
+          "down": "tconstruct:blocks/smeltery/seared_brick"
+        }
+      },
+      "4": {
+        "textures": {
+          "up": "tconstruct:blocks/smeltery/seared_brick",
+          "down": "tconstruct:blocks/smeltery/seared_brick"
+        }
+      }
+    },
+    "facing": {
+      "north": { "y": 180 },
+      "south": {},
+      "east": { "y": 270 },
+      "west": { "y": 90 }
+    }
+  }
+}

@@ -1,1 +1,32 @@
-{"forge_marker":1,"defaults":{"model":"orientable","textures":{"front":"tconstruct:blocks/smeltery/drain_front","side":"tconstruct:blocks/smeltery/drain_front","top":"tconstruct:blocks/smeltery/drain_front","bottom":"tconstruct:blocks/smeltery/drain_front","particle":"#side"},"uvlock":true},"variants":{"inventory":[{}],"normal":[{}],"active":{"1":{},"2":{},"3":{"textures":{"top":"#bottom","bottom":"#top"}},"4":{}},"facing":{"north":{"y":0},"south":{"y":180},"west":{"y":270},"east":{"y":90},"up":{"x":-90},"down":{"x":90}}}}
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model": "cube",
+    "uvlock": true,
+    "textures": {
+      "particle": "#up",
+      "up": "tconstruct:blocks/smeltery/drain_front",
+      "down": "#up",
+      "north": "tconstruct:blocks/smeltery/drain_back",
+      "south": "tconstruct:blocks/smeltery/drain_front",
+      "east": "#up",
+      "west": "#up"
+    }
+  },
+  "variants": {
+    "inventory": [{}],
+    "active": {
+      "1": {},
+      "2": {},
+      "3": {},
+      "4": {}
+    },
+    "facing": {
+      "north": { "y": 180 },
+      "south": {},
+      "east": { "y": 270 },
+      "west": { "y": 90 }
+    }
+  }
+}

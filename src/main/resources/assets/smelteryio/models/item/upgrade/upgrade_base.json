@@ -1,6 +1,1 @@
-{
-	"parent": "smelteryio:item/upgrade",
-	"textures": {
-		"layer0": "smelteryio:items/upgrade/upgrade_base"
-	}
-}
+{"parent":"smelteryio:item/upgrade","textures":{"layer0":"smelteryio:items/upgrade/upgrade_base"}}

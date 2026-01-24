@@ -1,1 +1,43 @@
-{"forge_marker":1,"defaults":{"model":"orientable","textures":{"front":"smelteryio:blocks/smeltery_input/smeltery_input_sides","side":"smelteryio:blocks/smeltery_input/smeltery_input_sides","top":"smelteryio:blocks/smeltery_input/smeltery_input_top","bottom":"smelteryio:blocks/smeltery_input/smeltery_input_top","particle":"#side"},"uvlock":true},"variants":{"inventory":[{}],"normal":[{}],"active":{"1":{},"2":{},"3":{"textures":{"top":"#bottom","bottom":"#top"}},"4":{}},"facing":{"north":{"y":0},"south":{"y":180},"west":{"y":270},"east":{"y":90},"up":{"x":-90},"down":{"x":90}}}}
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model": "cube",
+    "uvlock": true,
+    "textures": {
+      "particle": "smelteryio:blocks/smeltery_input/smeltery_input_sides",
+      "up": "smelteryio:blocks/smeltery_input/smeltery_input_top",
+      "down": "smelteryio:blocks/smeltery_input/smeltery_input_top",
+      "north": "tconstruct:blocks/smeltery/seared_brick",
+      "south": "smelteryio:blocks/smeltery_input/smeltery_input_sides",
+      "east": "smelteryio:blocks/smeltery_input/smeltery_input_sides",
+      "west": "smelteryio:blocks/smeltery_input/smeltery_input_sides"
+    }
+  },
+  "variants": {
+    "inventory": [
+      {
+        "textures": {
+          "north": "smelteryio:blocks/smeltery_input/smeltery_input_sides",
+          "south": "tconstruct:blocks/smeltery/seared_brick",
+          "east": "smelteryio:blocks/smeltery_input/smeltery_input_sides",
+          "west": "smelteryio:blocks/smeltery_input/smeltery_input_sides",
+          "up": "smelteryio:blocks/smeltery_input/smeltery_input_top",
+          "down": "smelteryio:blocks/smeltery_input/smeltery_input_top"
+        }
+      }
+    ],
+    "active": {
+      "1": {},
+      "2": {},
+      "3": {},
+      "4": {}
+    },
+    "facing": {
+      "north": { "y": 180 },
+      "south": {},
+      "east": { "y": 270 },
+      "west": { "y": 90 }
+    }
+  }
+}
