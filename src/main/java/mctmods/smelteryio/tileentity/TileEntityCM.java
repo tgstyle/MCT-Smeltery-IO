@@ -31,6 +31,10 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	public static final String TAG_LOCK_SLOTS = "currentLockSlots";
 	public static final String TAG_OUTPUT_ITEM_STACK = "targetItemStack";
 	public static final String TAG_BURN_COUNT = "burnCount";
+	public static final String TAG_REDSTONE = "controlledByRedstone";
+	public static final String TAG_MODE = "currentMode";
+	public static final String TAG_OUTPUT_STACK_SIZE = "outputStackSize";
+	public static final String TAG_SPEED_STACK_SIZE = "speedStackSize";
 	public static final int TILEID = 1;
 	public static final int TANK_CAPACITY = 10368;
 	public static final int CAST = 0;
@@ -43,12 +47,13 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	private static final int FUEL_ICE_CAST_AMOUNT = ConfigSIO.iceballAmountCasting;
 	private static final int CASTING_MACHINE_SPEED = ConfigSIO.castingMachineSpeed;
 	private int outputStackSize = 0;
+	private int speedStackSize = 0;
 	private int currentMode = CAST;
 	private int lastMode;
 	private int burnCount = 0;
 	private boolean slotsLocked = true;
 	private boolean controlledByRedstone = false;
-    private ItemStack targetItemStack = ItemStack.EMPTY;
+	private ItemStack targetItemStack = ItemStack.EMPTY;
 	private ItemStack lastCast = ItemStack.EMPTY;
 	private ItemStack cast;
 	private FluidStack lastCastFluid;
@@ -61,35 +66,39 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 		super(SLOTS_SIZE);
 	}
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
+	@Override public void readFromNBT(NBTTagCompound compound) {
 		slotsLocked = compound.getBoolean(TAG_LOCK_SLOTS);
 		targetItemStack = new ItemStack(compound.getCompoundTag(TAG_OUTPUT_ITEM_STACK));
 		burnCount = compound.getInteger(TAG_BURN_COUNT);
+		controlledByRedstone = compound.getBoolean(TAG_REDSTONE);
+		currentMode = compound.getInteger(TAG_MODE);
+		outputStackSize = compound.getInteger(TAG_OUTPUT_STACK_SIZE);
+		speedStackSize = compound.getInteger(TAG_SPEED_STACK_SIZE);
 		tank.readFromNBT(compound);
 		super.readFromNBT(compound);
 	}
 
-	@Override @Nonnull
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+	@Override @Nonnull public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setBoolean(TAG_LOCK_SLOTS, slotsLocked);
 		NBTTagCompound tagItemStack = new NBTTagCompound();
 		targetItemStack.writeToNBT(tagItemStack);
 		compound.setTag(TAG_OUTPUT_ITEM_STACK, tagItemStack);
 		compound.setInteger(TAG_BURN_COUNT, burnCount);
+		compound.setBoolean(TAG_REDSTONE, controlledByRedstone);
+		compound.setInteger(TAG_MODE, currentMode);
+		compound.setInteger(TAG_OUTPUT_STACK_SIZE, outputStackSize);
+		compound.setInteger(TAG_SPEED_STACK_SIZE, speedStackSize);
 		tank.writeToNBT(compound);
 		super.writeToNBT(compound);
 		return compound;
 	}
 
-	@Override @Nonnull
-	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+	@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		if (SlotHandlerItems.validForSlot(stack, slot, TILEID)) return itemInventory.insertItem(slot, stack, simulate);
 		return super.insertItem(slot, stack, simulate);
 	}
 
-	@Override @Nonnull
-	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+	@Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
 		if (slot == SLOTOUTPUT) return itemInventory.extractItem(slot, amount, simulate);
 		if (!slotsLocked) {
 			if (getCurrentFluid() == null && !isActive()) {
@@ -101,14 +110,12 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 		return super.extractItem(slot, amount, simulate);
 	}
 
-	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+	@Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
 		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public <T> @Nullable T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+	@Override public <T> @Nullable T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) tank;
 		return super.getCapability(capability, facing);
 	}
@@ -120,7 +127,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 				activeCount = progress;
 				progress = 0;
 				cooldown = 1;
-			} else if (active && cooldown % 2 == 0) {
+			} else if (active && canWork() && cooldown % 2 == 0) {
 				activeCount = (activeCount + CASTING_MACHINE_SPEED + speedStackSize) % (time + CASTING_MACHINE_SPEED + speedStackSize);
 			}
 		} else {
@@ -131,10 +138,10 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 				}
 				getSmeltery();
 				if (smeltery) inputFluid();
+				checkUpgradeSlots();
+				canBurnSolidFuel();
 				if (isChanged()) updateRecipe();
 				if (canWork()) {
-					checkUpgradeSlots();
-					canBurnSolidFuel();
 					doCasting();
 				}
 			}
@@ -220,7 +227,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 
 	public boolean canWork() {
 		if (!controlledByRedstone) return true;
-        boolean blockPowered = world.isBlockPowered(pos);
+		boolean blockPowered = world.isBlockPowered(pos);
 		return !blockPowered;
 	}
 
@@ -229,43 +236,33 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 		ItemStack upgrade2 = itemInventory.getStackInSlot(SLOTUPGRADE2);
 		ItemStack upgrade3 = itemInventory.getStackInSlot(SLOTUPGRADESPEED);
 		ItemStack upgrade4 = itemInventory.getStackInSlot(SLOTREDSTONE);
-		int stackSize1 = upgrade1.getCount();
-		int stackSize2 = upgrade2.getCount();
-		int stackSize3 = upgrade3.getCount();
-		int stackSize4 = upgrade4.getCount();
-		if (stackSize1 != upgradeSize1 || stackSize2 != upgradeSize2) {
-			outputStackSize = 0;
-			currentMode = CAST;
-			if (upgrade1 != ItemStack.EMPTY || upgrade2 != ItemStack.EMPTY) {
-				outputStackSize += getSlotStackSize(upgrade1);
-				outputStackSize += getSlotStackSize(upgrade2);
-				if (outputStackSize > 64) outputStackSize = 64;
-				if (upgrade1.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 5)) || upgrade2.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 5))) {
-					currentMode = BASIN;
-				}
+		int oldOutput = outputStackSize;
+		int oldMode = currentMode;
+		int oldSpeed = speedStackSize;
+		boolean oldRed = controlledByRedstone;
+		outputStackSize = 0;
+		currentMode = CAST;
+		if (!upgrade1.isEmpty() || !upgrade2.isEmpty()) {
+			outputStackSize += getSlotStackSize(upgrade1);
+			outputStackSize += getSlotStackSize(upgrade2);
+			if (outputStackSize > 64) outputStackSize = 64;
+			if (upgrade1.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 5)) || upgrade2.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 5))) {
+				currentMode = BASIN;
 			}
-			upgradeSize1 = stackSize1;
-			upgradeSize2 = stackSize2;
-			update = true;
 		}
-		if (stackSize3 != upgradeSize3) {
-			speedStackSize = 0;
-			if (upgrade3.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 6))) speedStackSize += getSlotStackSize(upgrade3);
-			upgradeSize3 = stackSize3;
-			update = true;
-		}
-		if (stackSize4 != upgradeSize4) {
-			controlledByRedstone = upgrade4.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 7));
-			upgradeSize4 = stackSize4;
+		speedStackSize = 0;
+		if (!upgrade3.isEmpty() && upgrade3.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 6))) speedStackSize += getSlotStackSize(upgrade3);
+		controlledByRedstone = !upgrade4.isEmpty() && upgrade4.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 7));
+		if (oldOutput != outputStackSize || oldMode != currentMode || oldSpeed != speedStackSize || oldRed != controlledByRedstone) {
 			update = true;
 		}
 	}
 
 	private void canBurnSolidFuel() {
-		if (!isReady && itemInventory.getStackInSlot(SLOTFUEL) != ItemStack.EMPTY) {
+		if (!isReady && !itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) {
 			isReady = true;
 			update = true;
-		} else if (isReady && time == 0 && progress == 0 && burnCount == 0 && itemInventory.getStackInSlot(SLOTFUEL) == ItemStack.EMPTY) {
+		} else if (isReady && time == 0 && progress == 0 && burnCount == 0 && itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) {
 			isReady = false;
 			update = true;
 		}
@@ -274,18 +271,16 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	private boolean burnSolidFuel() {
 		if (burnCount != 0) return true;
 		ItemStack fuel = itemInventory.getStackInSlot(SLOTFUEL);
-		if (fuel == ItemStack.EMPTY) return fueled = false;
-		int fuelAmount;
-		if (currentMode == CAST) fuelAmount = FUEL_SNOW_AMOUNT_CAST;
-		else fuelAmount = FUEL_SNOW_AMOUNT_BASIN;
+		if (fuel.isEmpty()) return false;
+		int fuelAmount = (currentMode == CAST) ? FUEL_SNOW_AMOUNT_CAST : FUEL_SNOW_AMOUNT_BASIN;
 		boolean fuelIce = fuel.isItemEqual(new ItemStack(Registry.ICEBALL));
 		if (fuelIce) fuelAmount = (currentMode == CAST) ? FUEL_ICE_AMOUNT_CAST : FUEL_ICE_AMOUNT_BASIN;
-		if (burnCount == 0 && fuel.getCount() >= fuelAmount) {
+		if (fuel.getCount() >= fuelAmount) {
 			consumeItemStack(SLOTFUEL, fuelAmount);
 			burnCount = fuelIce ? ((currentMode == CAST) ? FUEL_ICE_CAST_AMOUNT : FUEL_ICE_BASIN_AMOUNT) : 1;
-			return fueled = true;
+			return true;
 		}
-		return fueled = false;
+		return false;
 	}
 
 	private void doCasting() {

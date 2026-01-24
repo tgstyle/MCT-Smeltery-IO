@@ -33,6 +33,8 @@ public class GuiCM extends GuiContainer {
 	private final TileEntityCM tileEntity;
 	public static final int WIDTH = 176;
 	public static final int HEIGHT = 166;
+	private static final int PROGRESSWIDTH = 22;
+	private static final int FLUIDHEIGHT = 52;
 	private GuiButton buttonEmptyTank;
 	private GuiButton buttonLockSlots;
 	public static final int BUTTON_EMPTY_TANK = 0, BUTTON_LOCK_SLOTS = 1;
@@ -55,24 +57,29 @@ public class GuiCM extends GuiContainer {
 		drawDefaultBackground();
 		mc.getTextureManager().bindTexture(BG_TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+
 		if (!tileEntity.isControlledByRedstone()) drawTexturedModalRect(guiLeft + 123, guiTop + 52, 179, 63, 10, 10);
+
+		if (tileEntity.isActive()) {
+			int progress = tileEntity.getGUIProgress(PROGRESSWIDTH);
+			drawTexturedModalRect(guiLeft + 117, guiTop + 34, 176, 0, progress, 16);
+		}
+
 		if (!tileEntity.canWork()) {
 			drawTexturedModalRect(guiLeft + 126, guiTop + 51, 192, 60, 4, 4);
 			drawTexturedModalRect(guiLeft + 119, guiTop + 34, 176, 60, 16, 16);
 		}
-		if (tileEntity.isReady()) drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
+
+		if (!tileEntity.isReady()) drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
+
 		if (tileEntity.getCurrentMode() == TileEntityCM.BASIN) drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
 		else drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
-		if (tileEntity.isFueled() && tileEntity.isActive()) {
-			int PROGRESSWIDTH = 22;
-			int progress = tileEntity.getGUIProgress(PROGRESSWIDTH);
-			drawTexturedModalRect(guiLeft + 117, guiTop + 34, 176, 0, progress, 16);
-		}
+
 		if (tileEntity.getCurrentFluid() != null) {
-			int FLUIDHEIGHT = 52;
 			int fluidAmount = tileEntity.getGUIFluidBarHeight(FLUIDHEIGHT);
 			GuiUtil.renderTiledFluid(guiLeft + 19, guiTop + 15 + FLUIDHEIGHT - fluidAmount, 12, fluidAmount, zLevel, tileEntity.getCurrentFluid());
 		}
+
 		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 	}
 
@@ -80,18 +87,23 @@ public class GuiCM extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		String name = I18n.format("container.casting_machine");
 		fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 5, 0xffffff);
+
 		int outputSize = tileEntity.getOutputStackSize();
 		String outputName = String.valueOf(outputSize);
 		fontRenderer.drawString(outputName, 151 - fontRenderer.getStringWidth(outputName) / 2, 18, 0x0000aa);
+
 		List<String> tooltip = getTankTooltip(tileEntity.getTank(), tileEntity.getCurrentFluid(), mouseX, mouseY, guiLeft + 19, guiTop + 15, guiLeft + 38, guiTop + 67);
 		if (tooltip != null) drawHoveringText(tooltip, mouseX - guiLeft, mouseY - guiTop);
+
 		buttonEmptyTank.enabled = Util.isShiftKeyDown();
 		buttonLockSlots.enabled = Util.isShiftKeyDown();
+
 		if (buttonEmptyTank.isMouseOver()) {
 			String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttontank.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttontank.info")};
 			List<String> temp = Arrays.asList(desc);
 			drawHoveringText(temp, mouseX - guiLeft, mouseY - guiTop, fontRenderer);
 		}
+
 		if (buttonLockSlots.isMouseOver()) {
 			if (tileEntity.isSlotsLocked()) {
 				String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttonslot.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info1"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info2"), TextFormatting.DARK_GREEN + I18n.format("container.casting_machine.buttonslot.enabled")};
