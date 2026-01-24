@@ -1,6 +1,6 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"layer0": "mctsmelteryio:items/powdered_fuel"
+		"layer0": "smelteryio:items/powdered_fuel"
 	}
 }

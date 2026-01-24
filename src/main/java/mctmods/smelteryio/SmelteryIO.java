@@ -41,8 +41,8 @@ import org.apache.logging.log4j.Logger;
 
 @EventBusSubscriber
 public class SmelteryIO {
-	public static final String MODID = "mctsmelteryio";
-	public static final String MODNAME = "MCT Smeltery IO";
+	public static final String MODID = "smelteryio";
+	public static final String MODNAME = "Smeltery IO";
 	public static final String VERSION = "${version}";
 
 	public static Logger logger = LogManager.getLogger(MODID);

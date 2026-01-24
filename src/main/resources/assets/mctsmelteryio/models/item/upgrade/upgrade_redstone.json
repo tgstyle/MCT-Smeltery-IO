@@ -1,6 +1,0 @@
-{
-	"parent": "mctsmelteryio:item/upgrade",
-	"textures": {
-		"layer0": "mctsmelteryio:items/upgrade/upgrade_redstone"
-	}
-}

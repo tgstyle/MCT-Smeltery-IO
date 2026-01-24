@@ -1,0 +1,6 @@
+{
+	"parent": "smelteryio:item/upgrade",
+	"textures": {
+		"layer0": "smelteryio:items/upgrade/upgrade_slot3"
+	}
+}
