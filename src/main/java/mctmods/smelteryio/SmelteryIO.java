@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 @Mod(
 		modid = SmelteryIO.MODID,
 		name = SmelteryIO.MODNAME,
-		version = SmelteryIO.VERSION,
 		acceptedMinecraftVersions = "[1.12.2,1.13)",
 		dependencies = "required-after:forge@[14.23.+,);" +
 				"required-after:tconstruct;" +
@@ -41,7 +40,6 @@ import org.apache.logging.log4j.Logger;
 public class SmelteryIO {
 	public static final String MODID = "smelteryio";
 	public static final String MODNAME = "Smeltery IO";
-	public static final String VERSION = "${version}";
 
 	public static Logger logger = LogManager.getLogger(MODID);
 
