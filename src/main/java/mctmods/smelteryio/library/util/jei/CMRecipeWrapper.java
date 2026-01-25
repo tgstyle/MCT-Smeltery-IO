@@ -34,8 +34,7 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 	}
 
 	public CMRecipeWrapper(CastingRecipe recipe, IDrawable castingBlock) {
-		if(recipe.cast != null) this.cast = recipe.cast.getInputs();
-		else this.cast = ImmutableList.of();
+		this.cast = recipe.cast != null ? recipe.cast.getInputs() : ImmutableList.of();
 		this.inputFluid = ImmutableList.of(recipe.getFluid());
 		this.recipe = recipe;
 		this.output = ImmutableList.of(recipe.getResult());
@@ -43,7 +42,7 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 	}
 
 	public boolean hasCast() {
-		return this.recipe.cast != null;
+		return recipe.cast != null;
 	}
 
 	@Override public void getIngredients(IIngredients ingredients) {
@@ -53,29 +52,30 @@ public class CMRecipeWrapper implements IRecipeWrapper {
 	}
 
 	public List<ItemStack> lazyInitOutput() {
-		if(this.output == null) {
-			if(this.recipe.getResult() == null) return ImmutableList.of();
-			this.output = ImmutableList.of(this.recipe.getResult());
+		if (output == null) {
+			if (recipe.getResult() == null) {
+				return ImmutableList.of();
+			}
+			output = ImmutableList.of(recipe.getResult());
 		}
-		return this.output;
+		return output;
 	}
 
 	@Override public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		if(this.recipe.consumesCast()) {
+		if (recipe.consumesCast()) {
 			String s = I18n.format("gui.jei.casting.consume");
 			int x = 55;
-			x -= minecraft.fontRenderer.getStringWidth(s)/2;
+			x -= minecraft.fontRenderer.getStringWidth(s) / 2;
 			minecraft.fontRenderer.drawString(s, x, 40, 0xaa0000);
 		}
 	}
 
 	public boolean isValid(boolean checkCast) {
-		return !this.inputFluid.isEmpty()
-				&& this.inputFluid.get(0) != null
-				&& (!checkCast || !this.hasCast()
-				|| (!this.cast.isEmpty()
-				&& !this.cast.get(0).isEmpty()))
-				&& !this.output.isEmpty()
-				&& !this.output.get(0).isEmpty();
+		return !inputFluid.isEmpty()
+				&& inputFluid.get(0) != null
+				&& (!checkCast || !hasCast()
+				|| (!cast.isEmpty() && !cast.get(0).isEmpty()))
+				&& !output.isEmpty()
+				&& !output.get(0).isEmpty();
 	}
 }

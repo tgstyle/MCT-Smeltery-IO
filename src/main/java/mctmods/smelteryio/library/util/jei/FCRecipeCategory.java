@@ -8,7 +8,11 @@ import mctmods.smelteryio.SmelteryIO;
 import mctmods.smelteryio.registry.Registry;
 
 import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.gui.*;
+import mezz.jei.api.gui.IDrawable;
+import mezz.jei.api.gui.IDrawableAnimated;
+import mezz.jei.api.gui.IDrawableStatic;
+import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
@@ -25,6 +29,7 @@ import javax.annotation.Nonnull;
 public class FCRecipeCategory implements IRecipeCategory {
 	public static String CATEGORY = SmelteryIO.MODID + ":" + "fuel_controller";
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(SmelteryIO.MODID, "textures/gui/jei/fuel_controller.png");
+
 	protected final IDrawable background;
 	protected final IDrawableAnimated arrow;
 
@@ -57,10 +62,13 @@ public class FCRecipeCategory implements IRecipeCategory {
 
 	@Override public void setRecipe(IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		IGuiItemStackGroup items = recipeLayout.getItemStacks();
+
 		items.init(0, true, 116, 21);
 		items.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
+
 		List<ItemStack> speedUpg = Lists.newLinkedList();
 		speedUpg.add(new ItemStack(Registry.UPGRADE, 1, 6));
+
 		items.init(1, false, 7, 21);
 		items.set(1, speedUpg);
 	}

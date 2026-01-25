@@ -18,6 +18,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import net.minecraftforge.items.ItemStackHandler;
+
 import slimeknights.tconstruct.smeltery.tileentity.TileHeatingStructure;
 
 public class TileEntityFC extends TileEntityBase implements ITickable {
@@ -29,9 +31,12 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	public static final String TAG_SMELTERY_TEMP = "smelteryTemp";
 	public static final String TAG_AT_CAPACITY = "atCapacity";
 	public static final String TAG_OWNER = "owner";
+	public static final String TAG_FUELED = "fueled";
 	public static final int TILEID = 0;
+
 	private static final int FUEL_CONTROLLER_SPEED = ConfigSIO.fuelControllerSpeed;
 	private static final double FUEL_RATIO = ConfigSIO.fuelControllerRatio;
+
 	private double ratio = 0.01;
 	private int targetTemp = 0;
 	private int currentTemp = 0;
@@ -39,9 +44,16 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	private boolean owner = false;
 	private boolean heatingItem = false;
 	private boolean atCapacity = false;
+	private boolean fueled = false;
 
 	public TileEntityFC() {
 		super(SLOTS_SIZE);
+		itemInventory = new ItemStackHandler(SLOTS_SIZE) {
+			@Override protected void onContentsChanged(int slot) {
+				if (slot == SLOTFUEL) { canBurnSolidFuel(); }
+				efficientMarkDirty();
+			}
+		};
 	}
 
 	@Override public void readFromNBT(NBTTagCompound compound) {
@@ -51,6 +63,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		smelteryTemp = compound.getInteger(TAG_SMELTERY_TEMP);
 		atCapacity = compound.getBoolean(TAG_AT_CAPACITY);
 		owner = compound.getBoolean(TAG_OWNER);
+		fueled = compound.getBoolean(TAG_FUELED);
 		super.readFromNBT(compound);
 	}
 
@@ -61,41 +74,34 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		compound.setInteger(TAG_SMELTERY_TEMP, smelteryTemp);
 		compound.setBoolean(TAG_AT_CAPACITY, atCapacity);
 		compound.setBoolean(TAG_OWNER, owner);
+		compound.setBoolean(TAG_FUELED, fueled);
 		return super.writeToNBT(compound);
 	}
 
 	@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-		if (SlotHandlerItems.validForSlot(stack, slot, TILEID)) return itemInventory.insertItem(slot, stack, simulate);
+		if (SlotHandlerItems.validForSlot(stack, slot, TILEID)) { return itemInventory.insertItem(slot, stack, simulate); }
 		return super.insertItem(slot, stack, simulate);
 	}
 
 	@Override public void update() {
 		if (world.isRemote) {
-			if (active && progress != 0) {
-				activeCount = progress;
-				progress = 0;
-				cooldown = 1;
-			} else if (active && cooldown % 2 == 0) {
-				activeCount = (activeCount + FUEL_CONTROLLER_SPEED + speedStackSize) % (time + FUEL_CONTROLLER_SPEED + speedStackSize);
-			}
+			if (active && progress != 0) { activeCount = progress; progress = 0; cooldown = 1; }
+			else if (active && cooldown % 2 == 0) { activeCount = (activeCount + FUEL_CONTROLLER_SPEED + speedStackSize) % (time + FUEL_CONTROLLER_SPEED + speedStackSize); }
 		} else {
 			if (cooldown % 2 == 0) {
-				if (active && time == 0) {
-					active = false;
-					update = true;
-				}
+				if (active && time == 0) { active = false; update = true; }
 				getSmeltery();
-				if (smeltery && fueled) {
+				if (smeltery) {
+					int oldTemp = smelteryTemp;
+					smelteryTemp = getFluidFuelTemp();
+					if (oldTemp != smelteryTemp) { update = true; }
 					updateSmelteryHeatingState();
 					calculateRatio();
 					canBurnSolidFuel();
 					heatSmeltery();
 				}
 			}
-			if (update) {
-				efficientMarkDirty();
-				update = false;
-			}
+			if (update) { efficientMarkDirty(); update = false; }
 		}
 		cooldown = (cooldown + 1) % 20;
 	}
@@ -104,11 +110,8 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		tileSmeltery = getMasterTile();
 		if (tileSmeltery != null) {
 			if (tileSmeltery.isActive()) {
-				if (!smeltery) {
-					notifyMasterOfChange();
-					smeltery = true;
-					update = true;
-				} else {
+				if (!smeltery) { notifyMasterOfChange(); smeltery = true; update = true; }
+				else {
 					if (!owner && !tileSmeltery.getName().contains("sio.smeltery.customname")) {
 						resetSmelteryName("sio.smeltery.customname");
 						notifyMasterOfChange();
@@ -120,17 +123,8 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 						update = true;
 					}
 				}
-			} else {
-				if (smeltery) {
-					resetSmeltery();
-					resetFC();
-				}
-			}
-		} else {
-			if (smeltery) {
-				resetFC();
-			}
-		}
+			} else { if (smeltery) { resetSmeltery(); resetFC(); } }
+		} else { if (smeltery) { resetFC(); } }
 	}
 
 	private void resetFC() {
@@ -141,7 +135,6 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		progress = 0;
 		time = 0;
 		activeCount = 0;
-		upgradeSize1 = 0;
 		speedStackSize = 0;
 		owner = false;
 		atCapacity = false;
@@ -155,51 +148,39 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	}
 
 	private void updateSmelteryHeatingState() {
-		if (progress != 0) return;
+		if (progress != 0) { return; }
 		if (!tileSmeltery.isEmpty() && !heatingItem) {
 			for (int item = 0; item < tileSmeltery.getSizeInventory(); item++) {
 				ItemStack stack = tileSmeltery.getStackInSlot(item);
-				if (stack.isEmpty()) continue;
-				if (tileSmeltery.getTempRequired(item) <= 0) continue;
-				if (!tileSmeltery.canHeat(item)) continue;
+				if (stack.isEmpty()) { continue; }
+				if (tileSmeltery.getTempRequired(item) <= 0) { continue; }
+				if (!tileSmeltery.canHeat(item)) { continue; }
 				int temp = tileSmeltery.getTemperature(item);
 				int neededTemp = tileSmeltery.getTempRequired(item);
 				float itemProgress = tileSmeltery.getProgress(item);
-				if (temp <= neededTemp) {
-					heatingItem = true;
-					update = true;
-				}
-				if (!atCapacity && itemProgress >= 2) {
-					atCapacity = true;
-					update = true;
-				}
+				if (temp <= neededTemp) { heatingItem = true; update = true; }
+				if (!atCapacity && itemProgress >= 1) { atCapacity = true; update = true; }
 			}
-		} else if (atCapacity) {
-			atCapacity = false;
-			update = true;
-		}
+		} else if (atCapacity) { atCapacity = false; update = true; }
 	}
 
 	private void calculateRatio() {
 		ItemStack upgrade1 = itemInventory.getStackInSlot(SLOTUPGRADESPEED);
+		double oldRatio = ratio;
+		int oldSpeed = speedStackSize;
 		int stackSize1 = upgrade1.getCount();
-		if (stackSize1 == upgradeSize1) return;
 		ratio = 0.01;
-		if (!upgrade1.isEmpty()) {
-			ratio = (double) stackSize1 / FUEL_RATIO;
-		}
+		if (!upgrade1.isEmpty()) { ratio = (double) stackSize1 / FUEL_RATIO; }
 		speedStackSize = 0;
-		if (upgrade1.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 6))) speedStackSize += getSlotStackSize(upgrade1);
-		upgradeSize1 = stackSize1;
-		calculateTemperature();
-		update = true;
+		if (upgrade1.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 6))) { speedStackSize += getSlotStackSize(upgrade1); }
+		if (oldRatio != ratio || oldSpeed != speedStackSize) { calculateTemperature(); update = true; }
 	}
 
 	private void calculateTemperature() {
 		smelteryTemp = getFluidFuelTemp();
 		int fuelTempRatio = (int) (getBurnTime() * ratio) / 2;
 		int fuelTempSolid = (((fuelTempRatio + 99) / 100) * 100) + smelteryTemp;
-		if (fuelTempSolid >= 200000) fuelTempSolid = 200000;
+		if (fuelTempSolid >= 200000) { fuelTempSolid = 200000; }
 		targetTemp = fuelTempSolid;
 	}
 
@@ -207,24 +188,19 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		ItemStack solidFuel = itemInventory.getStackInSlot(SLOTFUEL);
 		if (!solidFuel.isEmpty()) {
 			int burnTime = TileEntityFurnace.getItemBurnTime(solidFuel);
-			if (burnTime > 0) return burnTime;
+			if (burnTime > 0) { return burnTime; }
 		}
 		return 0;
 	}
 
 	private void canBurnSolidFuel() {
-		if (!isReady && !itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) {
-			isReady = true;
-			update = true;
-		} else if (isReady && time == 0 && progress == 0 && itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) {
-			isReady = false;
-			update = true;
-		}
+		if (!isReady && !itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) { isReady = true; update = true; }
+		else if (isReady && time == 0 && progress == 0 && itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) { isReady = false; update = true; }
 	}
 
 	private void heatSmeltery() {
-		if (!isReady) return;
-		if (time != 0) progress = (progress + FUEL_CONTROLLER_SPEED + speedStackSize) % (time + FUEL_CONTROLLER_SPEED + speedStackSize);
+		if (!isReady) { return; }
+		if (time != 0) { progress = (progress + FUEL_CONTROLLER_SPEED + speedStackSize) % (time + FUEL_CONTROLLER_SPEED + speedStackSize); }
 		if (time == 0 && progress == 0) {
 			if (currentTemp == 0 && heatingItem) {
 				calculateTemperature();
@@ -246,30 +222,24 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		setSmelteryTemp(targetTemp);
 	}
 
-	private boolean burnSolidFuel() {
-		consumeItemStack(SLOTFUEL, 1);
-		return true;
-	}
+	private boolean burnSolidFuel() { consumeItemStack(SLOTFUEL, 1); return true; }
 
 	private int getFluidFuelTemp() {
 		int maxTemp = 0;
 		fueled = false;
 		for (BlockPos pos : tileSmeltery.tanks) {
 			IFluidTank tank = getTankAt(pos);
-			if (tank == null) continue;
+			if (tank == null) { continue; }
 			FluidStack fluid = tank.getFluid();
-			if (fluid == null || fluid.amount <= 0) continue;
+			if (fluid == null || fluid.amount <= 0) { continue; }
 			int fluidTemp = fluid.getFluid().getTemperature() - 300;
-			if (fluidTemp > maxTemp) maxTemp = fluidTemp;
+			if (fluidTemp > maxTemp) { maxTemp = fluidTemp; }
 			fueled = true;
 		}
 		return maxTemp;
 	}
 
-	private void setSmelteryTemp(int temperature) {
-		if (tileSmeltery == null || temperature == tileSmeltery.getTemperature()) return;
-		setSmelteryTempNBT(temperature);
-	}
+	private void setSmelteryTemp(int temperature) { if (tileSmeltery == null || temperature == tileSmeltery.getTemperature()) { return; } setSmelteryTempNBT(temperature); }
 
 	private void setSmelteryTempNBT(int temperature) {
 		NBTTagCompound nbt = getNBT();
@@ -281,49 +251,25 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		notifyMasterOfChange();
 	}
 
-	private NBTTagCompound getNBT() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		tileSmeltery.writeToNBT(nbt);
-		return nbt;
-	}
+	private NBTTagCompound getNBT() { NBTTagCompound nbt = new NBTTagCompound(); tileSmeltery.writeToNBT(nbt); return nbt; }
 
-	public int getFuelTemp() {
-		return currentTemp == 0 ? smelteryTemp : targetTemp;
-	}
+	public int getFuelTemp() { return currentTemp == 0 ? smelteryTemp : targetTemp; }
 
-	public void resetSmeltery() {
-		resetSmelteryName("gui.smeltery.name");
-		resetSmelteryTemp();
-		notifyMasterOfChange();
-	}
+	public void resetSmeltery() { resetSmelteryName("gui.smeltery.name"); resetSmelteryTemp(); notifyMasterOfChange(); }
 
-	public void resetSmelteryTemp() {
-		setSmelteryTemp(smelteryTemp);
-	}
+	public void resetSmelteryTemp() { setSmelteryTemp(smelteryTemp); }
 
-	public void resetSmelteryName(String name) {
-		tileSmeltery.setCustomName(name);
-	}
+	public void resetSmelteryName(String name) { tileSmeltery.setCustomName(name); }
 
-	@SideOnly(Side.CLIENT)
-	public boolean getOwner() {
-		return owner;
-	}
+	@SideOnly(Side.CLIENT) public boolean getOwner() { return owner; }
 
-	@SideOnly(Side.CLIENT)
-	public boolean atCapacity() {
-		return atCapacity;
-	}
+	@SideOnly(Side.CLIENT) public boolean atCapacity() { return atCapacity; }
 
-	@SideOnly(Side.CLIENT)
-	public boolean isHeatingSmeltery() { return !atCapacity && currentTemp != 0; }
+	@SideOnly(Side.CLIENT) public boolean isHeatingSmeltery() { return !atCapacity && currentTemp != 0; }
 
-	@SideOnly(Side.CLIENT)
-	public double getRatio() {
-		return ratio;
-	}
+	@SideOnly(Side.CLIENT) public double getRatio() { return ratio; }
 
-	public void guiOpen() {
-		efficientMarkDirty();
-	}
+	@SideOnly(Side.CLIENT) public boolean isFueled() { return fueled; }
+
+	public void guiOpen() { efficientMarkDirty(); }
 }

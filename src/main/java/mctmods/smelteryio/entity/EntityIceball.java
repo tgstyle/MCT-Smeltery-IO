@@ -21,18 +21,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityIceball extends EntityThrowable {
-
     @SuppressWarnings("unused")
     public EntityIceball(World worldIn) {
         super(worldIn);
-        this.setSize(0.25F, 0.25F);
+        setSize(0.25F, 0.25F);
     }
 
     public EntityIceball(World worldIn, EntityLivingBase throwerIn) {
         super(worldIn);
-        this.setSize(0.25F, 0.25F);
-        this.setPosition(throwerIn.posX, throwerIn.posY + (double)throwerIn.getEyeHeight() - 0.10000000149011612D, throwerIn.posZ);
-        this.thrower = throwerIn;
+        setSize(0.25F, 0.25F);
+        setPosition(throwerIn.posX, throwerIn.posY + throwerIn.getEyeHeight() - 0.10000000149011612D, throwerIn.posZ);
+        thrower = throwerIn;
     }
 
     public static void registerEntity() {
@@ -50,10 +49,10 @@ public class EntityIceball extends EntityThrowable {
         if (id == 3) {
             int itemId = Item.getIdFromItem(Registry.ICEBALL);
             for (int i = 0; i < 8; ++i) {
-                double vx = ((double)this.rand.nextFloat() - 0.5D) * 0.08D;
-                double vy = ((double)this.rand.nextFloat() - 0.5D) * 0.08D + 0.2D;
-                double vz = ((double)this.rand.nextFloat() - 0.5D) * 0.08D;
-                this.world.spawnParticle(EnumParticleTypes.ITEM_CRACK, this.posX, this.posY, this.posZ, vx, vy, vz, itemId);
+                double vx = (rand.nextFloat() - 0.5D) * 0.08D;
+                double vy = (rand.nextFloat() - 0.5D) * 0.08D + 0.2D;
+                double vz = (rand.nextFloat() - 0.5D) * 0.08D;
+                world.spawnParticle(EnumParticleTypes.ITEM_CRACK, posX, posY, posZ, vx, vy, vz, itemId);
             }
         }
     }
@@ -62,12 +61,14 @@ public class EntityIceball extends EntityThrowable {
     protected void onImpact(RayTraceResult result) {
         if (result.entityHit != null) {
             int damage = 4;
-            if (result.entityHit instanceof EntityBlaze) damage = 24;
-            result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float)damage);
+            if (result.entityHit instanceof EntityBlaze) {
+                damage = 24;
+            }
+            result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, getThrower()), damage);
         }
-        if (!this.world.isRemote) {
-            this.world.setEntityState(this, (byte)3);
-            this.setDead();
+        if (!world.isRemote) {
+            world.setEntityState(this, (byte) 3);
+            setDead();
         }
     }
 }

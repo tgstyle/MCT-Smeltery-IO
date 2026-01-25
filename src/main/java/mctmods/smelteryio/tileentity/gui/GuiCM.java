@@ -46,19 +46,19 @@ public class GuiCM extends GuiContainer {
 		this.ySize = HEIGHT;
 	}
 
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+	@Override public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		renderHoveredToolTip(mouseX, mouseY);
 	}
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+	@Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		drawDefaultBackground();
 		mc.getTextureManager().bindTexture(BG_TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-		if (!tileEntity.isControlledByRedstone()) drawTexturedModalRect(guiLeft + 123, guiTop + 52, 179, 63, 10, 10);
+		if (!tileEntity.isControlledByRedstone()) {
+			drawTexturedModalRect(guiLeft + 123, guiTop + 52, 179, 63, 10, 10);
+		}
 
 		if (tileEntity.isActive()) {
 			int progress = tileEntity.getGUIProgress(PROGRESSWIDTH);
@@ -70,10 +70,15 @@ public class GuiCM extends GuiContainer {
 			drawTexturedModalRect(guiLeft + 119, guiTop + 34, 176, 60, 16, 16);
 		}
 
-		if (!tileEntity.isReady()) drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
+		if (tileEntity.isReady()) {
+			drawTexturedModalRect(guiLeft + 142, guiTop + 33, 176, 60, 16, 16);
+		}
 
-		if (tileEntity.getCurrentMode() == TileEntityCM.BASIN) drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
-		else drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
+		if (tileEntity.getCurrentMode() == TileEntityCM.BASIN) {
+			drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
+		} else {
+			drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
+		}
 
 		if (tileEntity.getCurrentFluid() != null) {
 			int fluidAmount = tileEntity.getGUIFluidBarHeight(FLUIDHEIGHT);
@@ -83,8 +88,7 @@ public class GuiCM extends GuiContainer {
 		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 	}
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+	@Override protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		String name = I18n.format("container.casting_machine");
 		fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 5, 0xffffff);
 
@@ -93,33 +97,35 @@ public class GuiCM extends GuiContainer {
 		fontRenderer.drawString(outputName, 151 - fontRenderer.getStringWidth(outputName) / 2, 18, 0x0000aa);
 
 		List<String> tooltip = getTankTooltip(tileEntity.getTank(), tileEntity.getCurrentFluid(), mouseX, mouseY, guiLeft + 19, guiTop + 15, guiLeft + 38, guiTop + 67);
-		if (tooltip != null) drawHoveringText(tooltip, mouseX - guiLeft, mouseY - guiTop);
+		if (tooltip != null) {
+			drawHoveringText(tooltip, mouseX - guiLeft, mouseY - guiTop);
+		}
 
 		buttonEmptyTank.enabled = Util.isShiftKeyDown();
 		buttonLockSlots.enabled = Util.isShiftKeyDown();
 
 		if (buttonEmptyTank.isMouseOver()) {
-			String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttontank.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttontank.info")};
+			String[] desc = { TextFormatting.RED + I18n.format("container.casting_machine.buttontank.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttontank.info") };
 			List<String> temp = Arrays.asList(desc);
 			drawHoveringText(temp, mouseX - guiLeft, mouseY - guiTop, fontRenderer);
 		}
 
 		if (buttonLockSlots.isMouseOver()) {
 			if (tileEntity.isSlotsLocked()) {
-				String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttonslot.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info1"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info2"), TextFormatting.DARK_GREEN + I18n.format("container.casting_machine.buttonslot.enabled")};
+				String[] desc = { TextFormatting.RED + I18n.format("container.casting_machine.buttonslot.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info1"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info2"), TextFormatting.DARK_GREEN + I18n.format("container.casting_machine.buttonslot.enabled") };
 				List<String> temp = Arrays.asList(desc);
 				drawHoveringText(temp, mouseX - guiLeft, mouseY - guiTop, fontRenderer);
 			} else {
-				String[] desc = {TextFormatting.RED + I18n.format("container.casting_machine.buttonslot.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info1"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info2"), TextFormatting.DARK_RED + I18n.format("container.casting_machine.buttonslot.disabled")};
+				String[] desc = { TextFormatting.RED + I18n.format("container.casting_machine.buttonslot.header"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info1"), TextFormatting.GRAY + I18n.format("container.casting_machine.buttonslot.info2"), TextFormatting.DARK_RED + I18n.format("container.casting_machine.buttonslot.disabled") };
 				List<String> temp = Arrays.asList(desc);
 				drawHoveringText(temp, mouseX - guiLeft, mouseY - guiTop, fontRenderer);
 			}
 		}
 	}
 
-	@Override
-	public void initGui() {
+	@Override public void initGui() {
 		super.initGui();
+
 		buttonEmptyTank = new GuiButton(BUTTON_EMPTY_TANK, guiLeft - 20, guiTop, 20, 20, "") {
 			@Override public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 				super.drawButton(mc, mouseX, mouseY, partialTicks);
@@ -127,6 +133,7 @@ public class GuiCM extends GuiContainer {
 				drawTexturedModalRect(x, y, 177, 17, 20, 20);
 			}
 		};
+
 		buttonLockSlots = new GuiButton(BUTTON_LOCK_SLOTS, guiLeft - 20, guiTop + 20, 20, 20, "") {
 			@Override public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 				super.drawButton(mc, mouseX, mouseY, partialTicks);
@@ -134,14 +141,14 @@ public class GuiCM extends GuiContainer {
 				drawTexturedModalRect(x, y, 177, 39, 20, 20);
 			}
 		};
+
 		buttonList.add(buttonEmptyTank);
 		buttonList.add(buttonLockSlots);
 		buttonEmptyTank.enabled = false;
 		buttonLockSlots.enabled = false;
 	}
 
-	@Override
-	protected void actionPerformed(GuiButton button) {
+	@Override protected void actionPerformed(GuiButton button) {
 		switch (button.id) {
 			case BUTTON_EMPTY_TANK:
 				tileEntity.emptyTank();

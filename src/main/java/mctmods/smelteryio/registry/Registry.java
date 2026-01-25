@@ -34,9 +34,7 @@ public class Registry {
 	public static final ItemUpgrade UPGRADE = new ItemUpgrade();
 
 	// blocks
-	private static final Block[] block = {
-			MACHINE
-	};
+	private static final Block[] block = { MACHINE };
 
 	// items
 	private static final Item[] item = {
@@ -46,9 +44,7 @@ public class Registry {
 	};
 
 	// itemblocks
-	private static final ItemBlock[] itemblock = {
-			new ItemBlockMachine(MACHINE)
-	};
+	private static final ItemBlock[] itemblock = { new ItemBlockMachine(MACHINE) };
 
 	public static void registerBlocks(IForgeRegistry<Block> registry) {
 		for (Block block : block) {

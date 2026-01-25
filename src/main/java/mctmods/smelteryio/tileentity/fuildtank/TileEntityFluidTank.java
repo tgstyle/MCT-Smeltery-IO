@@ -7,11 +7,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityFluidTank extends FluidTank {
-	public interface TankListener {  void TankContentsChanged(); }
+	public interface TankListener {
+		void TankContentsChanged();
+	}
 
 	TankListener listener;
 
-	public TileEntityFluidTank(int capacity, @Nonnull TankListener listener) { this(null, capacity, listener); }
+	public TileEntityFluidTank(int capacity, @Nonnull TankListener listener) {
+		this(null, capacity, listener);
+	}
 
 	public TileEntityFluidTank(@Nullable FluidStack fluidStack, int capacity, @Nonnull TankListener listener) {
 		super(fluidStack, capacity);

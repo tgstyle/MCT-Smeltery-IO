@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class MessageLockSlots extends MessageBase<MessageLockSlots> {
@@ -29,8 +30,11 @@ public class MessageLockSlots extends MessageBase<MessageLockSlots> {
 		int x = message.data.getInteger("x");
 		int y = message.data.getInteger("y");
 		int z = message.data.getInteger("z");
+
 		TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
-		if(tileEntity instanceof TileEntityCM) ((TileEntityCM) tileEntity).slotsLocked();
+		if (tileEntity instanceof TileEntityCM) {
+			((TileEntityCM) tileEntity).slotsLocked();
+		}
 	}
 
 	@Override public void fromBytes(ByteBuf buf) {

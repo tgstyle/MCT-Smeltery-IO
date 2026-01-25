@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class MixinNetworkRegistry {
 
     // NOT FOR DISTRIBUTION! build.gradle prevents this file from being allowed in the jar.
+
     @Redirect(method = "newChannel(Ljava/lang/String;[Lio/netty/channel/ChannelHandler;)Ljava/util/EnumMap;", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/relauncher/Side;values()[Lnet/minecraftforge/fml/relauncher/Side;"), remap = false)
     private Side[] redirectNewChannel1() { return new Side[]{Side.CLIENT, Side.SERVER}; }
 

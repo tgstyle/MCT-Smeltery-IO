@@ -14,6 +14,6 @@ public class FCRecipeWrapper implements IRecipeWrapper {
 	}
 
 	@Override public void getIngredients(IIngredients ingredients) {
-		ingredients.setInput(VanillaTypes.ITEM, this.input);
+		ingredients.setInput(VanillaTypes.ITEM, input);
 	}
 }

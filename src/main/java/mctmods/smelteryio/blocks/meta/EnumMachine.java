@@ -6,10 +6,10 @@ import net.minecraft.util.IStringSerializable;
 import javax.annotation.Nonnull;
 
 public enum EnumMachine implements IStringSerializable {
-	FUEL_CONTROLLER ("fuel_controller", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
-	CASTING_MACHINE ("casting_machine", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
-	SMELTERY_INPUT ("smeltery_input", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64),
-	ADVANCED_DRAIN ("advanced_drain", EnumRarity.COMMON, "", "", 0, 2, 3, 15, 64);
+	FUEL_CONTROLLER     ("fuel_controller",     EnumRarity.COMMON, "", "", 0, 2, 3.0F, 15.0F, 64),
+	CASTING_MACHINE     ("casting_machine",     EnumRarity.COMMON, "", "", 0, 2, 3.0F, 15.0F, 64),
+	SMELTERY_INPUT      ("smeltery_input",      EnumRarity.COMMON, "", "", 0, 2, 3.0F, 15.0F, 64),
+	ADVANCED_DRAIN      ("advanced_drain",      EnumRarity.COMMON, "", "", 0, 2, 3.0F, 15.0F, 64);
 
 	private final String name;
 	private final EnumRarity rarity;
@@ -21,7 +21,8 @@ public enum EnumMachine implements IStringSerializable {
 	private final float resistance;
 	private final int maxSize;
 
-	EnumMachine (String name, EnumRarity rarity, String recipeOreDict1, String recipeOreDict2, int light, int harvestLevel, float hardness, float resistance, int maxSize) {
+	EnumMachine(String name, EnumRarity rarity, String recipeOreDict1, String recipeOreDict2,
+				int light, int harvestLevel, float hardness, float resistance, int maxSize) {
 		this.name = name;
 		this.rarity = rarity;
 		this.recipeOreDict1 = recipeOreDict1;
@@ -65,7 +66,7 @@ public enum EnumMachine implements IStringSerializable {
 		return resistance;
 	}
 
- 	public int getMaxSize() {
- 		return maxSize;
- 	}
+	public int getMaxSize() {
+		return maxSize;
+	}
 }

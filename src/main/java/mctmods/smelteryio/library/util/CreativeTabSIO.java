@@ -16,6 +16,6 @@ public class CreativeTabSIO extends CreativeTabs {
  	}
 
 	@Override @Nonnull public ItemStack createIcon() {
- 	 	return new ItemStack(Registry.MACHINE, 1, 0);
+		return new ItemStack(Registry.MACHINE, 1, 0);
 	}
 }

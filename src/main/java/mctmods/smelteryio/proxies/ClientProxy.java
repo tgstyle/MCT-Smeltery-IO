@@ -18,21 +18,21 @@ public class ClientProxy extends CommonProxy {
 		Registry.initModels();
 	}
 
-	@Override
- 	public void preInit() {
- 	 	super.preInit();
- 	 	RenderingRegistry.registerEntityRenderingHandler(EntityIceball.class, renderManager -> new RenderSnowball<>(renderManager, Registry.ICEBALL, Minecraft.getMinecraft().getRenderItem()));
+	@Override public void preInit() {
+		super.preInit();
+		RenderingRegistry.registerEntityRenderingHandler(EntityIceball.class,
+				renderManager -> new RenderSnowball<>(renderManager, Registry.ICEBALL, Minecraft.getMinecraft().getRenderItem()));
 	}
 
 	@Override public void init() {
- 	 	super.init();
+		super.init();
 	}
 
 	@Override public void postInit() {
- 	 	super.postInit();
+		super.postInit();
 	}
 
-	@Override public EntityPlayer getPlayerEntity(){
+	@Override public EntityPlayer getPlayerEntity() {
 		return Minecraft.getMinecraft().player;
 	}
 }

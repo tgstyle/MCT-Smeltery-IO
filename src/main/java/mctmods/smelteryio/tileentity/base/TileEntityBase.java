@@ -30,23 +30,18 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public static final String TAG_ACTIVE = "active";
 	public static final String TAG_PROGRESS = "progress";
 	public static final String TAG_SMELTER = "smeltery";
-	public static final String TAG_FUELED = "fueled";
 	public static final String TAG_TIME = "time";
 	public static final String TAG_SPEED_STACK_SIZE = "speedStackSize";
+
 	public EnumFacing facing = EnumFacing.NORTH;
 	public int progress = 0;
 	public int time = 0;
 	public int activeCount = 0;
 	public int cooldown = 0;
-	public int upgradeSize1 = 0;
-	public int upgradeSize2 = 0;
-	public int upgradeSize3 = 0;
-	public int upgradeSize4 = 0;
 	public int speedStackSize = 0;
 	public boolean isReady = false;
 	public boolean active = false;
 	public boolean smeltery = false;
-	public boolean fueled = false;
 	public boolean update = false;
 	public TileSmeltery tileSmeltery;
 	private final ItemStackHandler itemInventoryIO;
@@ -54,168 +49,129 @@ public class TileEntityBase extends TileSmelteryComponent {
 
 	protected TileEntityBase(int itemSlots) {
 		itemInventory = new ItemStackHandler(itemSlots) {
-			@Override
-			protected void onContentsChanged(int slot) {
-				efficientMarkDirty();
-			}
+			@Override protected void onContentsChanged(int slot) { efficientMarkDirty(); }
 		};
 		itemInventoryIO = new ItemStackHandler(itemSlots) {
 			@Override public void setStackInSlot(int slot, @Nonnull ItemStack stack) { itemInventory.setStackInSlot(slot, stack); }
-
-			@Override
-			public int getSlots() { return itemInventory.getSlots(); }
-
-			@Override @Nonnull
-			public ItemStack getStackInSlot(int slot) { return itemInventory.getStackInSlot(slot); }
-
+			@Override public int getSlots() { return itemInventory.getSlots(); }
+			@Override @Nonnull public ItemStack getStackInSlot(int slot) { return itemInventory.getStackInSlot(slot); }
 			@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return TileEntityBase.this.insertItem(slot, stack, simulate); }
-
 			@Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return TileEntityBase.this.extractItem(slot, amount, simulate); }
-
-			@Override
-			protected void onContentsChanged(int slot) {
-				efficientMarkDirty();
-			}
+			@Override protected void onContentsChanged(int slot) { efficientMarkDirty(); }
 		};
 	}
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
+	@Override public void readFromNBT(NBTTagCompound compound) {
 		facing = EnumFacing.byHorizontalIndex(compound.getInteger(TAG_FACING));
 		isReady = compound.getBoolean(TAG_IS_READY);
 		active = compound.getBoolean(TAG_ACTIVE);
 		progress = compound.getInteger(TAG_PROGRESS);
 		time = compound.getInteger(TAG_TIME);
 		smeltery = compound.getBoolean(TAG_SMELTER);
-		fueled = compound.getBoolean(TAG_FUELED);
 		speedStackSize = compound.getInteger(TAG_SPEED_STACK_SIZE);
 		itemInventory.deserializeNBT(compound.getCompoundTag("itemInventory"));
 		super.readFromNBT(compound);
 	}
 
-	@Override @Nonnull
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+	@Override @Nonnull public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setInteger(TAG_FACING, facing.getIndex());
 		compound.setBoolean(TAG_IS_READY, isReady);
 		compound.setBoolean(TAG_ACTIVE, active);
 		compound.setInteger(TAG_PROGRESS, progress);
 		compound.setInteger(TAG_TIME, time);
 		compound.setBoolean(TAG_SMELTER, smeltery);
-		compound.setBoolean(TAG_FUELED, fueled);
 		compound.setInteger(TAG_SPEED_STACK_SIZE, speedStackSize);
 		compound.setTag("itemInventory", itemInventory.serializeNBT());
 		super.writeToNBT(compound);
 		return compound;
 	}
 
-	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return itemInventory.getSlots() > 0;
+	@Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) { return itemInventory.getSlots() > 0; }
 		return super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public <T> @Nullable T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+	@Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory.getSlots() > 0) {
-			if (facing == null) return (T) itemInventory;
+			if (facing == null) { return (T) itemInventory; }
 			return (T) itemInventoryIO;
 		}
 		return super.getCapability(capability, facing);
 	}
 
 	protected ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-		if (!simulate) efficientMarkDirty();
+		if (!simulate) { efficientMarkDirty(); }
 		return stack;
 	}
 
 	protected ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if (!simulate) efficientMarkDirty();
+		if (!simulate) { efficientMarkDirty(); }
 		return ItemStack.EMPTY;
 	}
 
-	protected void consumeItemStack(int slotId, int amount) {
-		itemInventory.extractItem(slotId, amount, false);
-	}
+	protected void consumeItemStack(int slotId, int amount) { itemInventory.extractItem(slotId, amount, false); }
 
 	public int getSlotStackSize(ItemStack itemStack) {
 		int size = 0;
 		int meta = itemStack.getItemDamage();
 		int count = itemStack.getCount();
 		switch (meta) {
-			case 1:
-				size = count;
-				break;
+			case 1: size = count; break;
 			case 2:
-			case 6:
-				size = count * 2;
-				break;
-			case 3:
-				size = count * 3;
-				break;
-			case 4:
-				size = count * 4;
-				break;
+			case 6: size = count * 2; break;
+			case 3: size = count * 3; break;
+			case 4: size = count * 4; break;
 		}
 		return size;
 	}
 
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
+	@Override public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
 		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), tag);
 	}
 
-	@Override @Nonnull
-	public NBTTagCompound getUpdateTag() { return writeToNBT(new NBTTagCompound()); }
+	@Override @Nonnull public NBTTagCompound getUpdateTag() { return writeToNBT(new NBTTagCompound()); }
 
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+	@Override public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		super.onDataPacket(net, pkt);
 		readFromNBT(pkt.getNbtCompound());
 	}
 
-	@Override
-	public void invalidate() {
+	@Override public void invalidate() {
 		super.invalidate();
 		tileSmeltery = null;
 	}
 
-	public EnumFacing getFacing() { return facing; }
-
-	public void setFacing(EnumFacing facing) { this.facing = facing; }
-
 	public void efficientMarkDirty() {
-		if (world != null) {
-			world.getChunk(getPos()).markDirty();
-		}
+		if (world != null) { world.getChunk(getPos()).markDirty(); }
 		markContainingBlockForUpdate(null);
 	}
 
 	public void markContainingBlockForUpdate(@Nullable IBlockState newState) { markBlockForUpdate(getPos(), newState); }
 
 	public void markBlockForUpdate(BlockPos pos, @Nullable IBlockState newState) {
-		if (world == null) return;
+		if (world == null) { return; }
 		IBlockState state = world.getBlockState(pos);
-		if (newState == null) newState = state;
+		if (newState == null) { newState = state; }
 		world.notifyBlockUpdate(pos, state, newState, 3);
 		world.notifyNeighborsOfStateChange(pos, newState.getBlock(), true);
 	}
 
 	public TileSmeltery getMasterTile() {
-		if (!getHasMaster()) return null;
+		if (!getHasMaster()) { return null; }
 		BlockPos masterPos = getMasterPosition();
-		if (masterPos == null) return null;
+		if (masterPos == null) { return null; }
 		TileEntity te = getWorld().getTileEntity(masterPos);
-		if (te instanceof TileSmeltery) return (TileSmeltery) te;
+		if (te instanceof TileSmeltery) { return (TileSmeltery) te; }
 		return null;
 	}
 
 	public IFluidTank getTankAt(BlockPos pos) {
-		if (world == null) return null;
+		if (world == null) { return null; }
 		TileEntity tileEntity = world.getTileEntity(pos);
-		if (tileEntity instanceof TileTank) return ((TileTank) tileEntity).getInternalTank();
+		if (tileEntity instanceof TileTank) { return ((TileTank) tileEntity).getInternalTank(); }
 		return null;
 	}
 
@@ -224,14 +180,11 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public boolean hasController() { return smeltery; }
 
 	@SideOnly(Side.CLIENT)
-	public boolean isFueled() { return fueled; }
-
-	@SideOnly(Side.CLIENT)
 	public boolean isReady() { return !isReady; }
 
 	@SideOnly(Side.CLIENT)
 	public int getGUIProgress(int pixel) {
-		if (time <= 0) return 0;
+		if (time <= 0) { return 0; }
 		return (int) (((float) activeCount / (float) time) * pixel);
 	}
 }

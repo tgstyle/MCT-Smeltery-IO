@@ -13,11 +13,15 @@ public abstract class MessageBase<REQ extends IMessage> implements IMessage, IMe
 	public MessageBase() {}
 
 	public abstract void handleClientSide(REQ message, EntityPlayer player);
+
 	public abstract void handleServerSide(REQ message, EntityPlayer player);
 
 	@Override public REQ onMessage(REQ message, MessageContext context) {
-		if(context.side == Side.SERVER) { handleServerSide(message, context.getServerHandler().player); }
-		else { handleClientSide(message, SmelteryIO.proxy.getPlayerEntity()); }
+		if (context.side == Side.SERVER) {
+			handleServerSide(message, context.getServerHandler().player);
+		} else {
+			handleClientSide(message, SmelteryIO.proxy.getPlayerEntity());
+		}
 		return null;
 	}
 }

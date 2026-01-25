@@ -8,9 +8,9 @@ import net.minecraft.item.Item;
 import java.util.Objects;
 
 public class ItemBase extends Item {
- 	public ItemBase(String registry) {
- 	 	setRegistryName(SmelteryIO.MODID, registry);
- 	 	setTranslationKey(Objects.requireNonNull(getRegistryName()).toString());
- 	 	setCreativeTab(CreativeTabSIO.SMELTERYIO_TAB);
- 	}
+	public ItemBase(String registry) {
+		setRegistryName(SmelteryIO.MODID, registry);
+		setTranslationKey(Objects.requireNonNull(getRegistryName()).toString());
+		setCreativeTab(CreativeTabSIO.SMELTERYIO_TAB);
+	}
 }

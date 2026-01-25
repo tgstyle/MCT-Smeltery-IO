@@ -10,7 +10,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class SlotHandlerCM extends SlotItemHandler {
-    private final int tileSlot;
+	private final int tileSlot;
 	private final int slotStackLimit;
 
 	public SlotHandlerCM(IItemHandler itemHandler, int index, int xPosition, int yPosition, int stacksize) {
@@ -20,27 +20,25 @@ public class SlotHandlerCM extends SlotItemHandler {
 	}
 
 	@Override public boolean isItemValid(@Nonnull ItemStack stack) {
-        int tileID = TileEntityCM.TILEID;
-        switch(tileSlot) {
-		case TileEntityCM.SLOTFUEL:
-			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTFUEL, tileID);
-		case TileEntityCM.SLOTCAST:
-	   		return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTCAST, tileID);
-		case TileEntityCM.SLOTUPGRADE1:
-			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADE1, tileID);
-		case TileEntityCM.SLOTUPGRADE2:
-			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADE2, tileID);
-		case TileEntityCM.SLOTUPGRADESPEED:
-			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADESPEED, tileID);
-		case TileEntityCM.SLOTOUTPUT:
-			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTOUTPUT, tileID);
-		case TileEntityCM.SLOTREDSTONE:
-			return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTREDSTONE, tileID);
+		int tileID = TileEntityCM.TILEID;
+		switch (tileSlot) {
+			case TileEntityCM.SLOTFUEL:
+				return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTFUEL, tileID);
+			case TileEntityCM.SLOTCAST:
+				return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTCAST, tileID);
+			case TileEntityCM.SLOTUPGRADE1:
+				return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADE1, tileID);
+			case TileEntityCM.SLOTUPGRADE2:
+				return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADE2, tileID);
+			case TileEntityCM.SLOTUPGRADESPEED:
+				return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTUPGRADESPEED, tileID);
+			case TileEntityCM.SLOTOUTPUT:
+				return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTOUTPUT, tileID);
+			case TileEntityCM.SLOTREDSTONE:
+				return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTREDSTONE, tileID);
 		}
 		return false;
 	}
 
-	@Override public int getSlotStackLimit() {
-		return slotStackLimit;
-	}
+	@Override public int getSlotStackLimit() { return slotStackLimit; }
 }

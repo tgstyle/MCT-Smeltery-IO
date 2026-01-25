@@ -36,7 +36,7 @@ public class TileEntitySI extends TileEntityBase implements ITickable {
 	}
 
 	@Override public void update() {
-		if (world.isRemote) return;
+		if (world.isRemote) { return; }
 		getSmeltery();
 		if (update) {
 			efficientMarkDirty();
@@ -78,14 +78,11 @@ public class TileEntitySI extends TileEntityBase implements ITickable {
 
 		private InputProxyHandler(IItemHandler target) { this.target = target; }
 
-		@Override
-		public int getSlots() { return target.getSlots(); }
+		@Override public int getSlots() { return target.getSlots(); }
 
-		@Override @Nonnull
-		public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
+		@Override @Nonnull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
 
-		@Override @Nonnull
-		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return target.insertItem(slot, stack, simulate); }
+		@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return target.insertItem(slot, stack, simulate); }
 
 		@Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
 

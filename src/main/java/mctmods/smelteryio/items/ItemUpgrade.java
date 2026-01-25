@@ -1,6 +1,7 @@
 package mctmods.smelteryio.items;
 
 import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -30,8 +31,8 @@ public class ItemUpgrade extends ItemBase {
 	}
 
 	@Override public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
-		if(isInCreativeTab(tab)) {
-			for(EnumUpgrade type : EnumUpgrade.values()) {
+		if (isInCreativeTab(tab)) {
+			for (EnumUpgrade type : EnumUpgrade.values()) {
 				list.add(new ItemStack(this, 1, type.ordinal()));
 			}
 		}
@@ -61,7 +62,7 @@ public class ItemUpgrade extends ItemBase {
 
 	@SideOnly(Side.CLIENT)
 	@Override public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-		if(isShiftKeyDown()) {
+		if (isShiftKeyDown()) {
 			switch (stack.getItemDamage()) {
 				case 0:
 					tooltip.add(TextFormatting.GOLD + I18n.format("sio.tooltips.upgrade_base"));
@@ -103,8 +104,9 @@ public class ItemUpgrade extends ItemBase {
 
 	@SideOnly(Side.CLIENT)
 	public void initItemModels() {
-		for(EnumUpgrade variant : EnumUpgrade.values()) {
-			ModelLoader.setCustomModelResourceLocation(this, variant.ordinal(), new ModelResourceLocation(getRegistryName() + "/" + variant.getName(), "inventory"));
+		for (EnumUpgrade variant : EnumUpgrade.values()) {
+			ModelLoader.setCustomModelResourceLocation(this, variant.ordinal(),
+					new ModelResourceLocation(getRegistryName() + "/" + variant.getName(), "inventory"));
 		}
 	}
 }

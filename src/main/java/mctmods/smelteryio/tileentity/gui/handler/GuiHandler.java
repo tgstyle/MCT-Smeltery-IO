@@ -20,24 +20,24 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		switch (ID) {
-		case FUEL_CONTROLLER:
-			return new ContainerFC(player.inventory, (TileEntityFC) world.getTileEntity(new BlockPos(x, y, z)));
-		case CASTING_MACHINE:
-			return new ContainerCM(player.inventory, (TileEntityCM) world.getTileEntity(new BlockPos(x, y, z)));
-		default:
-			return null;
+			case FUEL_CONTROLLER:
+				return new ContainerFC(player.inventory, (TileEntityFC) world.getTileEntity(new BlockPos(x, y, z)));
+			case CASTING_MACHINE:
+				return new ContainerCM(player.inventory, (TileEntityCM) world.getTileEntity(new BlockPos(x, y, z)));
+			default:
+				return null;
 		}
 	}
 
 	@Override public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 		switch (ID) {
-		case FUEL_CONTROLLER:
-			return new GuiFC((ContainerBase) getServerGuiElement(ID, player, world, x, y, z), (TileEntityFC) tileEntity);
-		case CASTING_MACHINE:
-			return new GuiCM((ContainerBase) getServerGuiElement(ID, player, world, x, y, z), (TileEntityCM) tileEntity);
-		default:
-			return null;
+			case FUEL_CONTROLLER:
+				return new GuiFC((ContainerBase) getServerGuiElement(ID, player, world, x, y, z), (TileEntityFC) tileEntity);
+			case CASTING_MACHINE:
+				return new GuiCM((ContainerBase) getServerGuiElement(ID, player, world, x, y, z), (TileEntityCM) tileEntity);
+			default:
+				return null;
 		}
 	}
 }
