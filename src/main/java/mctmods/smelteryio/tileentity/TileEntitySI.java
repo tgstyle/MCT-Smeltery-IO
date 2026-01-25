@@ -14,6 +14,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class TileEntitySI extends TileEntityBase implements ITickable {
+	private int cooldown = 0;
+
 	public TileEntitySI() { super(0); }
 
 	@Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
@@ -37,11 +39,12 @@ public class TileEntitySI extends TileEntityBase implements ITickable {
 
 	@Override public void update() {
 		if (world.isRemote) { return; }
-		getSmeltery();
+		if (cooldown % 20 == 0) { getSmeltery(); }
 		if (update) {
 			efficientMarkDirty();
 			update = false;
 		}
+		cooldown = (cooldown + 1) % 20;
 	}
 
 	private void getSmeltery() {
