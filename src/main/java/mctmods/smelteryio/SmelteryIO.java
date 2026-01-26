@@ -1,6 +1,7 @@
 package mctmods.smelteryio;
 
 import mctmods.smelteryio.library.util.ConfigSIO;
+import mctmods.smelteryio.library.util.CoolantHandler;
 import mctmods.smelteryio.library.util.network.NetworkHandler;
 import mctmods.smelteryio.proxies.CommonProxy;
 import mctmods.smelteryio.registry.Registry;
@@ -88,6 +89,7 @@ public class SmelteryIO {
 	public void postInit(FMLPostInitializationEvent event) {
 		Registry.registerTConstruct();
 		RegistryGUI.registerGUI();
+		CoolantHandler.init();
 		proxy.postInit();
 	}
 }

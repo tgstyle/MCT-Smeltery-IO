@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import mctmods.smelteryio.SmelteryIO;
+import mctmods.smelteryio.library.util.CoolantHandler;
 import mctmods.smelteryio.library.util.network.NetworkHandler;
 import mctmods.smelteryio.library.util.network.messages.MessageEmptyTank;
 import mctmods.smelteryio.library.util.network.messages.MessageLockSlots;
@@ -17,6 +18,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -78,6 +80,16 @@ public class GuiCM extends GuiContainer {
 			drawTexturedModalRect(guiLeft + 47, guiTop + 52, 176, 60, 16, 16);
 		} else {
 			drawTexturedModalRect(guiLeft + 65, guiTop + 52, 176, 60, 16, 16);
+		}
+
+		ItemStack fuel = inventorySlots.getSlot(TileEntityCM.SLOTFUEL).getStack();
+		if (!fuel.isEmpty()) {
+			for (CoolantHandler.Entry entry : CoolantHandler.COOLANTS) {
+				if (entry.matches(fuel) && entry.getShape() == 'S') {
+					drawTexturedModalRect(guiLeft + 55, guiTop + 14, 55, 32, 18, 18);
+					break;
+				}
+			}
 		}
 
 		if (tileEntity.getCurrentFluid() != null) {

@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 import mctmods.smelteryio.SmelteryIO;
-import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.registry.Registry;
 
 import mezz.jei.api.IGuiHelper;
@@ -46,29 +45,19 @@ public class CMRecipeCategory implements IRecipeCategory {
 	}
 
 	@Override @Nonnull
-	public String getUid() {
-		return CATEGORY;
-	}
+	public String getUid() { return CATEGORY; }
 
 	@Override @Nonnull
-	public String getTitle() {
-		return I18n.format(Registry.MACHINE.getTranslationKey() + ".casting_machine.name");
-	}
+	public String getTitle() { return I18n.format(Registry.MACHINE.getTranslationKey() + ".casting_machine.name"); }
 
 	@Override @Nonnull
-	public String getModName() {
-		return SmelteryIO.MODNAME;
-	}
+	public String getModName() { return SmelteryIO.MODNAME; }
 
 	@Override @Nonnull
-	public IDrawable getBackground() {
-		return background;
-	}
+	public IDrawable getBackground() { return background; }
 
 	@Override
-	public void drawExtras(@Nonnull Minecraft minecraft) {
-		arrow.draw(minecraft, 103, 24);
-	}
+	public void drawExtras(@Nonnull Minecraft minecraft) { arrow.draw(minecraft, 103, 24); }
 
 	@Override
 	public void setRecipe(IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper, IIngredients ingredients) {
@@ -96,9 +85,9 @@ public class CMRecipeCategory implements IRecipeCategory {
 
 		items.init(2, true, 41, 4);
 		if (recipeWrapper instanceof CMRecipeWrapper && ((CMRecipeWrapper) recipeWrapper).hasCast()) {
-			items.set(2, new ItemStack(Items.SNOWBALL, ConfigSIO.snowballCastingAmount));
+			items.set(2, new ItemStack(Items.SNOWBALL, 1));
 		} else {
-			items.set(2, new ItemStack(Items.SNOWBALL, ConfigSIO.snowballBasinAmount));
+			items.set(2, new ItemStack(Items.SNOWBALL, 8));
 		}
 
 		items.init(3, false, 82, 1);

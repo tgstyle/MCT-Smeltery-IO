@@ -10,28 +10,23 @@ public class ConfigSIO {
 	public static final String CATEGORY_FUEL_CONTROLLER = "fuel controller";
 
 	public static int powderedFuelBurnTime;
-	public static int snowballBasinAmount;
-	public static int snowballCastingAmount;
-	public static int iceballBasinAmount;
-	public static int iceballCastingAmount;
-	public static int iceballAmountBasin;
-	public static int iceballAmountCasting;
 	public static int castingMachineSpeed;
 	public static int fuelControllerSpeed;
 	public static int iceBallStackSize;
 	public static double fuelControllerRatio;
 
+	public static String[] customCoolants;
+
 	private static int powderedFuelBurnTimeCheck = 24000;
-	private static int snowballBasinAmountCheck = 8;
-	private static int snowballCastingAmountCheck = 1;
-	private static int iceballBasinAmountCheck = 1;
-	private static int iceballCastingAmountCheck = 1;
-	private static int iceballAmountBasinCheck = 1;
-	private static int iceballAmountCastingCheck = 8;
 	private static int castingMachineSpeedCheck = 2;
 	private static int fuelControllerSpeedCheck = 8;
 	private static int iceBallStackSizeCheck = 16;
 	private static double fuelControllerRatioCheck = 4.44;
+
+	private static final String[] defaultCoolants = new String[] {
+			"minecraft:snowball:0;1,8,1,1;C",
+			"smelteryio:iceball:0;1,1,8,1;C"
+	};
 
 	public static void syncConfig() {
 		Configuration config = SmelteryIO.config;
@@ -66,90 +61,6 @@ public class ConfigSIO {
 				iceBallStackProperty.setValue(iceBallStackSizeCheck);
 			}
 			iceBallStackSize = iceBallStackSizeCheck;
-
-			Property snowballBasinAmountProperty = config.get(CATEGORY_CASTING_MACHINE,
-					"snowballBasinAmount",
-					String.valueOf(snowballBasinAmountCheck),
-					"The Amount of Snowballs used for Basin mode (Valid value 1-16) (Default = 8)");
-			snowballBasinAmountCheck = snowballBasinAmountProperty.getInt();
-			if (snowballBasinAmountCheck < 1) {
-				snowballBasinAmountCheck = 1;
-				snowballBasinAmountProperty.setValue(snowballBasinAmountCheck);
-			} else if (snowballBasinAmountCheck > 16) {
-				snowballBasinAmountCheck = 16;
-				snowballBasinAmountProperty.setValue(snowballBasinAmountCheck);
-			}
-			snowballBasinAmount = snowballBasinAmountCheck;
-
-			Property snowballCastingAmountProperty = config.get(CATEGORY_CASTING_MACHINE,
-					"snowballCastingAmount",
-					String.valueOf(snowballCastingAmountCheck),
-					"The Amount of Snowballs used for Casting mode (Valid value 1-16) (Default = 1)");
-			snowballCastingAmountCheck = snowballCastingAmountProperty.getInt();
-			if (snowballCastingAmountCheck < 1) {
-				snowballCastingAmountCheck = 1;
-				snowballCastingAmountProperty.setValue(snowballCastingAmountCheck);
-			} else if (snowballCastingAmountCheck > 16) {
-				snowballCastingAmountCheck = 16;
-				snowballCastingAmountProperty.setValue(snowballCastingAmountCheck);
-			}
-			snowballCastingAmount = snowballCastingAmountCheck;
-
-			Property iceballBasinAmountProperty = config.get(CATEGORY_CASTING_MACHINE,
-					"iceballBasinAmount",
-					String.valueOf(iceballBasinAmountCheck),
-					"The Amount of Iceballs used for Basin mode (Valid value 1-16) (Default = 1)");
-			iceballBasinAmountCheck = iceballBasinAmountProperty.getInt();
-			if (iceballBasinAmountCheck < 1) {
-				iceballBasinAmountCheck = 1;
-				iceballBasinAmountProperty.setValue(iceballBasinAmountCheck);
-			} else if (iceballBasinAmountCheck > 16) {
-				iceballBasinAmountCheck = 16;
-				iceballBasinAmountProperty.setValue(iceballBasinAmountCheck);
-			}
-			iceballBasinAmount = iceballBasinAmountCheck;
-
-			Property iceballCastingAmountProperty = config.get(CATEGORY_CASTING_MACHINE,
-					"iceballCastingAmount",
-					String.valueOf(iceballCastingAmountCheck),
-					"The Amount of Iceballs used for Casting mode (Valid value 1-16) (Default = 1)");
-			iceballCastingAmountCheck = iceballCastingAmountProperty.getInt();
-			if (iceballCastingAmountCheck < 1) {
-				iceballCastingAmountCheck = 1;
-				iceballCastingAmountProperty.setValue(iceballCastingAmountCheck);
-			} else if (iceballCastingAmountCheck > 16) {
-				iceballCastingAmountCheck = 16;
-				iceballCastingAmountProperty.setValue(iceballCastingAmountCheck);
-			}
-			iceballCastingAmount = iceballCastingAmountCheck;
-
-			Property iceballAmountBasinProperty = config.get(CATEGORY_CASTING_MACHINE,
-					"iceballAmountBasin",
-					String.valueOf(iceballAmountBasinCheck),
-					"The Amount of Casts per Iceball used for Basin mode (Valid value 1-16) (Default = 1)");
-			iceballAmountBasinCheck = iceballAmountBasinProperty.getInt();
-			if (iceballAmountBasinCheck < 1) {
-				iceballAmountBasinCheck = 1;
-				iceballAmountBasinProperty.setValue(iceballAmountBasinCheck);
-			} else if (iceballAmountBasinCheck > 16) {
-				iceballAmountBasinCheck = 16;
-				iceballAmountBasinProperty.setValue(iceballAmountBasinCheck);
-			}
-			iceballAmountBasin = iceballAmountBasinCheck;
-
-			Property iceballAmountCastingProperty = config.get(CATEGORY_CASTING_MACHINE,
-					"iceballAmountCasting",
-					String.valueOf(iceballAmountCastingCheck),
-					"The Amount of Casts per Iceball used for Casting mode (Valid value 1-16) (Default = 8)");
-			iceballAmountCastingCheck = iceballAmountCastingProperty.getInt();
-			if (iceballAmountCastingCheck < 1) {
-				iceballAmountCastingCheck = 1;
-				iceballAmountCastingProperty.setValue(iceballAmountCastingCheck);
-			} else if (iceballAmountCastingCheck > 16) {
-				iceballAmountCastingCheck = 16;
-				iceballAmountCastingProperty.setValue(iceballAmountCastingCheck);
-			}
-			iceballAmountCasting = iceballAmountCastingCheck;
 
 			Property castingMachineSpeedProperty = config.get(CATEGORY_CASTING_MACHINE,
 					"castingMachineSpeed",
@@ -192,6 +103,18 @@ public class ConfigSIO {
 				fuelControllerRatioProperty.setValue(fuelControllerRatioCheck);
 			}
 			fuelControllerRatio = fuelControllerRatioCheck;
+
+			Property customCoolantsProperty = config.get(CATEGORY_CASTING_MACHINE,
+					"customCoolants",
+					defaultCoolants,
+					"Custom cooling items for the Casting Machine.\n" +
+							"Format: modid:itemname[:meta];consume_table,consume_basin,casts_table,casts_basin[;C|S]\n" +
+							"Use '*' for wildcard metadata. All values must be >=1.\n" +
+							"C=circle slot BG (default), S=square slot BG.\n" +
+							"Examples:\n" +
+							"minecraft:packed_ice:0;1,2,4,2;S\n" +
+							"thermalfoundation:material:1025:*;1,1,10,5;C");
+			customCoolants = customCoolantsProperty.getStringList();
 
 		} catch (Exception e) {
 			SmelteryIO.logger.error("Config Error: {}", e);
