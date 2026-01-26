@@ -156,12 +156,6 @@ fancyGradle {
 }
 
 jar {
-    manifest {
-        attributes(
-            'FMLCorePlugin': 'mctmods.smelteryio.mixin.MixinLoader',
-            'FMLCorePluginContainsFMLMod': 'true'
-        )
-    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     // Exclude all mixin-related content from the release jar *NOT LICENSED FOR DISTRO IN THIS MOD*
