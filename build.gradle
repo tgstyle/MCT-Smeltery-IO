@@ -162,6 +162,18 @@ jar {
     exclude 'mctmods/smelteryio/mixin/**'
     exclude 'mixins.smelteryio.json'
     exclude 'mixins.smelteryio.refmap.json'
+
+    // Replace MANIFEST.MF with a clean version (no MixinConfigs) in the built JAR
+    doLast {
+        def tempDir = file("$buildDir/tmp/clean_manifest")
+        tempDir.mkdirs()
+        def cleanManifest = new File(tempDir, "MANIFEST.MF")
+        cleanManifest.text = "Manifest-Version: 1.0\r\n\r\n"
+
+        ant.zip(destfile: archiveFile.get().getAsFile(), update: true) {
+            zipfileset(dir: tempDir, prefix: "META-INF", includes: "MANIFEST.MF")
+        }
+    }
 }
 
 sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
