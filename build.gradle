@@ -97,7 +97,7 @@ minecraft {
         server {
             workingDirectory project.file('run/server')
             args '--version', common.mcversion
-			args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker'
+            args '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker'
             property 'forge.logging.console.level', 'debug'
             mods {
                 "${archivesBaseName}" {
