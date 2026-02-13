@@ -1,5 +1,7 @@
 package mctmods.smelteryio;
 
+import java.io.File;
+
 import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.library.util.CoolantHandler;
 import mctmods.smelteryio.library.util.network.NetworkHandler;
@@ -72,7 +74,7 @@ public class SmelteryIO {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		config = new Configuration(event.getSuggestedConfigurationFile());
+		config = new Configuration(new File(event.getModConfigurationDirectory(), "mct_smelteryio.cfg"));
 		ConfigSIO.syncConfig();
 		RegistryTE.registerTileEntities();
 		Registry.registerEntities();
