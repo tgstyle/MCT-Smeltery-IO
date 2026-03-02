@@ -1,6 +1,9 @@
 
 # Links
+- [Official Discord](https://discord.gg/ujY2mV9)<br/>
+
 - [MCT Smeltery IO on CurseForge](https://www.curseforge.com/minecraft/mc-mods/mct-smeltery-io)<br/>
+- [MCT Smeltery IO on Modrinth](https://modrinth.com/mod/mct-smeltery-io)<br/>
 - [TiCh Immersion Modpack on CurseForge](https://www.curseforge.com/minecraft/modpacks/mct-tich-immersion)<br/>
 
 # MCT Smeltery IO
