@@ -1,15 +1,13 @@
 [
   {
-    "modid": "smelteryio",
-    "name": "Smeltery IO",
-    "description": "Tinkers Smeltery addon mod for casting/processing upgrades",
+    "modid": "${mod_id}",
+    "name": "${mod_name}",
+    "description": "${mod_description}",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "https://www.curseforge.com/minecraft/mc-mods/mct-smeltery-io",
-    "authorList": ["TGstyle"],
-    "credits": "Tinker I/O Team & TeamSLTW for inspiration.",
-    "logoFile": "assets/smelteryio/MCTlogo.png",
-    "screenshots": [],
+    "url": "${mod_url}",
+    "authorList": ["${mod_authors}"],
+    "logoFile": "MCTlogo.png",
     "dependencies": ["tconstruct"]
   }
 ]
