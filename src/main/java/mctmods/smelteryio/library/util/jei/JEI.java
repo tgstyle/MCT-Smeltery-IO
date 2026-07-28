@@ -1,11 +1,10 @@
 package mctmods.smelteryio.library.util.jei;
 
-import javax.annotation.Nonnull;
-
 import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.tileentity.gui.GuiCM;
 import mctmods.smelteryio.tileentity.gui.GuiFC;
 
+import javax.annotation.Nonnull;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IJeiRuntime;
@@ -13,9 +12,10 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.gui.ICraftingGridHelper;
+import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
-
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 @SuppressWarnings("unused")
 @mezz.jei.api.JEIPlugin
@@ -41,12 +41,16 @@ public class JEI implements IModPlugin {
 
 	@Override public void register(@Nonnull IModRegistry registry) {
 		jeiHelpers = registry.getJeiHelpers();
+		IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
+		ResourceLocation casting = new ResourceLocation("tconstruct", "textures/gui/jei/casting.png");
+		IDrawable castingTable = guiHelper.createDrawable(casting, 141, 0, 16, 16);
+		IDrawable castingBasin = guiHelper.createDrawable(casting, 141, 16, 16, 16);
 
 		registry.handleRecipes(FCRecipeWrapper.class, new FCRecipeHandler(), FCRecipeCategory.CATEGORY);
 		registry.addRecipes(FCRecipeChecker.getFuel(), FCRecipeCategory.CATEGORY);
 
 		registry.handleRecipes(CMRecipeWrapper.class, new CMRecipeHandler(), CMRecipeCategory.CATEGORY);
-		registry.addRecipes(CMRecipeChecker.getCastingRecipes(), CMRecipeCategory.CATEGORY);
+		registry.addRecipes(CMRecipeChecker.getCastingRecipes(castingTable, castingBasin), CMRecipeCategory.CATEGORY);
 
 		registry.addRecipeClickArea(GuiFC.class, 102, 35, 18, 18, FCRecipeCategory.CATEGORY);
 		registry.addRecipeClickArea(GuiCM.class, 117, 34, 22, 16, CMRecipeCategory.CATEGORY);
@@ -55,7 +59,5 @@ public class JEI implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(Registry.MACHINE, 1, 1), CMRecipeCategory.CATEGORY);
 	}
 
-	@Override public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
-		recipeRegistry = jeiRuntime.getRecipeRegistry();
-	}
+	@Override public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) { recipeRegistry = jeiRuntime.getRecipeRegistry(); }
 }

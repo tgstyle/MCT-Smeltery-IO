@@ -1,8 +1,9 @@
 package mctmods.smelteryio.tileentity.base;
 
+import mctmods.smelteryio.registry.Registry;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,15 +12,12 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-
 import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 import slimeknights.tconstruct.smeltery.tileentity.TileTank;
@@ -110,7 +108,9 @@ public class TileEntityBase extends TileSmelteryComponent {
 		return ItemStack.EMPTY;
 	}
 
-	protected void consumeItemStack(int slotId, int amount) { itemInventory.extractItem(slotId, amount, false); }
+	protected void consumeItemStack() { itemInventory.extractItem(mctmods.smelteryio.tileentity.TileEntityFC.SLOTFUEL, 1, false); }
+
+	protected static boolean isUpgrade(ItemStack stack, int meta) { return !stack.isEmpty() && stack.getItem() == Registry.UPGRADE && stack.getItemDamage() == meta; }
 
 	public int getSlotStackSize(ItemStack itemStack) {
 		int size = 0;
@@ -156,7 +156,6 @@ public class TileEntityBase extends TileSmelteryComponent {
 		IBlockState state = world.getBlockState(pos);
 		if (newState == null) { newState = state; }
 		world.notifyBlockUpdate(pos, state, newState, 3);
-		world.notifyNeighborsOfStateChange(pos, newState.getBlock(), true);
 	}
 
 	public TileSmeltery getMasterTile() {

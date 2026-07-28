@@ -1,20 +1,18 @@
 package mctmods.smelteryio.tileentity;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import mctmods.smelteryio.tileentity.base.TileEntityBase;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class TileEntitySI extends TileEntityBase implements ITickable {
-	private int cooldown = 0;
+	private InputProxyHandler proxy;
 
 	public TileEntitySI() { super(0); }
 
@@ -30,7 +28,8 @@ public class TileEntitySI extends TileEntityBase implements ITickable {
 			if (smeltery && tileSmeltery != null) {
 				IItemHandler target = tileSmeltery.getItemHandler();
 				if (target != null) {
-					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new InputProxyHandler(target));
+					if (proxy == null || proxy.target != target) { proxy = new InputProxyHandler(target); }
+					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(proxy);
 				}
 			}
 		}
@@ -56,13 +55,15 @@ public class TileEntitySI extends TileEntityBase implements ITickable {
 					smeltery = true;
 					update = true;
 				}
-			} else {
+			}
+			else {
 				if (smeltery) {
 					notifyMasterOfChange();
 					resetSI();
 				}
 			}
-		} else {
+		}
+		else {
 			if (smeltery) {
 				notifyMasterOfChange();
 				resetSI();
@@ -74,6 +75,7 @@ public class TileEntitySI extends TileEntityBase implements ITickable {
 		smeltery = false;
 		update = true;
 		tileSmeltery = null;
+		proxy = null;
 	}
 
 	private static class InputProxyHandler implements IItemHandler {

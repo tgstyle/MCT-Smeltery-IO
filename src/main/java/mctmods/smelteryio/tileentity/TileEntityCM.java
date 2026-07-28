@@ -1,30 +1,27 @@
 package mctmods.smelteryio.tileentity;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import mctmods.smelteryio.library.util.CoolantHandler;
 import mctmods.smelteryio.library.util.ConfigSIO;
 import mctmods.smelteryio.library.util.recipes.CMRecipeHandler;
-import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.tileentity.base.TileEntityBase;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import net.minecraftforge.items.ItemStackHandler;
-
 import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
 import slimeknights.tconstruct.library.smeltery.SmelteryTank;
 
@@ -57,6 +54,10 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	private ItemStack cast;
 	private FluidStack castFluid;
 	private ICastingRecipe currentRecipe;
+	private Item lastCastItem;
+	private int lastCastMeta;
+	private Fluid lastFluid;
+	private int lastRecipeMode = -1;
 
 	public TileEntityFluidTank tank = new TileEntityFluidTank(TANK_CAPACITY, this);
 
@@ -138,15 +139,17 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 				activeCount = progress;
 				progress = 0;
 				cooldown = 1;
-			} else if (active && time > 0 && canWork() && cooldown % 2 == 0) {
+			}
+			else if (active && time > 0 && canWork() && cooldown % 2 == 0) {
 				activeCount += CASTING_MACHINE_SPEED + speedStackSize;
 				if (activeCount > time) { activeCount = time; }
 			}
-		} else {
+		}
+		else {
 			if (cooldown % 2 == 0) {
 				getSmeltery();
 				if (smeltery) { inputFluid(); }
-				checkUpgradeSlots();
+				if (cooldown == 0) { checkUpgradeSlots(); }
 				canBurnSolidFuel();
 				int oldMode = lastMode;
 				cast = itemInventory.getStackInSlot(SLOTCAST);
@@ -167,7 +170,8 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 					this.markContainingBlockForUpdate(null);
 					update = true;
 				}
-			} else {
+			}
+			else {
 				if (gracePeriod > 0) { gracePeriod--; }
 				if (gracePeriod <= 0 && active) {
 					active = false;
@@ -193,13 +197,15 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 					smeltery = true;
 					update = true;
 				}
-			} else {
+			}
+			else {
 				if (smeltery) {
 					notifyMasterOfChange();
 					resetCM();
 				}
 			}
-		} else {
+		}
+		else {
 			if (smeltery) { resetCM(); }
 		}
 	}
@@ -225,9 +231,18 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	}
 
 	private void updateRecipe() {
+		Item castItem = cast.isEmpty() ? null : cast.getItem();
+		int castMeta = cast.isEmpty() ? 0 : cast.getItemDamage();
+		Fluid fluid = castFluid == null ? null : castFluid.getFluid();
+		if (currentMode == lastRecipeMode && castItem == lastCastItem && castMeta == lastCastMeta && fluid == lastFluid) { return; }
+		lastRecipeMode = currentMode;
+		lastCastItem = castItem;
+		lastCastMeta = castMeta;
+		lastFluid = fluid;
+		ICastingRecipe oldRecipe = currentRecipe;
 		if (currentMode == CAST) { currentRecipe = CMRecipeHandler.findTableCastingRecipe(cast, castFluid); }
 		else if (currentMode == BASIN) { currentRecipe = CMRecipeHandler.findBasinCastingRecipe(cast, castFluid); }
-		update = true;
+		if (oldRecipe != currentRecipe) { update = true; }
 	}
 
 	public boolean canWork() {
@@ -254,28 +269,23 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 			outputStackSize += getSlotStackSize(upgrade1);
 			outputStackSize += getSlotStackSize(upgrade2);
 			if (outputStackSize > 64) { outputStackSize = 64; }
-			if (upgrade1.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 5)) || upgrade2.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 5))) {
-				currentMode = BASIN;
-			}
+			if (isUpgrade(upgrade1, 5) || isUpgrade(upgrade2, 5)) { currentMode = BASIN; }
 		}
 
 		speedStackSize = 0;
-		if (!upgrade3.isEmpty() && upgrade3.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 6))) {
-			speedStackSize += getSlotStackSize(upgrade3);
-		}
+		if (isUpgrade(upgrade3, 6)) { speedStackSize += getSlotStackSize(upgrade3); }
 
-		controlledByRedstone = !upgrade4.isEmpty() && upgrade4.isItemEqual(new ItemStack(Registry.UPGRADE, 1, 7));
+		controlledByRedstone = isUpgrade(upgrade4, 7);
 
-		if (oldOutput != outputStackSize || oldMode != currentMode || oldSpeed != speedStackSize || oldRed != controlledByRedstone) {
-			update = true;
-		}
+		if (oldOutput != outputStackSize || oldMode != currentMode || oldSpeed != speedStackSize || oldRed != controlledByRedstone) { update = true; }
 	}
 
 	private void canBurnSolidFuel() {
 		if (!isReady && !itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) {
 			isReady = true;
 			update = true;
-		} else if (isReady && time == 0 && progress == 0 && burnCount == 0 && itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) {
+		}
+		else if (isReady && time == 0 && progress == 0 && burnCount == 0 && itemInventory.getStackInSlot(SLOTFUEL).isEmpty()) {
 			isReady = false;
 			update = true;
 		}
@@ -293,26 +303,22 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 				break;
 			}
 		}
-		if (coolant == null) return false;
+		if (coolant == null) { return false; }
 
 		int consume = coolant.getConsume(currentMode == CAST);
-		if (fuel.getCount() < consume) return false;
+		if (fuel.getCount() < consume) { return false; }
 
 		fuel.shrink(consume);
-		if (fuel.isEmpty()) {
-			itemInventory.setStackInSlot(SLOTFUEL, ItemStack.EMPTY);
-		}
+		if (fuel.isEmpty()) { itemInventory.setStackInSlot(SLOTFUEL, ItemStack.EMPTY); }
 
 		burnCount = coolant.getCasts(currentMode == CAST);
 		return true;
 	}
 
 	private void doCasting() {
-		if (!isReady) return;
+		if (!isReady) { return; }
 		if (time > 0) {
-			if (progress < time) {
-				progress += CASTING_MACHINE_SPEED + speedStackSize;
-			}
+			if (progress < time) { progress += CASTING_MACHINE_SPEED + speedStackSize; }
 			if (progress >= time) {
 				ItemStack remainder = itemInventory.insertItem(SLOTOUTPUT, targetItemStack.copy(), false);
 				if (remainder.isEmpty()) {
@@ -322,7 +328,8 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 					update = true;
 				}
 			}
-		} else if (targetItemStack.isEmpty() && currentRecipe != null && castFluid != null && castFluid.amount >= currentRecipe.getFluidAmount()) {
+		}
+		else if (targetItemStack.isEmpty() && currentRecipe != null && castFluid != null && castFluid.amount >= currentRecipe.getFluidAmount()) {
 			targetItemStack = getResult(cast, castFluid);
 			if (!targetItemStack.isEmpty() && canOutput() && burnSolidFuel()) {
 				if (currentRecipe.consumesCast()) { itemInventory.extractItem(SLOTCAST, 1, false); }
@@ -330,9 +337,8 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 				time = currentRecipe.getTime() / 2;
 				burnCount--;
 				update = true;
-			} else {
-				targetItemStack = ItemStack.EMPTY;
 			}
+			else { targetItemStack = ItemStack.EMPTY; }
 		}
 	}
 
@@ -353,7 +359,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 		return 0;
 	}
 
-	@Override public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
+	@Override public void TankContentsChanged() { update = true; }
 
 	public void emptyTank() { tank.drain(getFluidAmount(), true); }
 
