@@ -110,6 +110,16 @@ public class BlockMachine extends BlockBaseTE {
 	}
 
 	@SuppressWarnings("deprecation")
+	@Override public boolean hasComparatorInputOverride(@Nonnull IBlockState state) { return state.getValue(VARIANT) == EnumMachine.CASTING_MACHINE; }
+
+	@SuppressWarnings("deprecation")
+	@Override public int getComparatorInputOverride(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
+		TileEntity tileEntity = world.getTileEntity(pos);
+		if (tileEntity instanceof TileEntityCM) { return ((TileEntityCM) tileEntity).getComparatorLevel(); }
+		return 0;
+	}
+
+	@SuppressWarnings("deprecation")
 	@Override public int getLightValue(@Nonnull IBlockState state) { return state.getValue(VARIANT).getLight(); }
 
 	@SuppressWarnings("deprecation")

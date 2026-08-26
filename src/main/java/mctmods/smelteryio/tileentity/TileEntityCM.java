@@ -58,6 +58,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	private int lastCastMeta;
 	private Fluid lastFluid;
 	private int lastRecipeMode = -1;
+	private int lastComparatorLevel = 0;
 
 	public TileEntityFluidTank tank = new TileEntityFluidTank(TANK_CAPACITY, this);
 
@@ -183,6 +184,12 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 			if (update) {
 				efficientMarkDirty();
 				update = false;
+			}
+
+			int comparatorLevel = getComparatorLevel();
+			if (comparatorLevel != lastComparatorLevel) {
+				lastComparatorLevel = comparatorLevel;
+				world.updateComparatorOutputLevel(pos, getBlockType());
 			}
 		}
 		cooldown = (cooldown + 1) % 20;
@@ -350,6 +357,12 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	private boolean canOutput() {
 		ItemStack outputSlot = itemInventory.getStackInSlot(SLOTOUTPUT);
 		return (outputSlot.isEmpty() || (outputSlot.isItemEqual(targetItemStack) && ItemStack.areItemStackTagsEqual(outputSlot, targetItemStack))) && outputStackSize - outputSlot.getCount() >= targetItemStack.getCount();
+	}
+
+	public int getComparatorLevel() {
+		if (time <= 0 || progress <= 0) { return 0; }
+		int level = (int) (((float) progress / (float) time) * 15.0F);
+		return Math.min(level, 15);
 	}
 
 	public FluidStack getCurrentFluid() { return tank.getFluid(); }
