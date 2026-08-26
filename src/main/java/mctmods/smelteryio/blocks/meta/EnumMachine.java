@@ -11,6 +11,7 @@ public enum EnumMachine implements IStringSerializable {
 	SMELTERY_INPUT      ("smeltery_input",      EnumRarity.COMMON, "", "", 0, 2, 3.0F, 15.0F, 64),
 	ADVANCED_DRAIN      ("advanced_drain",      EnumRarity.COMMON, "", "", 0, 2, 3.0F, 15.0F, 64);
 
+	public static final EnumMachine[] VALUES = values();
 	private final String name;
 	private final EnumRarity rarity;
 	private final String recipeOreDict1;

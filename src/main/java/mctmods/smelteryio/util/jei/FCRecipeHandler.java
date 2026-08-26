@@ -1,4 +1,4 @@
-package mctmods.smelteryio.library.util.jei;
+package mctmods.smelteryio.util.jei;
 
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IRecipeWrapperFactory;

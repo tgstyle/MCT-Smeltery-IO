@@ -30,6 +30,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public static final String TAG_SMELTER = "smeltery";
 	public static final String TAG_TIME = "time";
 	public static final String TAG_SPEED_STACK_SIZE = "speedStackSize";
+	public static final String TAG_ITEM_INVENTORY = "itemInventory";
 
 	public EnumFacing facing = EnumFacing.NORTH;
 	public int progress = 0;
@@ -42,6 +43,7 @@ public class TileEntityBase extends TileSmelteryComponent {
 	public boolean smeltery = false;
 	public boolean update = false;
 	public TileSmeltery tileSmeltery;
+	private TileSmeltery cachedMaster;
 	private final ItemStackHandler itemInventoryIO;
 	protected ItemStackHandler itemInventory;
 
@@ -67,11 +69,17 @@ public class TileEntityBase extends TileSmelteryComponent {
 		time = compound.getInteger(TAG_TIME);
 		smeltery = compound.getBoolean(TAG_SMELTER);
 		speedStackSize = compound.getInteger(TAG_SPEED_STACK_SIZE);
-		itemInventory.deserializeNBT(compound.getCompoundTag("itemInventory"));
+		if (compound.hasKey(TAG_ITEM_INVENTORY)) { itemInventory.deserializeNBT(compound.getCompoundTag(TAG_ITEM_INVENTORY)); }
 		super.readFromNBT(compound);
 	}
 
 	@Override @Nonnull public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		writeSyncNBT(compound);
+		compound.setTag(TAG_ITEM_INVENTORY, itemInventory.serializeNBT());
+		return compound;
+	}
+
+	@Nonnull protected NBTTagCompound writeSyncNBT(NBTTagCompound compound) {
 		compound.setInteger(TAG_FACING, facing.getIndex());
 		compound.setBoolean(TAG_IS_READY, isReady);
 		compound.setBoolean(TAG_ACTIVE, active);
@@ -79,7 +87,6 @@ public class TileEntityBase extends TileSmelteryComponent {
 		compound.setInteger(TAG_TIME, time);
 		compound.setBoolean(TAG_SMELTER, smeltery);
 		compound.setInteger(TAG_SPEED_STACK_SIZE, speedStackSize);
-		compound.setTag("itemInventory", itemInventory.serializeNBT());
 		super.writeToNBT(compound);
 		return compound;
 	}
@@ -127,27 +134,31 @@ public class TileEntityBase extends TileSmelteryComponent {
 	}
 
 	@Override public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), tag);
+		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
 	}
 
-	@Override @Nonnull public NBTTagCompound getUpdateTag() { return writeToNBT(new NBTTagCompound()); }
+	@Override @Nonnull public NBTTagCompound getUpdateTag() { return writeSyncNBT(new NBTTagCompound()); }
 
 	@Override public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		boolean wasActive = active;
+		boolean hadController = smeltery;
 		super.onDataPacket(net, pkt);
-		readFromNBT(pkt.getNbtCompound());
+		if (wasActive != active || hadController != smeltery) { markContainingBlockForUpdate(null); }
 	}
 
 	@Override public void invalidate() {
 		super.invalidate();
 		tileSmeltery = null;
+		cachedMaster = null;
 	}
 
 	public void efficientMarkDirty() {
-		if (world != null) { world.getChunk(getPos()).markDirty(); }
+		if (world == null || world.isRemote) { return; }
+		markDirtyForSave();
 		markContainingBlockForUpdate(null);
 	}
+
+	public void markDirtyForSave() { if (world != null && !world.isRemote) { world.getChunk(getPos()).markDirty(); } }
 
 	public void markContainingBlockForUpdate(@Nullable IBlockState newState) { markBlockForUpdate(getPos(), newState); }
 
@@ -159,12 +170,19 @@ public class TileEntityBase extends TileSmelteryComponent {
 	}
 
 	public TileSmeltery getMasterTile() {
-		if (!getHasMaster()) { return null; }
+		if (!getHasMaster()) {
+			cachedMaster = null;
+			return null;
+		}
 		BlockPos masterPos = getMasterPosition();
-		if (masterPos == null) { return null; }
+		if (masterPos == null) {
+			cachedMaster = null;
+			return null;
+		}
+		if (cachedMaster != null && !cachedMaster.isInvalid() && masterPos.equals(cachedMaster.getPos())) { return cachedMaster; }
 		TileEntity te = getWorld().getTileEntity(masterPos);
-		if (te instanceof TileSmeltery) { return (TileSmeltery) te; }
-		return null;
+		cachedMaster = te instanceof TileSmeltery ? (TileSmeltery) te : null;
+		return cachedMaster;
 	}
 
 	public IFluidTank getTankAt(BlockPos pos) {

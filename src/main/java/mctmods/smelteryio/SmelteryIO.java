@@ -2,15 +2,15 @@ package mctmods.smelteryio;
 
 import java.io.File;
 
-import mctmods.smelteryio.library.util.ConfigSIO;
-import mctmods.smelteryio.library.util.CoolantHandler;
-import mctmods.smelteryio.library.util.network.NetworkHandler;
+import mctmods.smelteryio.network.NetworkHandler;
 import mctmods.smelteryio.proxies.CommonProxy;
 import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.registry.RegistryDict;
 import mctmods.smelteryio.registry.RegistryGUI;
 import mctmods.smelteryio.registry.RegistryRecipes;
 import mctmods.smelteryio.registry.RegistryTE;
+import mctmods.smelteryio.util.ConfigSIO;
+import mctmods.smelteryio.util.CoolantHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

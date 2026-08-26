@@ -6,12 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import mctmods.smelteryio.SmelteryIO;
-import mctmods.smelteryio.library.util.CoolantHandler;
-import mctmods.smelteryio.library.util.network.NetworkHandler;
-import mctmods.smelteryio.library.util.network.messages.MessageEmptyTank;
-import mctmods.smelteryio.library.util.network.messages.MessageLockSlots;
+import mctmods.smelteryio.network.NetworkHandler;
+import mctmods.smelteryio.network.messages.MessageEmptyTank;
+import mctmods.smelteryio.network.messages.MessageLockSlots;
 import mctmods.smelteryio.tileentity.TileEntityCM;
 import mctmods.smelteryio.tileentity.container.base.ContainerBase;
+import mctmods.smelteryio.util.CoolantHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

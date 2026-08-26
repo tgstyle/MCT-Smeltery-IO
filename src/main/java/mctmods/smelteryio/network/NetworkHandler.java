@@ -1,8 +1,8 @@
-package mctmods.smelteryio.library.util.network;
+package mctmods.smelteryio.network;
 
 import mctmods.smelteryio.SmelteryIO;
-import mctmods.smelteryio.library.util.network.messages.MessageEmptyTank;
-import mctmods.smelteryio.library.util.network.messages.MessageLockSlots;
+import mctmods.smelteryio.network.messages.MessageEmptyTank;
+import mctmods.smelteryio.network.messages.MessageLockSlots;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

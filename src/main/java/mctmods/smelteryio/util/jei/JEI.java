@@ -1,4 +1,4 @@
-package mctmods.smelteryio.library.util.jei;
+package mctmods.smelteryio.util.jei;
 
 import mctmods.smelteryio.registry.Registry;
 import mctmods.smelteryio.tileentity.gui.GuiCM;

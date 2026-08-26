@@ -2,7 +2,6 @@ package mctmods.smelteryio.tileentity.container.slots;
 
 import javax.annotation.Nonnull;
 
-import mctmods.smelteryio.library.util.CoolantHandler;
 import mctmods.smelteryio.tileentity.TileEntityCM;
 
 import net.minecraft.item.ItemStack;
@@ -24,10 +23,7 @@ public class SlotHandlerCM extends SlotItemHandler {
 		int tileID = TileEntityCM.TILEID;
 		switch (tileSlot) {
 			case TileEntityCM.SLOTFUEL:
-				for (CoolantHandler.Entry entry : CoolantHandler.COOLANTS) {
-					if (entry.matches(stack)) { return true; }
-				}
-				return false;
+				return SlotHandlerItems.isCoolant(stack);
 			case TileEntityCM.SLOTCAST:
 				return SlotHandlerItems.validForSlot(stack, TileEntityCM.SLOTCAST, tileID);
 			case TileEntityCM.SLOTUPGRADE1:

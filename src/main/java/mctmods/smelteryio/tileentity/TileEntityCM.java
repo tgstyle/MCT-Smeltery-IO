@@ -1,11 +1,11 @@
 package mctmods.smelteryio.tileentity;
 
-import mctmods.smelteryio.library.util.CoolantHandler;
-import mctmods.smelteryio.library.util.ConfigSIO;
-import mctmods.smelteryio.library.util.recipes.CMRecipeHandler;
 import mctmods.smelteryio.tileentity.base.TileEntityBase;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
 import mctmods.smelteryio.tileentity.fuildtank.TileEntityFluidTank;
+import mctmods.smelteryio.util.ConfigSIO;
+import mctmods.smelteryio.util.CoolantHandler;
+import mctmods.smelteryio.util.recipes.CMRecipeHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,6 +42,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 
 	private static final int CASTING_MACHINE_SPEED = ConfigSIO.castingMachineSpeed;
 	private static final int GRACE_TICKS = 60;
+	private static final int SYNC_THROTTLE_TICKS = 10;
 
 	private int outputStackSize = 0;
 	private int currentMode = CAST;
@@ -59,6 +60,7 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	private Fluid lastFluid;
 	private int lastRecipeMode = -1;
 	private int lastComparatorLevel = 0;
+	private boolean updateThrottled = false;
 
 	public TileEntityFluidTank tank = new TileEntityFluidTank(TANK_CAPACITY, this);
 
@@ -80,30 +82,32 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 
 	@Override public void readFromNBT(NBTTagCompound compound) {
 		slotsLocked = compound.getBoolean(TAG_LOCK_SLOTS);
-		targetItemStack = new ItemStack(compound.getCompoundTag(TAG_OUTPUT_ITEM_STACK));
-		burnCount = compound.getInteger(TAG_BURN_COUNT);
 		controlledByRedstone = compound.getBoolean(TAG_REDSTONE);
 		currentMode = compound.getInteger(TAG_MODE);
 		outputStackSize = compound.getInteger(TAG_OUTPUT_STACK_SIZE);
 		tank.readFromNBT(compound);
+		if (compound.hasKey(TAG_OUTPUT_ITEM_STACK)) { targetItemStack = new ItemStack(compound.getCompoundTag(TAG_OUTPUT_ITEM_STACK)); }
+		if (compound.hasKey(TAG_BURN_COUNT)) { burnCount = compound.getInteger(TAG_BURN_COUNT); }
 		super.readFromNBT(compound);
-		gracePeriod = compound.getInteger(TAG_GRACE_PERIOD);
-		this.markContainingBlockForUpdate(null);
+		if (compound.hasKey(TAG_GRACE_PERIOD)) { gracePeriod = compound.getInteger(TAG_GRACE_PERIOD); }
 	}
 
 	@Override @Nonnull public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setBoolean(TAG_LOCK_SLOTS, slotsLocked);
 		NBTTagCompound tagItemStack = new NBTTagCompound();
 		targetItemStack.writeToNBT(tagItemStack);
 		compound.setTag(TAG_OUTPUT_ITEM_STACK, tagItemStack);
 		compound.setInteger(TAG_BURN_COUNT, burnCount);
+		compound.setInteger(TAG_GRACE_PERIOD, gracePeriod);
+		return super.writeToNBT(compound);
+	}
+
+	@Override @Nonnull protected NBTTagCompound writeSyncNBT(NBTTagCompound compound) {
+		compound.setBoolean(TAG_LOCK_SLOTS, slotsLocked);
 		compound.setBoolean(TAG_REDSTONE, controlledByRedstone);
 		compound.setInteger(TAG_MODE, currentMode);
 		compound.setInteger(TAG_OUTPUT_STACK_SIZE, outputStackSize);
-		compound.setInteger(TAG_GRACE_PERIOD, gracePeriod);
 		tank.writeToNBT(compound);
-		super.writeToNBT(compound);
-		return compound;
+		return super.writeSyncNBT(compound);
 	}
 
 	@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -114,10 +118,8 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 	@Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
 		if (slot == SLOTOUTPUT) { return itemInventory.extractItem(slot, amount, simulate); }
 		if (!slotsLocked) {
-			if (getCurrentFluid() == null && !isActive()) {
-				for (int slotNumber = 1; slotNumber < SLOTS_SIZE - 2; slotNumber++) {
-					if (slot == slotNumber) { return itemInventory.extractItem(slot, amount, simulate); }
-				}
+			if (slot >= SLOTCAST && slot < SLOTS_SIZE - 2 && getCurrentFluid() == null && !isActive()) {
+				return itemInventory.extractItem(slot, amount, simulate);
 			}
 		}
 		return super.extractItem(slot, amount, simulate);
@@ -184,6 +186,11 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 			if (update) {
 				efficientMarkDirty();
 				update = false;
+				updateThrottled = false;
+			}
+			else if (updateThrottled && cooldown % SYNC_THROTTLE_TICKS == 0) {
+				efficientMarkDirty();
+				updateThrottled = false;
 			}
 
 			int comparatorLevel = getComparatorLevel();
@@ -372,7 +379,10 @@ public class TileEntityCM extends TileEntityBase implements ITickable, TileEntit
 		return 0;
 	}
 
-	@Override public void TankContentsChanged() { update = true; }
+	@Override public void TankContentsChanged() {
+		markDirtyForSave();
+		updateThrottled = true;
+	}
 
 	public void emptyTank() { tank.drain(getFluidAmount(), true); }
 

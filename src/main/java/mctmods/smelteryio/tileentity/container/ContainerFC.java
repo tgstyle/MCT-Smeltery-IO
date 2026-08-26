@@ -17,5 +17,6 @@ public class ContainerFC extends ContainerBase {
 		addSlotToContainer(new SlotHandlerFC(handler, TileEntityFC.SLOTFUEL, 134, 34, 64));
 
 		addPlayerInventorySlotToContainer(playerInventory);
+		bindTileEntity(tileEntity);
 	}
 }

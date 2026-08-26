@@ -1,4 +1,4 @@
-package mctmods.smelteryio.library.util.recipes;
+package mctmods.smelteryio.util.recipes;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;

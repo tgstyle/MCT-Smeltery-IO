@@ -32,23 +32,23 @@ public class ItemUpgrade extends ItemBase {
 
 	@Override public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
 		if (isInCreativeTab(tab)) {
-			for (EnumUpgrade type : EnumUpgrade.values()) {
+			for (EnumUpgrade type : EnumUpgrade.VALUES) {
 				list.add(new ItemStack(this, 1, type.ordinal()));
 			}
 		}
 	}
 
 	@Override @Nonnull public String getTranslationKey(ItemStack stack) {
-		return super.getTranslationKey() + "." + EnumUpgrade.values()[stack.getMetadata()].getName();
+		return super.getTranslationKey() + "." + EnumUpgrade.VALUES[stack.getMetadata()].getName();
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override @Nonnull public EnumRarity getRarity(ItemStack stack) {
-		return EnumUpgrade.values()[stack.getMetadata()].getRarity();
+		return EnumUpgrade.VALUES[stack.getMetadata()].getRarity();
 	}
 
 	@Override public int getItemStackLimit(ItemStack stack) {
-		return EnumUpgrade.values()[stack.getMetadata()].getMaxSize();
+		return EnumUpgrade.VALUES[stack.getMetadata()].getMaxSize();
 	}
 
 	@Override public int getMetadata(int damage) {
@@ -104,7 +104,7 @@ public class ItemUpgrade extends ItemBase {
 
 	@SideOnly(Side.CLIENT)
 	public void initItemModels() {
-		for (EnumUpgrade variant : EnumUpgrade.values()) {
+		for (EnumUpgrade variant : EnumUpgrade.VALUES) {
 			ModelLoader.setCustomModelResourceLocation(this, variant.ordinal(),
 					new ModelResourceLocation(getRegistryName() + "/" + variant.getName(), "inventory"));
 		}

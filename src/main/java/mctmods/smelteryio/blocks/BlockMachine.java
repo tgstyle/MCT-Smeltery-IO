@@ -54,6 +54,7 @@ public class BlockMachine extends BlockBaseTE {
 	public static final PropertyEnum<EnumMachine> VARIANT = PropertyEnum.create("block", EnumMachine.class);
 	public static final IProperty<EnumFacing> FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	public static final PropertyInteger ACTIVE = PropertyInteger.create("active", 1, 4);
+	private static final double SOUND_CHANCE = 0.1D;
 
 	public BlockMachine() {
 		super(Material.IRON, MapColor.GRAY, "machine");
@@ -68,7 +69,7 @@ public class BlockMachine extends BlockBaseTE {
 	}
 
 	@Override public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
-		for (EnumMachine variant : EnumMachine.values()) {
+		for (EnumMachine variant : EnumMachine.VALUES) {
 			list.add(new ItemStack(this, 1, variant.ordinal()));
 		}
 	}
@@ -78,7 +79,7 @@ public class BlockMachine extends BlockBaseTE {
 		int variantIndex = meta & 3;
 		int facingIndex = (meta >> 2) & 3;
 		EnumFacing facing = EnumFacing.HORIZONTALS[facingIndex];
-		return getDefaultState().withProperty(VARIANT, EnumMachine.values()[variantIndex]).withProperty(FACING, facing);
+		return getDefaultState().withProperty(VARIANT, EnumMachine.VALUES[variantIndex]).withProperty(FACING, facing);
 	}
 
 	@Override public int getMetaFromState(IBlockState state) {
@@ -93,7 +94,7 @@ public class BlockMachine extends BlockBaseTE {
 
 	@Override @Nonnull public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facingBlock, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer, @Nonnull EnumHand hand) {
 		EnumFacing facing = placer.getHorizontalFacing().getOpposite();
-		return getDefaultState().withProperty(VARIANT, EnumMachine.values()[meta & 3]).withProperty(FACING, facing).withProperty(ACTIVE, 1);
+		return getDefaultState().withProperty(VARIANT, EnumMachine.VALUES[meta & 3]).withProperty(FACING, facing).withProperty(ACTIVE, 1);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -192,7 +193,7 @@ public class BlockMachine extends BlockBaseTE {
 			double d1 = pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
 			double d2 = pos.getZ() + 0.5D;
 			double d4 = rand.nextDouble() * 0.6D - 0.3D;
-			world.playSound(d0, pos.getY() + 0.5D, d2, net.minecraft.init.SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, rand.nextFloat() * 0.4F + 0.8F, false);
+			if (rand.nextDouble() < SOUND_CHANCE) { world.playSound(d0, pos.getY() + 0.5D, d2, net.minecraft.init.SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, rand.nextFloat() * 0.4F + 0.8F, false); }
 			switch (facing) {
 				case WEST:
 					world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 - 0.52D, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
@@ -213,7 +214,7 @@ public class BlockMachine extends BlockBaseTE {
 			}
 		}
 		if (tileEntity instanceof TileEntityCM && ((TileEntityBase) tileEntity).active) {
-			world.playSound(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, net.minecraft.init.SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.25F, 0.1F, false);
+			if (rand.nextDouble() < SOUND_CHANCE) { world.playSound(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, net.minecraft.init.SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.25F, 0.1F, false); }
 			world.spawnParticle(EnumParticleTypes.CLOUD, pos.getX() + 0.5D, pos.getY() + 0.99D, pos.getZ() + 0.5D, 0.0D, 0.0D, 0.0D);
 			world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + 0.99D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 0.0D, 0.0D, 0.0D);
 			world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + 0.0D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 0.0D, 0.0D, 0.0D);
@@ -225,7 +226,7 @@ public class BlockMachine extends BlockBaseTE {
 	@SideOnly(Side.CLIENT)
 	public void initItemBlockModels() {
 		ModelLoader.setCustomStateMapper(this, new BlockStateMachine());
-		for (EnumMachine variant : EnumMachine.values()) {
+		for (EnumMachine variant : EnumMachine.VALUES) {
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), variant.ordinal(), new ModelResourceLocation(SmelteryIO.MODID + ":" + variant.getName(), "inventory"));
 		}
 	}

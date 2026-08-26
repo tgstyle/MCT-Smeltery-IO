@@ -5,10 +5,17 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 
 public class ContainerBase extends Container {
+	private static final double MAX_REACH_SQ = 64.0D;
+	private TileEntity tileEntity;
+
+	protected void bindTileEntity(TileEntity tileEntity) { this.tileEntity = tileEntity; }
+
 	public void addPlayerInventorySlotToContainer(IInventory playerInventory) {
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -40,5 +47,10 @@ public class ContainerBase extends Container {
 		return itemstack;
 	}
 
-	@Override public boolean canInteractWith(@Nonnull EntityPlayer player) { return true; }
+	@Override public boolean canInteractWith(@Nonnull EntityPlayer player) {
+		if (tileEntity == null) { return true; }
+		if (tileEntity.isInvalid()) { return false; }
+		BlockPos pos = tileEntity.getPos();
+		return player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= MAX_REACH_SQ;
+	}
 }

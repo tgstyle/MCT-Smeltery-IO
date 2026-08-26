@@ -15,6 +15,7 @@ public enum EnumUpgrade implements IStringSerializable {
 	UPGRADE_SPEED     ("upgrade_speed",     EnumRarity.COMMON, "", "", 8),
 	UPGRADE_REDSTONE  ("upgrade_redstone",  EnumRarity.COMMON, "", "", 1);
 
+	public static final EnumUpgrade[] VALUES = values();
 	private final String name;
 	private final EnumRarity rarity;
 	private final String recipeOreDict1;

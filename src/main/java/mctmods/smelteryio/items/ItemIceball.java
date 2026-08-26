@@ -2,7 +2,7 @@ package mctmods.smelteryio.items;
 
 import mctmods.smelteryio.entity.EntityIceball;
 import mctmods.smelteryio.items.base.ItemBase;
-import mctmods.smelteryio.library.util.ConfigSIO;
+import mctmods.smelteryio.util.ConfigSIO;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;

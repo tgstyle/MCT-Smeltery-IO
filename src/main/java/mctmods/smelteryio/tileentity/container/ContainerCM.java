@@ -22,5 +22,6 @@ public class ContainerCM extends ContainerBase {
 		addSlotToContainer(new SlotHandlerCM(handler, TileEntityCM.SLOTREDSTONE, 142, 54, 64));
 
 		addPlayerInventorySlotToContainer(playerInventory);
+		bindTileEntity(tileEntity);
 	}
 }

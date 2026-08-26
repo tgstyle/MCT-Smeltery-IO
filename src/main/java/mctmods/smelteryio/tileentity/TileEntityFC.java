@@ -1,8 +1,9 @@
 package mctmods.smelteryio.tileentity;
 
-import mctmods.smelteryio.library.util.ConfigSIO;
+import mctmods.smelteryio.SmelteryIO;
 import mctmods.smelteryio.tileentity.base.TileEntityBase;
 import mctmods.smelteryio.tileentity.container.slots.SlotHandlerItems;
+import mctmods.smelteryio.util.ConfigSIO;
 
 import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 import slimeknights.tconstruct.smeltery.tileentity.TileHeatingStructure;
+import java.lang.reflect.Field;
 
 public class TileEntityFC extends TileEntityBase implements ITickable {
 	public static final int SLOTS_SIZE = 2;
@@ -31,6 +33,9 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 
 	private static final int FUEL_CONTROLLER_SPEED = ConfigSIO.fuelControllerSpeed;
 	private static final double FUEL_RATIO = ConfigSIO.fuelControllerRatio;
+	private static final Field HEAT_TEMPERATURE = resolveHeatField("temperature");
+	private static final Field HEAT_FUEL = resolveHeatField("fuel");
+	private static final Field HEAT_NEEDS_FUEL = resolveHeatField("needsFuel");
 
 	private double ratio = 0.01;
 	private int targetTemp = 0;
@@ -40,6 +45,18 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 	private boolean heatingItem = false;
 	private boolean atCapacity = false;
 	private boolean fueled = false;
+	private int fluidTempThisTick = -1;
+
+	private static Field resolveHeatField(String name) {
+		try {
+			Field field = TileHeatingStructure.class.getDeclaredField(name);
+			field.setAccessible(true);
+			return field;
+		} catch (Exception ex) {
+			SmelteryIO.logger.warn("TileHeatingStructure.{} not found, using the NBT fallback", name, ex);
+			return null;
+		}
+	}
 
 	public TileEntityFC() {
 		super(SLOTS_SIZE);
@@ -62,7 +79,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		super.readFromNBT(compound);
 	}
 
-	@Override @Nonnull public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+	@Override @Nonnull protected NBTTagCompound writeSyncNBT(NBTTagCompound compound) {
 		compound.setDouble(TAG_RATIO, ratio);
 		compound.setInteger(TAG_TARGET_TEMP, targetTemp);
 		compound.setInteger(TAG_CURRENT_TEMP, currentTemp);
@@ -70,7 +87,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		compound.setBoolean(TAG_AT_CAPACITY, atCapacity);
 		compound.setBoolean(TAG_OWNER, owner);
 		compound.setBoolean(TAG_FUELED, fueled);
-		return super.writeToNBT(compound);
+		return super.writeSyncNBT(compound);
 	}
 
 	@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -92,6 +109,7 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		}
 		else {
 			if (cooldown % 2 == 0) {
+				fluidTempThisTick = -1;
 				if (active && time == 0) {
 					active = false;
 					update = true;
@@ -132,9 +150,10 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 						update = true;
 					}
 					else if (owner && !fueled) {
+						int oldTemp = smelteryTemp;
 						smelteryTemp = getFluidFuelTemp();
 						setSmelteryTemp(smelteryTemp);
-						update = true;
+						if (oldTemp != smelteryTemp) { update = true; }
 					}
 				}
 			}
@@ -245,29 +264,40 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 		if (time != 0) { progress = (progress + FUEL_CONTROLLER_SPEED + speedStackSize) % (time + FUEL_CONTROLLER_SPEED + speedStackSize); }
 		if (time == 0 && progress == 0) {
 			if (currentTemp == 0 && heatingItem) {
-				calculateTemperature();
-				time = getBurnTime();
-				active = burnSolidFuel();
-				currentTemp = targetTemp;
+				startBurn();
 				update = true;
 			}
 		}
 		else if (progress >= time) {
-			smelteryTemp = getFluidFuelTemp();
-			setSmelteryTemp(smelteryTemp);
-			targetTemp = smelteryTemp;
 			currentTemp = 0;
 			time = 0;
 			progress = 0;
 			heatingItem = false;
+			updateSmelteryHeatingState();
+			if (heatingItem && getBurnTime() > 0) { startBurn(); }
+			else { dropToFluidTemp(); }
 			update = true;
 		}
 		setSmelteryTemp(targetTemp);
 	}
 
+	private void startBurn() {
+		calculateTemperature();
+		time = getBurnTime();
+		active = burnSolidFuel();
+		currentTemp = targetTemp;
+	}
+
+	private void dropToFluidTemp() {
+		smelteryTemp = getFluidFuelTemp();
+		setSmelteryTemp(smelteryTemp);
+		targetTemp = smelteryTemp;
+	}
+
 	private boolean burnSolidFuel() { consumeItemStack(); return true; }
 
 	private int getFluidFuelTemp() {
+		if (fluidTempThisTick >= 0) { return fluidTempThisTick; }
 		int maxTemp = 0;
 		fueled = false;
 		for (BlockPos pos : tileSmeltery.tanks) {
@@ -279,15 +309,31 @@ public class TileEntityFC extends TileEntityBase implements ITickable {
 			if (fluidTemp > maxTemp) { maxTemp = fluidTemp; }
 			fueled = true;
 		}
+		fluidTempThisTick = maxTemp;
 		return maxTemp;
 	}
 
-	private void setSmelteryTemp(int temperature) { if (tileSmeltery == null || temperature == tileSmeltery.getTemperature()) { return; } setSmelteryTempNBT(temperature); }
+	private void setSmelteryTemp(int temperature) { if (tileSmeltery == null || temperature == tileSmeltery.getTemperature()) { return; } applySmelteryTemp(temperature); }
 
-	private void setSmelteryTempNBT(int temperature) {
+	private void applySmelteryTemp(int temperature) {
+		int fuelValue = (temperature > 0) ? Integer.MAX_VALUE : 0;
+		if (HEAT_TEMPERATURE != null && HEAT_FUEL != null && HEAT_NEEDS_FUEL != null) {
+			try {
+				HEAT_TEMPERATURE.setInt(tileSmeltery, temperature);
+				HEAT_FUEL.setInt(tileSmeltery, fuelValue);
+				HEAT_NEEDS_FUEL.setBoolean(tileSmeltery, fuelValue == 0);
+				notifyMasterOfChange();
+				return;
+			} catch (Exception ex) {
+				SmelteryIO.logger.warn("Could not set the smeltery heat fields directly, falling back to NBT", ex);
+			}
+		}
+		setSmelteryTempNBT(temperature, fuelValue);
+	}
+
+	private void setSmelteryTempNBT(int temperature, int fuelValue) {
 		NBTTagCompound nbt = getNBT();
 		nbt.setInteger(TileHeatingStructure.TAG_TEMPERATURE, temperature);
-		int fuelValue = (temperature > 0) ? Integer.MAX_VALUE : 0;
 		nbt.setInteger(TileHeatingStructure.TAG_FUEL, fuelValue);
 		nbt.setBoolean(TileHeatingStructure.TAG_NEEDS_FUEL, fuelValue == 0);
 		tileSmeltery.readFromNBT(nbt);

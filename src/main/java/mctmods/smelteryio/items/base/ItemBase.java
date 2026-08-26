@@ -1,7 +1,7 @@
 package mctmods.smelteryio.items.base;
 
 import mctmods.smelteryio.SmelteryIO;
-import mctmods.smelteryio.library.util.CreativeTabSIO;
+import mctmods.smelteryio.util.CreativeTabSIO;
 
 import net.minecraft.item.Item;
 

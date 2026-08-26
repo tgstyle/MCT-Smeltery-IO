@@ -1,4 +1,4 @@
-package mctmods.smelteryio.library.util;
+package mctmods.smelteryio.util;
 
 import mctmods.smelteryio.SmelteryIO;
 
