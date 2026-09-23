@@ -51,6 +51,7 @@ minecraft {
     mcpMappingVersion = common.mcp_mappings.toString().split('-')[0]
     username = 'tgstyle'
     extraRunJvmArguments.addAll(
+        '-Xmx4G',
         '-Dforge.logging.console.level=debug'
     )
 }
@@ -68,6 +69,13 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    clientRuntime {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
 dependencies {
     implementation rfg.deobf("${common.mjei_version}")
 
@@ -76,15 +84,13 @@ dependencies {
 
     implementation rfg.deobf("curse.maven:${common.tcon_version}")
     implementation rfg.deobf("curse.maven:${common.mant_version}")
+
+    clientRuntime rfg.deobf("curse.maven:${common.bf3r_version}")
 }
 
 tasks.named('runClient').configure {
     extraArgs.addAll('--width', '1920', '--height', '1080')
-}
-
-tasks.register('runClientGamescope', Exec) {
-    workingDir = projectDir
-    commandLine 'bash', '-c', 'set -o pipefail; gamescope -W 1920 -H 1080 -- ./gradlew --no-daemon runClient 2>&1 ' + '| grep --line-buffered -v "xdg_backend: Changed refresh"'
+    classpath configurations.clientRuntime
 }
 
 tasks.named('runServer').configure {
