@@ -1,7 +1,23 @@
+import java.security.MessageDigest
+
 plugins {
     id 'idea'
     id 'java'
     id 'com.gtnewhorizons.retrofuturagradle' version '2.0.2'
+}
+
+class JarStamp {
+    static String hash(Set<File> files, File versionProps, File root) {
+        def digest = MessageDigest.getInstance('SHA-256')
+        files.sort { it.path }.each { File file ->
+            digest.update(root.toPath().relativize(file.toPath()).toString().getBytes('UTF-8'))
+            digest.update(file.bytes)
+        }
+        versionProps.readLines().findAll { !it.startsWith('#') && !it.startsWith('build_number=') }.sort().each { digest.update(it.getBytes('UTF-8')) }
+        digest.digest().encodeHex().toString()
+    }
+
+    static boolean changed(Set<File> files, File versionProps, File root, File stamp) { !stamp.isFile() || stamp.text != hash(files, versionProps, root) }
 }
 
 ext.configFile = file '../common/common-1.12.properties'
@@ -76,16 +92,18 @@ configurations {
     }
 }
 
+String deobf(String notation) { return project.modUtils.deobfuscate(notation) as String }
+
 dependencies {
-    implementation rfg.deobf("${common.mjei_version}")
+    implementation deobf("${common.mjei_version}")
 
-    compileOnly rfg.deobf("curse.maven:${common.mtop_version}")
-    compileOnly rfg.deobf("curse.maven:${common.hwya_version}")
+    compileOnly deobf("curse.maven:${common.mtop_version}")
+    compileOnly deobf("curse.maven:${common.hwya_version}")
 
-    implementation rfg.deobf("curse.maven:${common.tcon_version}")
-    implementation rfg.deobf("curse.maven:${common.mant_version}")
+    implementation deobf("curse.maven:${common.tcon_version}")
+    implementation deobf("curse.maven:${common.mant_version}")
 
-    clientRuntime rfg.deobf("curse.maven:${common.bf3r_version}")
+    clientRuntime deobf("curse.maven:${common.bf3r_version}")
 }
 
 tasks.named('runClient').configure {
@@ -97,7 +115,15 @@ tasks.named('runServer').configure {
     workingDir = file('run/server')
 }
 
+def stampInputs = files(sourceSets.main.java.srcDirs, sourceSets.main.resources.srcDirs, file('gradle.properties'), file('build.gradle'), configFile).asFileTree
+def stampProps = file('version.properties')
+def stampRoot = rootDir
+def stampFile = layout.buildDirectory.file('jar-inputs.sha256')
+def builtJar = layout.buildDirectory.file("libs/${modarchivename}-${version}.jar")
+def needsJar = { !builtJar.get().asFile.isFile() || JarStamp.changed(stampInputs.files, stampProps, stampRoot, stampFile.get().asFile) }
+
 tasks.register('bumpVersion') {
+    onlyIf { needsJar() }
     doLast {
         def requested = gradle.startParameter.taskNames*.toLowerCase()
         if (!requested.any { it.contains('build') || it.contains('jar') || it.contains('assemble') }) { return }
@@ -138,6 +164,12 @@ processResources {
 
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    onlyIf { needsJar() }
+}
+
+tasks.named('reobfJar') {
+    onlyIf { needsJar() }
+    doLast { stampFile.get().asFile.text = JarStamp.hash(stampInputs.files, stampProps, stampRoot) }
 }
 
 sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
